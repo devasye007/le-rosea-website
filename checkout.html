@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout - LE ROSÈA</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="page-checkout">
+
+<div id="site-header"></div>
+
+<section class="section-tight">
+  <div class="container">
+
+    <div id="checkoutView">
+      <div class="section-head">
+        <span class="eyebrow">Secure Checkout</span>
+        <h1 class="mt-0">Complete Your Order</h1>
+      </div>
+
+      <div class="checkout-grid">
+        <form id="checkoutForm">
+          <h3>Contact</h3>
+          <div class="field-row">
+            <div class="field"><label for="fName">Full name</label><input id="fName" required></div>
+            <div class="field"><label for="fPhone">Phone</label><input id="fPhone" type="tel" required></div>
+          </div>
+          <div class="field"><label for="fEmail">Email</label><input id="fEmail" type="email" required></div>
+
+          <h3 style="margin-top:34px;">Shipping Address</h3>
+          <div class="field"><label for="fAddr">Address</label><input id="fAddr" required></div>
+          <div class="field-row">
+            <div class="field"><label for="fCity">City</label><input id="fCity" required></div>
+            <div class="field"><label for="fState">State</label><input id="fState" required></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label for="fPin">PIN / postal code</label><input id="fPin" required></div>
+            <div class="field"><label for="fCountry">Country</label>
+              <select id="fCountry">
+                <option>India</option>
+                <option>United States</option>
+                <option>United Kingdom</option>
+                <option>United Arab Emirates</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+
+          <h3 style="margin-top:34px;">Payment Method</h3>
+          <div class="pay-options" id="payOptions">
+            <label class="pay-opt selected"><input type="radio" name="pay" value="upi" checked> UPI</label>
+            <label class="pay-opt"><input type="radio" name="pay" value="card"> Credit / Debit Card</label>
+            <label class="pay-opt"><input type="radio" name="pay" value="cod"> Cash on Delivery</label>
+          </div>
+          <p style="font-size:0.76rem; color:var(--taupe); margin-top:-10px; margin-bottom:26px;">
+            Payment is processed securely at the next step. Made-to-order and customized pieces follow the lead time shown at checkout.
+          </p>
+
+          <button type="submit" class="btn btn-primary btn-block" id="placeOrderBtn">Place Order</button>
+        </form>
+
+        <aside class="order-summary">
+          <h3 class="mt-0">Order Summary</h3>
+          <div id="summaryLines"></div>
+          <div class="order-totals">
+            <div class="row"><span>Subtotal</span><span id="sumSubtotal">₹0</span></div>
+            <div class="row"><span>Shipping</span><span id="sumShipping">Calculated after address</span></div>
+            <div class="row total"><span>Total</span><span id="sumTotal">₹0</span></div>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <div id="confirmView" class="hidden">
+      <div class="confirm-panel">
+        <div class="rose-mark" id="confirmRose"></div>
+        <span class="eyebrow">Thank You</span>
+        <h1>Your Order Has Been Received</h1>
+        <p class="lede center">Order <strong id="confirmOrderId"></strong> is confirmed. A member of the House will be in touch to confirm sizing and, where relevant, customization details before your piece goes into production.</p>
+        <a href="shop.html" class="btn btn-primary" style="margin-top:10px;">Continue Browsing</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div id="site-footer"></div>
+
+<script src="js/icons.js"></script>
+<script src="js/products.js"></script>
+<script src="js/placeholder-art.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/components.js"></script>
+<script src="js/motion.js"></script>
+<script>
+  function renderSummary(){
+    const lines = cartLinesWithData();
+    document.getElementById('summaryLines').innerHTML = lines.map(l => `
+      <div class="order-line">
+        <div class="art" data-art="${l.productId}" data-art-variant="${l.product.artVariant}"></div>
+        <div style="flex:1;">
+          <div style="font-family:var(--serif); font-size:0.95rem;">${l.product.name}</div>
+          <div style="font-size:0.74rem; color:var(--taupe);">Size ${l.size} &middot; Qty ${l.qty}</div>
+        </div>
+        <div style="font-size:0.85rem;">${formatINR(l.product.price * l.qty)}</div>
+      </div>
+    `).join('') || '<p style="color:var(--taupe); font-size:0.88rem;">Your bag is empty.</p>';
+    const subtotal = cartSubtotal();
+    document.getElementById('sumSubtotal').textContent = formatINR(subtotal);
+    document.getElementById('sumTotal').textContent = formatINR(subtotal);
+    initPlaceholderArt();
+  }
+
+  document.querySelectorAll('.pay-opt').forEach(opt => opt.addEventListener('click', () => {
+    document.querySelectorAll('.pay-opt').forEach(o => o.classList.remove('selected'));
+    opt.classList.add('selected');
+  }));
+
+  // NOTE for integration: this demo does not process a real payment.
+  // To go live, replace the block below with a call to your payment
+  // gateway (e.g. Razorpay Orders API / Stripe PaymentIntents) from a
+  // backend you control, and only show the confirmation view once that
+  // backend confirms the payment succeeded and the order is persisted.
+  function placeOrder(e){
+    e.preventDefault();
+    if (cartLinesWithData().length === 0){ return; }
+    const orderId = 'LR' + Math.floor(100000 + Math.random()*900000);
+    document.getElementById('confirmOrderId').textContent = '#' + orderId;
+    document.getElementById('confirmRose').innerHTML = ICONS.rose;
+    document.getElementById('checkoutView').classList.add('hidden');
+    document.getElementById('confirmView').classList.remove('hidden');
+    writeCart([]);
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+
+  document.getElementById('checkoutForm').addEventListener('submit', placeOrder);
+  document.addEventListener('DOMContentLoaded', renderSummary);
+</script>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">Product - LE ROSÈA</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="page-product">
+
+<div id="site-header"></div>
+
+<section class="section-tight">
+  <div class="container" id="pdpRoot">
+    <!-- populated by script -->
+  </div>
+</section>
+
+<section class="section-tight" id="relatedSection">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">You May Also Love</span>
+      <h2 class="mt-0">Complete the Moment</h2>
+    </div>
+    <div class="scroll-row" id="relatedRow"></div>
+  </div>
+</section>
+
+<div id="site-footer"></div>
+
+<script src="js/icons.js"></script>
+<script src="js/products.js"></script>
+<script src="js/placeholder-art.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/components.js"></script>
+<script src="js/motion.js"></script>
+<script>
+  const id = new URLSearchParams(location.search).get('id');
+  const product = getProductById(id) || PRODUCTS[0];
+  let selectedSize = product.sizes[Math.floor(product.sizes.length/2)];
+  let qty = 1;
+
+  document.getElementById('pageTitle').textContent = `${product.name} - LE ROSÈA`;
+
+  function render(){
+    document.getElementById('pdpRoot').innerHTML = `
+      <div class="pdp">
+        <div>
+          <div class="pdp-gallery-main">
+            <div class="art tall" id="mainArt" data-art="${product.id}" data-art-variant="${product.artVariant}" data-art-label="${product.colorway}"></div>
+          </div>
+          <div class="pdp-thumbs">
+            ${['rose','drape','botanical','grid','bloom'].map((v,i) => `
+              <div class="art thumb ${i===0?'active':''}" data-thumb data-variant="${v}" data-art="${product.id}-${v}" data-art-variant="${v}"></div>
+            `).join('')}
+          </div>
+        </div>
+        <div class="pdp-info">
+          <div class="p-cat">${product.category} · ${product.collection}</div>
+          <h1>${product.name}</h1>
+          <p class="p-price">${formatINR(product.price)}</p>
+          <p class="lede">${product.description}</p>
+
+          <div>
+            <label style="font-size:0.78rem; letter-spacing:0.06em; display:block; margin-bottom:8px;">Colourway: ${product.colorway}</label>
+          </div>
+
+          <div class="spec-grid">
+            <div><span>Craft</span><strong>${product.craft}</strong></div>
+            <div><span>Made to order</span><strong>${product.madeToOrder ? 'Yes' : 'No'}</strong></div>
+            <div><span>Lead time</span><strong>${product.leadTime}</strong></div>
+            <div><span>Care</span><strong>${product.care}</strong></div>
+          </div>
+
+          <div>
+            <label style="font-size:0.78rem; letter-spacing:0.06em; display:block; margin-bottom:8px;">Size</label>
+            <div class="size-row" id="sizeRow"></div>
+            <a href="size-guide.html" class="text-link" style="font-size:0.74rem;">View size guide</a>
+          </div>
+
+          <div style="margin-top:22px;">
+            <label style="font-size:0.78rem; letter-spacing:0.06em; display:block; margin-bottom:8px;">Quantity</label>
+            <div class="qty-row">
+              <div class="qty-control">
+                <button id="qtyMinus" aria-label="Decrease quantity">${ICONS.minus}</button>
+                <span id="qtyValue">1</span>
+                <button id="qtyPlus" aria-label="Increase quantity">${ICONS.plus}</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="delivery-note">
+            <span>&#9679;</span>
+            <span>Made to order &middot; dispatched in ${product.leadTime}. ${product.customizable ? 'Customization available on this piece - see options below.' : ''}</span>
+          </div>
+
+          <div class="pdp-actions">
+            <button class="btn btn-primary" id="addToCartBtn">Add to Bag</button>
+            <button class="btn" id="buyNowBtn">Buy Now</button>
+          </div>
+
+          ${product.customizable ? `<a href="customization.html" class="text-link">Request a customization for this piece</a>` : ''}
+
+          <div class="accordion" style="margin-top:34px;">
+            <div class="accordion-item open">
+              <button data-acc>Fabric &amp; Craftsmanship <span class="accordion-icon">+</span></button>
+              <div class="accordion-body"><div class="accordion-body-inner">${product.fabric} ${product.embellishment}</div></div>
+            </div>
+            <div class="accordion-item">
+              <button data-acc>Fit &amp; Sizing <span class="accordion-icon">+</span></button>
+              <div class="accordion-body"><div class="accordion-body-inner">${product.fit} Available in sizes ${product.sizes.join(', ')}. If you're between sizes, we recommend sizing up for a relaxed drape.</div></div>
+            </div>
+            <div class="accordion-item">
+              <button data-acc>Delivery &amp; Customization <span class="accordion-icon">+</span></button>
+              <div class="accordion-body"><div class="accordion-body-inner">Dispatched within ${product.leadTime} of order confirmation. ${product.customizable ? 'This piece can be customized for measurements, length, colour or select design details - see our Customization page for the full process.' : 'This piece is available in standard sizing only.'}</div></div>
+            </div>
+            <div class="accordion-item">
+              <button data-acc>Care <span class="accordion-icon">+</span></button>
+              <div class="accordion-body"><div class="accordion-body-inner">${product.care}. Store on a padded hanger away from direct sunlight. Handcrafted embellishment may show slight natural variation - this is part of the character of the piece, not a flaw.</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const sizeRow = document.getElementById('sizeRow');
+    sizeRow.innerHTML = product.sizes.map(s => `<div class="size-opt ${s===selectedSize?'selected':''}" data-size="${s}">${s}</div>`).join('');
+    sizeRow.querySelectorAll('.size-opt').forEach(el => el.addEventListener('click', () => {
+      selectedSize = el.dataset.size;
+      sizeRow.querySelectorAll('.size-opt').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+    }));
+
+    document.getElementById('qtyMinus').addEventListener('click', () => { qty = Math.max(1, qty-1); document.getElementById('qtyValue').textContent = qty; });
+    document.getElementById('qtyPlus').addEventListener('click', () => { qty += 1; document.getElementById('qtyValue').textContent = qty; });
+
+    document.getElementById('addToCartBtn').addEventListener('click', () => addToCart(product.id, selectedSize, qty));
+    document.getElementById('buyNowBtn').addEventListener('click', () => { addToCart(product.id, selectedSize, qty); location.href = 'checkout.html'; });
+
+    document.querySelectorAll('[data-acc]').forEach(btn => btn.addEventListener('click', () => {
+      const item = btn.closest('.accordion-item');
+      const wasOpen = item.classList.contains('open');
+      item.parentElement.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('open'));
+      if (!wasOpen) item.classList.add('open');
+    }));
+
+    document.querySelectorAll('[data-thumb]').forEach(t => t.addEventListener('click', () => {
+      document.querySelectorAll('[data-thumb]').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+      const main = document.getElementById('mainArt');
+      main.setAttribute('data-art-variant', t.dataset.variant);
+      paintArt(main);
+    }));
+
+    const related = PRODUCTS.filter(p => p.id !== product.id && p.category === product.category).slice(0,6);
+    document.getElementById('relatedRow').innerHTML = related.map(p => `
+      <a class="product-card" href="product.html?id=${p.id}">
+        <div class="art" data-art="${p.id}" data-art-variant="${p.artVariant}"></div>
+        <div class="p-cat">${p.collection}</div>
+        <div class="p-name">${p.name}</div>
+        <div class="p-price">${formatINR(p.price)}</div>
+      </a>`).join('');
+
+    initPlaceholderArt();
+  }
+
+  document.addEventListener('DOMContentLoaded', render);
+</script>
+</body>
+</html>

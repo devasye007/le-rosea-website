@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact - LE ROSÈA</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="page-contact">
+
+<div id="site-header"></div>
+
+<section class="section-tight">
+  <div class="container">
+    <div class="section-head center">
+      <span class="eyebrow">We're Here to Help</span>
+      <h1>Contact &amp; Appointments</h1>
+      <p class="lede center">For sizing, customization requests, order questions or a private styling appointment.</p>
+    </div>
+
+    <div class="split">
+      <form id="contactForm">
+        <div class="field-row">
+          <div class="field"><label for="cName">Name</label><input id="cName" required></div>
+          <div class="field"><label for="cEmail">Email</label><input id="cEmail" type="email" required></div>
+        </div>
+        <div class="field"><label for="cSubject">Subject</label>
+          <select id="cSubject">
+            <option>General enquiry</option>
+            <option>Sizing help</option>
+            <option>Customization request</option>
+            <option>Order status</option>
+            <option>Styling appointment</option>
+          </select>
+        </div>
+        <div class="field"><label for="cMessage">Message</label><textarea id="cMessage" rows="5" required></textarea></div>
+        <button type="submit" class="btn btn-primary btn-block" id="contactSubmit">Send Message</button>
+        <p id="contactSent" class="hidden" style="margin-top:14px; font-size:0.86rem; color:var(--gold);">Thank you - your message has been received. Our team will respond shortly.</p>
+      </form>
+
+      <div>
+        <h3 class="mt-0">Direct Channels</h3>
+        <ul style="list-style:none; padding:0; display:flex; flex-direction:column; gap:22px; margin-bottom:30px;">
+          <li>
+            <span class="eyebrow" style="display:block; margin-bottom:4px;">WhatsApp</span>
+            <a href="https://wa.me/910000000000" class="text-link">+91 00000 00000</a>
+          </li>
+          <li>
+            <span class="eyebrow" style="display:block; margin-bottom:4px;">Email</span>
+            <a href="mailto:hello@lerosea.com" class="text-link">hello@lerosea.com</a>
+          </li>
+          <li>
+            <span class="eyebrow" style="display:block; margin-bottom:4px;">Instagram</span>
+            <a href="https://instagram.com" target="_blank" rel="noopener" class="text-link">@lerosea</a>
+          </li>
+        </ul>
+        <div class="art" data-art="contact-art" data-art-variant="rose"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div id="site-footer"></div>
+
+<script src="js/icons.js"></script>
+<script src="js/products.js"></script>
+<script src="js/placeholder-art.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/components.js"></script>
+<script src="js/motion.js"></script>
+<script>
+  document.getElementById('contactForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    document.getElementById('contactSent').classList.remove('hidden');
+    document.getElementById('contactSubmit').textContent = 'Message Sent';
+    document.getElementById('contactSubmit').disabled = true;
+  });
+</script>
+</body>
+</html>
