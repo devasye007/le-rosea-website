@@ -44,26 +44,39 @@
 
   const hasPhotos = product.images && product.images.length;
 
+  const EXPAND_ICON = `<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 4H4v5M15 4h5v5M20 15v5h-5M4 15v5h5"/></svg>`;
+
+  // If a real photo fails to load, reveal the stage's fill instead of a broken-image icon.
+  function pdpImgError(img){
+    if (!img) return;
+    img.style.visibility = 'hidden';
+    const stage = img.closest('.pdp-stage');
+    if (stage) stage.classList.add('img-failed');
+  }
+
   function galleryMarkup(){
     if (hasPhotos){
       const alt = escapeHtml(product.name + ' — ' + product.colorway);
+      const multi = product.images.length > 1;
+      const arrows = multi ? `
+          <button type="button" class="pdp-nav pdp-prev" id="pdpPrev" aria-label="Previous image">${ICONS.chevron}</button>
+          <button type="button" class="pdp-nav pdp-next" id="pdpNext" aria-label="Next image">${ICONS.chevron}</button>` : '';
       const main = `<div class="pdp-gallery-main">
-        <div class="art tall has-photo" id="mainArt">
-          <img id="mainImg" src="${assetPath(product.images[0])}" alt="${alt}" decoding="async" fetchpriority="high" data-art-id="${product.id}" data-art-variant="${product.artVariant}" onerror="lrArtFallback(this)">
+        <div class="pdp-stage" id="pdpStage" tabindex="0" role="group" aria-roledescription="carousel" aria-label="${alt}">
+          <img id="mainImg" class="pdp-main-img" src="${assetPath(product.images[0])}" alt="${alt}" decoding="async" fetchpriority="high" onerror="pdpImgError(this)">${arrows}
+          <button type="button" class="pdp-expand" id="pdpExpand" aria-label="View full screen">${EXPAND_ICON}</button>
         </div>
       </div>`;
-      const thumbs = `<div class="pdp-thumbs">${product.images.map((src,i) => `
-        <div class="art thumb has-photo ${i===0?'active':''}" data-thumb data-thumb-img="${assetPath(src)}">
-          <img src="${assetPath(src)}" alt="" loading="lazy" decoding="async" data-art-id="${product.id}" data-art-variant="${product.artVariant}" onerror="lrArtFallback(this)">
-        </div>`).join('')}</div>`;
+      const thumbs = multi ? `<div class="pdp-thumbs" id="pdpThumbs">${product.images.map((src,i) => `
+        <button type="button" class="pdp-thumb ${i===0?'active':''}" data-index="${i}" aria-label="View image ${i+1} of ${product.images.length}"${i===0?' aria-current="true"':''}>
+          <img src="${assetPath(src)}" alt="" loading="lazy" decoding="async" onerror="this.closest('.pdp-thumb').style.display='none'">
+        </button>`).join('')}</div>` : '';
       return main + thumbs;
     }
-    const main = `<div class="pdp-gallery-main">
-      <div class="art tall" id="mainArt" data-art="${product.id}" data-art-variant="${product.artVariant}" data-art-label="${product.colorway}"></div>
+    // No matched photos — a single generated placeholder, no gallery controls.
+    return `<div class="pdp-gallery-main">
+      <div class="art tall" id="mainArt" data-art="${product.id}" data-art-variant="${product.artVariant}" data-art-label="${escapeHtml(product.colorway)}"></div>
     </div>`;
-    const thumbs = `<div class="pdp-thumbs">${['rose','drape','botanical','grid','bloom'].map((v,i) => `
-      <div class="art thumb ${i===0?'active':''}" data-thumb data-variant="${v}" data-art="${product.id}-${v}" data-art-variant="${v}"></div>`).join('')}</div>`;
-    return main + thumbs;
   }
 
   function render(){
@@ -161,18 +174,7 @@
       if (!wasOpen) item.classList.add('open');
     }));
 
-    document.querySelectorAll('[data-thumb]').forEach(t => t.addEventListener('click', () => {
-      document.querySelectorAll('[data-thumb]').forEach(x => x.classList.remove('active'));
-      t.classList.add('active');
-      if (t.dataset.thumbImg){
-        const img = document.getElementById('mainImg');
-        if (img) img.src = t.dataset.thumbImg;
-      } else {
-        const main = document.getElementById('mainArt');
-        main.setAttribute('data-art-variant', t.dataset.variant);
-        paintArt(main);
-      }
-    }));
+    initGallery();
 
     const related = PRODUCTS.filter(p => p.id !== product.id && p.category === product.category).slice(0,6);
     document.getElementById('relatedRow').innerHTML = related.map(p => `
@@ -184,6 +186,95 @@
       </a>`).join('');
 
     initPlaceholderArt();
+  }
+
+  // Gallery: main-image swap, next/prev (wraparound), thumbnail sync,
+  // keyboard nav, and a fullscreen lightbox. Real photos only.
+  function initGallery(){
+    if (!hasPhotos) return;
+    const imgs = product.images;
+    const multi = imgs.length > 1;
+    const mainImg = document.getElementById('mainImg');
+    const stage = document.getElementById('pdpStage');
+    const thumbEls = Array.from(document.querySelectorAll('.pdp-thumb'));
+    let idx = 0;
+
+    // Build the lightbox once and attach it to <body>.
+    const alt = escapeHtml(product.name + ' — ' + product.colorway);
+    const lb = document.createElement('div');
+    lb.className = 'pdp-lightbox';
+    lb.id = 'pdpLightbox';
+    lb.tabIndex = -1;
+    lb.setAttribute('role', 'dialog');
+    lb.setAttribute('aria-modal', 'true');
+    lb.setAttribute('aria-label', product.name + ' image viewer');
+    lb.setAttribute('aria-hidden', 'true');
+    lb.innerHTML = `
+      <button type="button" class="pdp-lb-close" aria-label="Close image viewer">${ICONS.close}</button>
+      ${multi ? `<button type="button" class="pdp-lb-nav pdp-lb-prev" aria-label="Previous image">${ICONS.chevron}</button>` : ''}
+      <img class="pdp-lb-img" id="pdpLbImg" alt="${alt}">
+      ${multi ? `<button type="button" class="pdp-lb-nav pdp-lb-next" aria-label="Next image">${ICONS.chevron}</button>` : ''}
+      ${multi ? `<div class="pdp-lb-counter" id="pdpLbCounter" aria-hidden="true"></div>` : ''}`;
+    document.body.appendChild(lb);
+    const lbImg = lb.querySelector('#pdpLbImg');
+    const lbCounter = lb.querySelector('#pdpLbCounter');
+
+    function show(i){
+      idx = (i % imgs.length + imgs.length) % imgs.length;   // wraparound both directions
+      const src = assetPath(imgs[idx]);
+      if (mainImg){ mainImg.style.visibility = ''; mainImg.src = src; }
+      if (lbImg) lbImg.src = src;
+      thumbEls.forEach((t, ti) => {
+        const on = ti === idx;
+        t.classList.toggle('active', on);
+        if (on) t.setAttribute('aria-current', 'true'); else t.removeAttribute('aria-current');
+      });
+      if (lbCounter) lbCounter.textContent = `${idx + 1} / ${imgs.length}`;
+    }
+    const next = () => show(idx + 1);
+    const prev = () => show(idx - 1);
+
+    thumbEls.forEach(t => t.addEventListener('click', () => show(parseInt(t.dataset.index, 10))));
+    document.getElementById('pdpPrev')?.addEventListener('click', e => { e.stopPropagation(); prev(); });
+    document.getElementById('pdpNext')?.addEventListener('click', e => { e.stopPropagation(); next(); });
+
+    // Keyboard nav while the inline gallery is focused.
+    stage?.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight'){ e.preventDefault(); next(); }
+      else if (e.key === 'ArrowLeft'){ e.preventDefault(); prev(); }
+      else if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openLb(); }
+    });
+
+    function openLb(){
+      if (lbImg) lbImg.src = assetPath(imgs[idx]);
+      if (lbCounter) lbCounter.textContent = `${idx + 1} / ${imgs.length}`;
+      lb.classList.add('is-open');
+      lb.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('pdp-lb-open');
+      lb.focus();
+    }
+    function closeLb(){
+      lb.classList.remove('is-open');
+      lb.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('pdp-lb-open');
+      stage?.focus();
+    }
+
+    document.getElementById('pdpExpand')?.addEventListener('click', e => { e.stopPropagation(); openLb(); });
+    mainImg?.addEventListener('click', openLb);
+    lb.querySelector('.pdp-lb-close')?.addEventListener('click', closeLb);
+    lb.querySelector('.pdp-lb-prev')?.addEventListener('click', e => { e.stopPropagation(); prev(); });
+    lb.querySelector('.pdp-lb-next')?.addEventListener('click', e => { e.stopPropagation(); next(); });
+    lb.addEventListener('click', e => { if (e.target === lb) closeLb(); });   // click backdrop to close
+
+    document.addEventListener('keydown', e => {
+      if (!lb.classList.contains('is-open')) return;
+      if (e.key === 'Escape') closeLb();
+      else if (e.key === 'ArrowRight') next();
+      else if (e.key === 'ArrowLeft') prev();
+    });
+
+    show(0);
   }
 
   document.addEventListener('DOMContentLoaded', render);

@@ -120,19 +120,27 @@
   </div>
   <div class="cat-grid">
     <a class="cat-tile" href="shop.html?category=Dresses">
-      <div class="art on-dark" data-art="cat-dresses" data-art-variant="botanical"></div>
+      <div class="art on-dark has-photo">
+        <img src="assets/products/ivory-bloom-dress/1.jpg" alt="Dresses" loading="lazy" decoding="async" data-art-id="cat-dresses" data-art-variant="botanical" onerror="lrArtFallback(this)">
+      </div>
       <span>Dresses</span>
     </a>
     <a class="cat-tile" href="shop.html?category=Gowns">
-      <div class="art on-dark" data-art="cat-gowns" data-art-variant="rose"></div>
+      <div class="art on-dark has-photo">
+        <img src="assets/products/royal-draped-gown-dark-blue/1.jpg" alt="Gowns" loading="lazy" decoding="async" data-art-id="cat-gowns" data-art-variant="rose" onerror="lrArtFallback(this)">
+      </div>
       <span>Gowns</span>
     </a>
     <a class="cat-tile" href="shop.html?category=Co-ords+%26+Separates">
-      <div class="art on-dark" data-art="cat-coords" data-art-variant="grid"></div>
+      <div class="art on-dark has-photo">
+        <img src="assets/products/sequins-rush-set-sea-green/1.jpg" alt="Co-ords &amp; Separates" loading="lazy" decoding="async" data-art-id="cat-coords" data-art-variant="grid" onerror="lrArtFallback(this)">
+      </div>
       <span>Co-ords &amp; Separates</span>
     </a>
     <a class="cat-tile" href="shop.html?collection=Statement+Pr%C3%AAt-Couture">
-      <div class="art on-dark" data-art="cat-statement" data-art-variant="bloom"></div>
+      <div class="art on-dark has-photo">
+        <img src="assets/products/golden-rose-corset-with-skirt/1.jpg" alt="Statement Prêt-Couture" loading="lazy" decoding="async" data-art-id="cat-statement" data-art-variant="bloom" onerror="lrArtFallback(this)">
+      </div>
       <span>Statement Prêt-Couture</span>
     </a>
   </div>
@@ -267,13 +275,15 @@
     document.getElementById('bestsellersGrid').innerHTML = bestsellers.map(productCard).join('');
 
     const journalPosts = [
-      { title: 'Inside the Atelier: The Making of Écrin d\u2019Or', tag: 'Craftsmanship', variant: 'grid' },
-      { title: 'A Season of Statement Prêt-Couture', tag: 'Collection Story', variant: 'bloom' },
-      { title: 'Styling the Reine des Roses Gown', tag: 'Styling', variant: 'rose' },
+      { title: 'Inside the Atelier: The Making of Écrin d\u2019Or', tag: 'Craftsmanship', variant: 'grid', img: 'assets/products/golden-crystal-corset-with-skirt/1.jpg' },
+      { title: 'A Season of Statement Prêt-Couture', tag: 'Collection Story', variant: 'bloom', img: 'assets/products/starry-night-beaded-fringe-dress/1.jpg' },
+      { title: 'Styling the Reine des Roses Gown', tag: 'Styling', variant: 'rose', img: 'assets/products/secret-rose-corset-gown/1.jpg' },
     ];
     document.getElementById('journalPreview').innerHTML = journalPosts.map(j => `
       <a class="journal-card" href="journal.html">
-        <div class="art" data-art="${j.title}" data-art-variant="${j.variant}"></div>
+        <div class="art has-photo">
+          <img src="${assetPath(j.img)}" alt="${escapeHtml(j.title)}" loading="lazy" decoding="async" data-art-id="${escapeHtml(j.title)}" data-art-variant="${j.variant}" onerror="lrArtFallback(this)">
+        </div>
         <span class="eyebrow">${j.tag}</span>
         <h3 style="margin:0;">${j.title}</h3>
       </a>`).join('');

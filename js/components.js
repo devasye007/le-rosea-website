@@ -74,9 +74,9 @@ function renderHeader(){
             </div>
           </div>
         </div>
-        <div class="home-collections-video" aria-label="Video placeholder">
-          <video class="home-collections-video-frame" autoplay muted loop playsinline preload="metadata" poster="assets/runway-hero.png">
-            <source src="VIDEO-2026-08-31-12-11-02.mp4" type="video/mp4">
+        <div class="home-collections-video" aria-label="Sky Fringe Gown campaign video">
+          <video class="home-collections-video-frame" autoplay muted loop playsinline preload="metadata" poster="assets/video/collections-poster.jpg">
+            <source src="assets/video/collections.mp4" type="video/mp4">
           </video>
         </div>
       </div>

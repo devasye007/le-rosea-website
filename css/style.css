@@ -594,10 +594,9 @@ body.homepage #site-header{
   position: absolute;
   inset: 0;
   border: 1px solid rgba(176,138,60,0.12);
-  background:
-    linear-gradient(180deg, rgba(252,250,246,0.08), rgba(247,241,232,0.06)),
-    url("../assets/runway-hero.png") center right / cover no-repeat,
-    linear-gradient(140deg, #f7efe1 0%, #e9d4b8 100%);
+  /* Neutral gradient fallback only — shown before the video loads. No stray
+     image layer behind the video, so nothing can bleed at the edges. */
+  background: linear-gradient(140deg, #f7efe1 0%, #e9d4b8 100%);
   box-shadow: 0 26px 62px rgba(36, 28, 24, 0.12);
   overflow: hidden;
 }
@@ -607,10 +606,8 @@ body.homepage #site-header{
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 14%;
-  filter: saturate(0.96) contrast(1.02);
-  transform: scale(1.18) translateY(-3%);
-  transform-origin: center top;
+  object-position: center 30%;
+  filter: saturate(0.98) contrast(1.02);
 }
 .opening-hero-visual::before{
   content: "";
@@ -2823,12 +2820,21 @@ body.homepage #site-header{
 .feature-card p{ color: var(--ink-soft); }
 
 /* ---- Product cards, journal, media, placeholder art ---- */
+/* Cards blend into the page: the name/price info panel inherits the page
+   background instead of sitting on a hard white square. The photo keeps its
+   own hairline border, so there is a subtle edge rather than a color break. */
 .product-grid .product-card,
 .scroll-row .product-card,
-.journal-card,
+.journal-card{
+  background: transparent;
+  border-color: rgba(18,16,14,0.08);
+  box-shadow: none;
+}
+/* Image containers sit behind a cover photo — a soft ivory fill (never pure
+   white) avoids a flash-of-white before the photo loads. */
 .product-card-media,
 .media-stage{
-  background: #FFFFFF;
+  background: var(--ivory);
   border-color: rgba(18,16,14,0.08);
   box-shadow: 0 20px 44px rgba(60,45,25,0.08);
 }
@@ -2850,6 +2856,14 @@ body > section:nth-of-type(even) .product-card .p-price{ color: var(--gold-ink);
   color: var(--espresso);
 }
 /* .art.on-dark + .cat-tile stay dark: they render as image tiles */
+/* Scrim under the white category label so it stays legible over a real photo. */
+.cat-tile .art.has-photo::after{
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(18,14,10,0) 42%, rgba(18,14,10,0.55) 100%);
+  pointer-events: none;
+}
 
 /* ---- Buttons ---- */
 .btn{
@@ -3003,4 +3017,156 @@ html, body{ overflow-x: hidden; max-width: 100%; }
   .home-header-nav{ width: 100%; max-width: 100%; flex-wrap: wrap; gap: 4px 12px; }
   .home-header-nav a,
   .home-collections-toggle{ font-size: 0.62rem; letter-spacing: 0.06em; padding: 8px 2px; }
+}
+
+/* ==========================================================================
+   PDP GALLERY — full-garment visibility, next/prev, thumbnails, lightbox
+   ========================================================================== */
+
+/* Main image: object-fit: contain in a tall 2/3 box so heads/hems are never
+   cropped; a soft fill covers any letterboxing. Capped so it can't dominate. */
+.pdp-stage{
+  position: relative;
+  aspect-ratio: 2 / 3;
+  max-height: 80vh;
+  margin: 0 auto;
+  border: var(--border-hair);
+  background: linear-gradient(160deg, #F2ECDD 0%, #E8DCC6 100%);
+  overflow: hidden;
+  outline: none;
+}
+.pdp-stage:focus-visible{ box-shadow: 0 0 0 2px var(--gold-ink); }
+.pdp-main-img{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  cursor: zoom-in;
+}
+
+/* Overlaid next/prev arrows + expand control */
+.pdp-nav,
+.pdp-expand{
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: rgba(252,250,246,0.88);
+  color: var(--espresso);
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(36,28,24,0.18);
+  opacity: 0;
+  transition: opacity .25s var(--ease), background .2s var(--ease), transform .2s var(--ease);
+  z-index: 3;
+}
+.pdp-nav{ top: 50%; transform: translateY(-50%); width: 46px; height: 46px; }
+.pdp-nav svg{ width: 22px; height: 22px; }
+.pdp-prev{ left: 12px; }
+.pdp-next{ right: 12px; }
+.pdp-prev svg{ transform: rotate(180deg); }
+.pdp-expand{ bottom: 12px; right: 12px; width: 42px; height: 42px; }
+.pdp-expand svg{ width: 18px; height: 18px; }
+.pdp-nav:hover,
+.pdp-expand:hover{ background: #fff; }
+.pdp-nav:focus-visible,
+.pdp-expand:focus-visible{ opacity: 1; outline: 2px solid var(--gold-ink); outline-offset: 2px; }
+.pdp-stage:hover .pdp-nav,
+.pdp-stage:hover .pdp-expand,
+.pdp-stage:focus-within .pdp-nav,
+.pdp-stage:focus-within .pdp-expand{ opacity: 1; }
+@media (hover: none){
+  .pdp-nav,
+  .pdp-expand{ opacity: 1; }   /* always visible on touch devices */
+}
+
+/* Thumbnail strip: one per image, adaptive count (no hardcoded slots) */
+.pdp-thumbs{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(60px, 78px));
+  gap: 10px;
+  margin-top: 14px;
+}
+.pdp-thumbs:empty{ display: none; }
+.pdp-thumb{
+  padding: 0;
+  appearance: none;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid rgba(18,16,14,0.14);
+  background: var(--ivory);
+  transition: border-color .2s var(--ease), box-shadow .2s var(--ease), transform .3s var(--ease-premium);
+}
+.pdp-thumb img{ width: 100%; height: 100%; object-fit: cover; display: block; }
+.pdp-thumb:hover{ transform: translateY(-2px); border-color: rgba(176,138,60,0.6); }
+.pdp-thumb.active{ border-color: var(--gold-ink); box-shadow: 0 0 0 2px var(--gold-ink); }
+.pdp-thumb:focus-visible{ outline: 2px solid var(--gold-ink); outline-offset: 2px; }
+@media (max-width: 540px){
+  .pdp-thumbs{ grid-template-columns: repeat(auto-fill, minmax(52px, 70px)); }
+}
+
+/* Fullscreen lightbox */
+.pdp-lightbox{
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(16px, 4vw, 56px);
+  background: rgba(12,10,9,0.93);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .3s var(--ease), visibility .3s var(--ease);
+}
+.pdp-lightbox.is-open{ opacity: 1; visibility: visible; }
+.pdp-lb-img{
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.pdp-lb-close,
+.pdp-lb-nav{
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.14);
+  color: #fff;
+  cursor: pointer;
+  transition: background .2s var(--ease);
+  z-index: 2;
+}
+.pdp-lb-close:hover,
+.pdp-lb-nav:hover{ background: rgba(255,255,255,0.28); }
+.pdp-lb-close:focus-visible,
+.pdp-lb-nav:focus-visible{ outline: 2px solid #fff; outline-offset: 2px; }
+.pdp-lb-close{ top: 18px; right: 20px; width: 46px; height: 46px; }
+.pdp-lb-close svg{ width: 24px; height: 24px; }
+.pdp-lb-nav{ top: 50%; transform: translateY(-50%); width: 52px; height: 52px; }
+.pdp-lb-nav svg{ width: 26px; height: 26px; }
+.pdp-lb-prev{ left: clamp(10px, 3vw, 34px); }
+.pdp-lb-next{ right: clamp(10px, 3vw, 34px); }
+.pdp-lb-prev svg{ transform: rotate(180deg); }
+.pdp-lb-counter{
+  position: absolute;
+  bottom: 20px; left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255,255,255,0.82);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+}
+body.pdp-lb-open{ overflow: hidden; }
+@media (max-width: 540px){
+  .pdp-lb-close{ width: 42px; height: 42px; top: 12px; right: 12px; }
+  .pdp-lb-nav{ width: 44px; height: 44px; }
 }
