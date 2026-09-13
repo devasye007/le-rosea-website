@@ -82,6 +82,7 @@ function renderHeader(){
       </div>
     `;
     document.getElementById('cartToggle')?.addEventListener('click', openCart);
+    setupCollectionsAccordion();
     return;
   }
 
@@ -124,13 +125,44 @@ function renderHeader(){
   document.getElementById('cartToggle')?.addEventListener('click', openCart);
 }
 
+// On mobile the persistent collections mega-menu becomes a tap accordion
+// (hidden by default, expands on tapping "Collections") instead of a wide
+// always-open dropdown. On desktop it stays persistent and the toggle links out.
+function setupCollectionsAccordion(){
+  const toggle = document.querySelector('.home-collections-toggle');
+  const panel = document.querySelector('.home-collections-panel');
+  const video = document.querySelector('.home-collections-video');
+  if (!toggle || !panel) return;
+  const mq = window.matchMedia('(max-width: 980px)');
+  const applyMode = () => {
+    if (mq.matches){
+      panel.classList.add('is-collapsible');
+      video?.classList.add('is-collapsible');
+      toggle.setAttribute('aria-expanded', panel.classList.contains('is-open') ? 'true' : 'false');
+    } else {
+      panel.classList.remove('is-collapsible', 'is-open');
+      video?.classList.remove('is-collapsible', 'is-open');
+      toggle.removeAttribute('aria-expanded');
+    }
+  };
+  applyMode();
+  mq.addEventListener('change', applyMode);
+  toggle.addEventListener('click', (e) => {
+    if (!mq.matches) return; // desktop: follow the link to the shop
+    e.preventDefault();
+    const open = panel.classList.toggle('is-open');
+    video?.classList.toggle('is-open', open);
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+}
+
 function renderFooter(){
   const el = document.getElementById('site-footer');
   if (!el) return;
   el.innerHTML = `
     <div class="footer-grid">
       <div class="footer-brand">
-        <a href="index.html" class="logo" style="justify-content:flex-start; color:var(--ivory); margin-bottom:16px;">
+        <a href="index.html" class="logo" style="justify-content:flex-start; color:var(--espresso); margin-bottom:16px;">
           <span class="rose-mark" style="color:var(--gold);">${ICONS.rose}</span>
           LE ROSÈA
         </a>

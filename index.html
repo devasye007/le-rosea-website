@@ -42,8 +42,8 @@
       </div>
       <div class="opening-hero-visual-wrap">
         <div class="opening-hero-visual" aria-label="LE ROSÈA campaign video">
-          <video class="opening-hero-video" autoplay muted loop playsinline preload="metadata" poster="assets/runway-hero.png">
-            <source src="assets/atelier-loop.mp4" type="video/mp4">
+          <video class="opening-hero-video" autoplay muted loop playsinline preload="metadata" poster="assets/video/hero-poster.jpg">
+            <source src="assets/video/hero.mp4" type="video/mp4">
           </video>
         </div>
       </div>
@@ -153,9 +153,9 @@
 
 <section class="section-dark" style="padding: 90px 0;">
   <div class="container center" style="max-width:640px;">
-    <span class="eyebrow" style="color:var(--gold);">The LE ROSÈA Woman</span>
+    <span class="eyebrow" style="color:var(--gold-ink);">The LE ROSÈA Woman</span>
     <h2 style="margin-top:14px;">She is not only buying a garment.</h2>
-    <p class="lede" style="margin:0 auto; color:#F1E7D6;">She is buying the feeling of arriving, being remembered, and marking an occasion beautifully.</p>
+    <p class="lede" style="margin:0 auto; color:var(--ink-soft);">She is buying the feeling of arriving, being remembered, and marking an occasion beautifully.</p>
   </div>
 </section>
 
@@ -170,9 +170,9 @@
 </section>
 
 <section class="newsletter">
-  <span class="eyebrow" style="color:var(--gold);">Stay Close to the House</span>
+  <span class="eyebrow" style="color:var(--gold-ink);">Stay Close to the House</span>
   <h2 style="margin-top:12px;">Be first to know</h2>
-  <p style="color:#E4D8C4; margin: 0 auto;">New collections, atelier stories and private previews - delivered occasionally, never as noise.</p>
+  <p style="color:var(--ink-soft); margin: 0 auto;">New collections, atelier stories and private previews - delivered occasionally, never as noise.</p>
   <form onsubmit="event.preventDefault(); this.querySelector('button').textContent='Subscribed';">
     <input type="email" placeholder="Your email address" required>
     <button type="submit" class="btn btn-gold">Subscribe</button>
@@ -208,11 +208,48 @@
     setTimeout(() => splash.remove(), 2600);
   })();
 
+  // On phones (<=600px) don't autoplay/download the background hero video —
+  // show the poster still image instead to save mobile data and battery.
+  (function(){
+    function initHeroMedia(){
+      const wrap = document.querySelector('.opening-hero-visual');
+      const video = wrap && wrap.querySelector('video.opening-hero-video');
+      if (!wrap || !video) return;
+      const poster = video.getAttribute('poster') || 'assets/video/hero-poster.jpg';
+      let img = null;
+      const mq = window.matchMedia('(max-width: 600px)');
+      function apply(){
+        if (mq.matches){
+          try { video.pause(); } catch(_){}
+          video.removeAttribute('autoplay');
+          video.preload = 'none';
+          video.style.display = 'none';
+          if (!img){
+            img = document.createElement('img');
+            img.className = 'opening-hero-video';
+            img.alt = 'LE ROSÈA collection';
+            img.decoding = 'async';
+            img.src = poster;
+            wrap.appendChild(img);
+          }
+          img.style.display = 'block';
+        } else {
+          if (img) img.style.display = 'none';
+          video.style.display = '';
+        }
+      }
+      apply();
+      mq.addEventListener('change', apply);
+    }
+    if (document.readyState === 'loading'){
+      document.addEventListener('DOMContentLoaded', initHeroMedia, { once: true });
+    } else { initHeroMedia(); }
+  })();
+
   function productCard(p){
+    const badge = p.isNew ? '<span class="badge">New Arrival</span>' : '';
     return `<a class="product-card" href="product.html?id=${p.id}">
-      <div class="art" data-art="${p.id}" data-art-variant="${p.artVariant}">
-        ${p.isNew ? '<span class="badge">New Arrival</span>' : ''}
-      </div>
+      ${productImageBlock(p, { inner: badge })}
       <div class="p-cat">${p.collection}</div>
       <div class="p-name">${p.name}</div>
       <div class="p-price">${formatINR(p.price)}</div>

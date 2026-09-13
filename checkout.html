@@ -98,7 +98,7 @@
     const lines = cartLinesWithData();
     document.getElementById('summaryLines').innerHTML = lines.map(l => `
       <div class="order-line">
-        <div class="art" data-art="${l.productId}" data-art-variant="${l.product.artVariant}"></div>
+        ${productImageBlock(l.product)}
         <div style="flex:1;">
           <div style="font-family:var(--serif); font-size:0.95rem;">${l.product.name}</div>
           <div style="font-size:0.74rem; color:var(--taupe);">Size ${l.size} &middot; Qty ${l.qty}</div>

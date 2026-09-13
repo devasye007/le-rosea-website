@@ -23,10 +23,11 @@ function makeProduct(product){
 const PRODUCTS = [
   makeProduct({
     id: 'sequins-rush-set-sea-green',
+    images: ['assets/products/sequins-rush-set-sea-green/1.jpg', 'assets/products/sequins-rush-set-sea-green/2.jpg', 'assets/products/sequins-rush-set-sea-green/3.jpg'],
     name: 'Sequins Rush Set',
     category: 'Co-ords & Separates',
     collection: 'Pret',
-    price: 28500,
+    price: 14999,
     colorway: 'Sea Green',
     isNew: true,
     isBestseller: true,
@@ -38,10 +39,11 @@ const PRODUCTS = [
   }),
   makeProduct({
     id: 'sequins-rush-set-pink',
+    images: ['assets/products/sequins-rush-set-pink/1.jpg', 'assets/products/sequins-rush-set-pink/2.jpg', 'assets/products/sequins-rush-set-pink/3.jpg', 'assets/products/sequins-rush-set-pink/4.jpg', 'assets/products/sequins-rush-set-pink/5.jpg', 'assets/products/sequins-rush-set-pink/6.jpg', 'assets/products/sequins-rush-set-pink/7.jpg'],
     name: 'Sequins Rush Set',
     category: 'Co-ords & Separates',
     collection: 'Pret',
-    price: 28500,
+    price: 14999,
     colorway: 'Pink',
     isNew: true,
     isBestseller: false,
@@ -53,10 +55,11 @@ const PRODUCTS = [
   }),
   makeProduct({
     id: 'fringe-mini-dress-sea-green',
+    images: ['assets/products/fringe-mini-dress-sea-green/1.jpg', 'assets/products/fringe-mini-dress-sea-green/2.jpg', 'assets/products/fringe-mini-dress-sea-green/3.jpg'],
     name: 'Fringe Mini Dress',
     category: 'Dresses',
     collection: 'Pret',
-    price: 32500,
+    price: 9999,
     colorway: 'Sea Green',
     isNew: false,
     isBestseller: true,
@@ -68,10 +71,11 @@ const PRODUCTS = [
   }),
   makeProduct({
     id: 'fringe-mini-dress-lavender',
+    images: ['assets/products/fringe-mini-dress-lavender/1.jpg', 'assets/products/fringe-mini-dress-lavender/2.jpg', 'assets/products/fringe-mini-dress-lavender/3.jpg'],
     name: 'Fringe Mini Dress',
     category: 'Dresses',
     collection: 'Pret',
-    price: 32500,
+    price: 9999,
     colorway: 'Lavender',
     isNew: false,
     isBestseller: false,
@@ -83,10 +87,11 @@ const PRODUCTS = [
   }),
   makeProduct({
     id: 'fringe-mini-dress-pink',
+    images: ['assets/products/fringe-mini-dress-pink/1.jpg', 'assets/products/fringe-mini-dress-pink/2.jpg', 'assets/products/fringe-mini-dress-pink/3.jpg'],
     name: 'Fringe Mini Dress',
     category: 'Dresses',
     collection: 'Pret',
-    price: 32500,
+    price: 9999,
     colorway: 'Pink',
     isNew: false,
     isBestseller: false,
@@ -98,10 +103,11 @@ const PRODUCTS = [
   }),
   makeProduct({
     id: 'wildflower-coord-set-white',
+    images: ['assets/products/wildflower-coord-set-white/1.jpg', 'assets/products/wildflower-coord-set-white/2.jpg', 'assets/products/wildflower-coord-set-white/3.jpg', 'assets/products/wildflower-coord-set-white/4.jpg'],
     name: 'Wildflower Co-ord Set',
     category: 'Co-ords & Separates',
     collection: 'Pret',
-    price: 35500,
+    price: 24500,
     colorway: 'White',
     isNew: false,
     isBestseller: false,
@@ -113,10 +119,11 @@ const PRODUCTS = [
   }),
   makeProduct({
     id: 'blush-dress',
+    images: ['assets/products/blush-dress/1.jpg', 'assets/products/blush-dress/2.jpg', 'assets/products/blush-dress/3.jpg', 'assets/products/blush-dress/4.jpg', 'assets/products/blush-dress/5.jpg', 'assets/products/blush-dress/6.jpg'],
     name: 'Blush Dress',
     category: 'Dresses',
     collection: 'Pret',
-    price: 29500,
+    price: 10999,
     colorway: 'Blush Pink',
     isNew: false,
     isBestseller: false,
@@ -128,10 +135,11 @@ const PRODUCTS = [
   }),
   makeProduct({
     id: 'secret-rose-corset-gown',
+    images: ['assets/products/secret-rose-corset-gown/1.jpg', 'assets/products/secret-rose-corset-gown/2.jpg', 'assets/products/secret-rose-corset-gown/3.jpg', 'assets/products/secret-rose-corset-gown/4.jpg'],
     name: 'Secret Rose Corset Gown',
     category: 'Gowns',
     collection: 'Couture',
-    price: 68500,
+    price: 51000,
     colorway: 'Wine',
     isNew: true,
     isBestseller: false,
@@ -143,10 +151,11 @@ const PRODUCTS = [
   }),
   makeProduct({
     id: 'starfall-cowl-dress-sky-blue',
+    images: ['assets/products/starfall-cowl-dress-sky-blue/1.jpg', 'assets/products/starfall-cowl-dress-sky-blue/2.jpg', 'assets/products/starfall-cowl-dress-sky-blue/3.jpg', 'assets/products/starfall-cowl-dress-sky-blue/4.jpg'],
     name: 'Starfall Cowl Dress',
     category: 'Dresses',
     collection: 'Pret',
-    price: 36500,
+    price: 14999,
     colorway: 'Sky Blue',
     isNew: false,
     isBestseller: true,
@@ -158,10 +167,11 @@ const PRODUCTS = [
   }),
   makeProduct({
     id: 'starfall-cowl-dress-black',
+    images: ['assets/products/starfall-cowl-dress-black/1.jpg', 'assets/products/starfall-cowl-dress-black/2.jpg', 'assets/products/starfall-cowl-dress-black/3.jpg', 'assets/products/starfall-cowl-dress-black/4.jpg'],
     name: 'Starfall Cowl Dress',
     category: 'Dresses',
     collection: 'Pret',
-    price: 36500,
+    price: 14999,
     colorway: 'Black',
     isNew: false,
     isBestseller: false,
@@ -173,10 +183,11 @@ const PRODUCTS = [
   }),
   makeProduct({
     id: 'fringe-cascade-gown-brown',
+    images: ['assets/products/fringe-cascade-gown-brown/1.jpg', 'assets/products/fringe-cascade-gown-brown/2.jpg', 'assets/products/fringe-cascade-gown-brown/3.jpg', 'assets/products/fringe-cascade-gown-brown/4.jpg', 'assets/products/fringe-cascade-gown-brown/5.jpg', 'assets/products/fringe-cascade-gown-brown/6.jpg'],
     name: 'Fringe Cascade Gown',
     category: 'Gowns',
     collection: 'Couture',
-    price: 59500,
+    price: 22500,
     colorway: 'Brown',
     isNew: false,
     isBestseller: false,
@@ -188,10 +199,11 @@ const PRODUCTS = [
   }),
   makeProduct({
     id: 'royal-draped-gown-dark-blue',
+    images: ['assets/products/royal-draped-gown-dark-blue/1.jpg', 'assets/products/royal-draped-gown-dark-blue/2.jpg', 'assets/products/royal-draped-gown-dark-blue/3.jpg', 'assets/products/royal-draped-gown-dark-blue/4.jpg', 'assets/products/royal-draped-gown-dark-blue/5.jpg', 'assets/products/royal-draped-gown-dark-blue/6.jpg', 'assets/products/royal-draped-gown-dark-blue/7.jpg'],
     name: 'Royal Draped Gown',
     category: 'Gowns',
     collection: 'Couture',
-    price: 62500,
+    price: 20000,
     colorway: 'Dark Blue',
     isNew: false,
     isBestseller: true,
@@ -206,7 +218,7 @@ const PRODUCTS = [
     name: 'Mocha Gold Mini Dress',
     category: 'Dresses',
     collection: 'Pret',
-    price: 34500,
+    price: 19500,
     colorway: 'Mocha Brown & Gold',
     isNew: false,
     isBestseller: true,
@@ -218,10 +230,11 @@ const PRODUCTS = [
   }),
   makeProduct({
     id: 'black-jewel-dress',
+    images: ['assets/products/black-jewel-dress/1.jpg', 'assets/products/black-jewel-dress/2.jpg', 'assets/products/black-jewel-dress/3.jpg', 'assets/products/black-jewel-dress/4.jpg'],
     name: 'Black Jewel Dress',
     category: 'Dresses',
     collection: 'Pret',
-    price: 31500,
+    price: 29500,
     colorway: 'Black',
     isNew: false,
     isBestseller: false,
@@ -233,10 +246,11 @@ const PRODUCTS = [
   }),
   makeProduct({
     id: 'ivory-bloom-dress',
+    images: ['assets/products/ivory-bloom-dress/1.jpg', 'assets/products/ivory-bloom-dress/2.jpg', 'assets/products/ivory-bloom-dress/3.jpg', 'assets/products/ivory-bloom-dress/4.jpg', 'assets/products/ivory-bloom-dress/5.jpg'],
     name: 'Ivory Bloom Dress',
     category: 'Dresses',
     collection: 'Pret',
-    price: 33500,
+    price: 19000,
     colorway: 'Ivory White',
     isNew: false,
     isBestseller: true,
@@ -251,7 +265,7 @@ const PRODUCTS = [
     name: 'Midnight Rain Gown',
     category: 'Gowns',
     collection: 'Couture',
-    price: 64500,
+    price: 27500,
     colorway: 'Midnight Blue',
     isNew: false,
     isBestseller: false,
@@ -263,10 +277,11 @@ const PRODUCTS = [
   }),
   makeProduct({
     id: 'crystal-bow-dress',
+    images: ['assets/products/crystal-bow-dress/1.jpg', 'assets/products/crystal-bow-dress/2.jpg', 'assets/products/crystal-bow-dress/3.jpg', 'assets/products/crystal-bow-dress/4.jpg', 'assets/products/crystal-bow-dress/5.jpg'],
     name: 'Crystal Bow Dress',
     category: 'Gowns',
     collection: 'Pret',
-    price: 42500,
+    price: 11000,
     colorway: 'Black',
     isNew: false,
     isBestseller: false,
@@ -278,10 +293,11 @@ const PRODUCTS = [
   }),
   makeProduct({
     id: 'noir-bloom-set-black',
+    images: ['assets/products/noir-bloom-set-black/1.jpg', 'assets/products/noir-bloom-set-black/2.jpg', 'assets/products/noir-bloom-set-black/3.jpg', 'assets/products/noir-bloom-set-black/4.jpg', 'assets/products/noir-bloom-set-black/5.jpg'],
     name: 'Noir Bloom Set',
     category: 'Co-ords & Separates',
     collection: 'Pret',
-    price: 37500,
+    price: 25000,
     colorway: 'Black',
     isNew: false,
     isBestseller: false,
@@ -293,10 +309,11 @@ const PRODUCTS = [
   }),
   makeProduct({
     id: 'golden-rose-corset-with-skirt',
+    images: ['assets/products/golden-rose-corset-with-skirt/1.jpg', 'assets/products/golden-rose-corset-with-skirt/2.jpg', 'assets/products/golden-rose-corset-with-skirt/3.jpg', 'assets/products/golden-rose-corset-with-skirt/4.jpg'],
     name: 'Golden Rose Corset with Skirt',
     category: 'Gowns',
     collection: 'Couture',
-    price: 74500,
+    price: 79000,
     colorway: 'Gold & Black',
     isNew: true,
     isBestseller: false,
@@ -308,10 +325,11 @@ const PRODUCTS = [
   }),
   makeProduct({
     id: 'blue-bell-dress',
+    images: ['assets/products/blue-bell-dress/1.jpg', 'assets/products/blue-bell-dress/2.jpg', 'assets/products/blue-bell-dress/3.jpg', 'assets/products/blue-bell-dress/4.jpg'],
     name: 'Blue Bell Dress',
     category: 'Dresses',
     collection: 'Couture',
-    price: 39500,
+    price: 39999,
     colorway: 'Light Blue',
     isNew: true,
     isBestseller: false,
@@ -323,10 +341,11 @@ const PRODUCTS = [
   }),
   makeProduct({
     id: 'cream-stone-set',
+    images: ['assets/products/cream-stone-set/1.jpg', 'assets/products/cream-stone-set/2.jpg', 'assets/products/cream-stone-set/3.jpg'],
     name: 'Cream Stone Set',
     category: 'Co-ords & Separates',
     collection: 'Pret',
-    price: 26500,
+    price: 10999,
     colorway: 'Crème',
     isNew: false,
     isBestseller: false,
@@ -338,10 +357,11 @@ const PRODUCTS = [
   }),
   makeProduct({
     id: 'azure-petal-midi-dress',
+    images: ['assets/products/azure-petal-midi-dress/1.jpg', 'assets/products/azure-petal-midi-dress/2.jpg', 'assets/products/azure-petal-midi-dress/3.jpg', 'assets/products/azure-petal-midi-dress/4.jpg'],
     name: 'Azure Petal Midi Dress',
     category: 'Dresses',
     collection: 'Pret',
-    price: 34500,
+    price: 14999,
     colorway: 'Sparkle Blue',
     isNew: false,
     isBestseller: false,
@@ -353,10 +373,11 @@ const PRODUCTS = [
   }),
   makeProduct({
     id: 'sky-fringe-gown',
+    images: ['assets/products/sky-fringe-gown/1.jpg', 'assets/products/sky-fringe-gown/2.jpg', 'assets/products/sky-fringe-gown/3.jpg', 'assets/products/sky-fringe-gown/4.jpg', 'assets/products/sky-fringe-gown/5.jpg'],
     name: 'Sky Fringe Gown',
     category: 'Gowns',
     collection: 'Pret',
-    price: 61500,
+    price: 34500,
     colorway: 'Black & Sky Blue',
     isNew: false,
     isBestseller: true,
@@ -368,10 +389,11 @@ const PRODUCTS = [
   }),
   makeProduct({
     id: 'aqua-pearl-mini-dress',
+    images: ['assets/products/aqua-pearl-mini-dress/1.jpg', 'assets/products/aqua-pearl-mini-dress/2.jpg', 'assets/products/aqua-pearl-mini-dress/3.jpg', 'assets/products/aqua-pearl-mini-dress/4.jpg'],
     name: 'Aqua Pearl Mini Dress',
     category: 'Dresses',
     collection: 'Pret',
-    price: 38500,
+    price: 30500,
     colorway: 'Blue Ombré',
     isNew: false,
     isBestseller: false,
@@ -383,10 +405,11 @@ const PRODUCTS = [
   }),
   makeProduct({
     id: 'bubblegum-ombre-mini-dress',
+    images: ['assets/products/bubblegum-ombre-mini-dress/1.jpg', 'assets/products/bubblegum-ombre-mini-dress/2.jpg', 'assets/products/bubblegum-ombre-mini-dress/3.jpg', 'assets/products/bubblegum-ombre-mini-dress/4.jpg', 'assets/products/bubblegum-ombre-mini-dress/5.jpg', 'assets/products/bubblegum-ombre-mini-dress/6.jpg'],
     name: 'Bubblegum Ombré Mini Dress',
     category: 'Dresses',
     collection: 'Pret',
-    price: 40500,
+    price: 39500,
     colorway: 'Peach to Red Ombré',
     isNew: true,
     isBestseller: false,
@@ -401,7 +424,7 @@ const PRODUCTS = [
     name: 'Hand Embellished Bridal Gown',
     category: 'Gowns',
     collection: 'Couture',
-    price: 79500,
+    price: 53000,
     colorway: 'White',
     isNew: true,
     isBestseller: true,
@@ -413,10 +436,11 @@ const PRODUCTS = [
   }),
   makeProduct({
     id: 'starry-night-beaded-fringe-dress',
+    images: ['assets/products/starry-night-beaded-fringe-dress/1.jpg', 'assets/products/starry-night-beaded-fringe-dress/2.jpg', 'assets/products/starry-night-beaded-fringe-dress/3.jpg', 'assets/products/starry-night-beaded-fringe-dress/4.jpg', 'assets/products/starry-night-beaded-fringe-dress/5.jpg', 'assets/products/starry-night-beaded-fringe-dress/6.jpg', 'assets/products/starry-night-beaded-fringe-dress/7.jpg'],
     name: 'Starry Night Beaded Fringe Dress',
     category: 'Gowns',
     collection: 'Couture',
-    price: 82500,
+    price: 95000,
     colorway: 'Navy Blue & Light Blue',
     isNew: true,
     isBestseller: true,
@@ -426,43 +450,22 @@ const PRODUCTS = [
     fit: 'Structured corset with elongated, fluid skirt.',
     artVariant: 'grid',
   }),
-];
-
-const PRODUCT_VIEWS = [
-  { key: 'front', label: 'Front view' },
-  { key: 'back', label: 'Back view' },
-  { key: 'side', label: 'Side view' },
-  { key: 'close', label: 'Close-up detail' },
-];
-
-const LOCAL_MEDIA = {
-  'sequins-rush-set-sea-green': [
-    { key: 'front', label: 'Front view', src: assetPath('le-rosea images/sequins rush top:skirt/1.jpeg') },
-  ],
-  'sequins-rush-set-pink': [
-    { key: 'front', label: 'Front view', src: assetPath('le-rosea images/sequins rush top:skirt/2.jpeg') },
-  ],
-  'fringe-mini-dress-sea-green': [
-    { key: 'front', label: 'Front view', src: assetPath('le-rosea images/fringe mini dress/1.jpeg') },
-  ],
-  'fringe-mini-dress-pink': [
-    { key: 'front', label: 'Front view', src: assetPath('le-rosea images/fringe mini dress/2.jpeg') },
-  ],
-  'fringe-mini-dress-lavender': [
-    { key: 'front', label: 'Front view', src: assetPath('le-rosea images/fringe mini dress/3.jpeg') },
-  ],
-};
-
-const COLOR_PALETTES = [
-  { match: ['sea green'], colors: ['#4f958c', '#a9d6ce', '#f4f8f7'] },
-  { match: ['pink', 'blush', 'rose'], colors: ['#c87492', '#efc0cf', '#fbf3f6'] },
-  { match: ['lavender'], colors: ['#a98bcf', '#d4c4ea', '#f7f3fc'] },
-  { match: ['wine'], colors: ['#7f2d40', '#c995a6', '#f8f0f2'] },
-  { match: ['sky blue', 'light blue', 'blue ombré', 'sparkle blue', 'blue'], colors: ['#4f86c8', '#a9c9ec', '#f3f8ff'] },
-  { match: ['black', 'midnight', 'navy'], colors: ['#201a1a', '#584b47', '#f0e5d7'] },
-  { match: ['brown', 'mocha', 'gold'], colors: ['#9b6b3e', '#d5b88a', '#fcf5e7'] },
-  { match: ['white', 'ivory', 'crème', 'cream'], colors: ['#c8b79a', '#f0e8d9', '#fffdf9'] },
-  { match: ['peach', 'red'], colors: ['#dd8d7b', '#efc5bc', '#fff6f3'] },
+  makeProduct({
+    id: 'golden-crystal-corset-with-skirt',
+    name: 'Golden Crystal Corset with Skirt',
+    category: 'Gowns',
+    collection: 'Couture',
+    price: 70000,
+    colorway: 'Gold & Brown',
+    isNew: true,
+    isBestseller: false,
+    images: ['assets/products/golden-crystal-corset-with-skirt/1.jpg', 'assets/products/golden-crystal-corset-with-skirt/2.jpg', 'assets/products/golden-crystal-corset-with-skirt/3.jpg', 'assets/products/golden-crystal-corset-with-skirt/4.jpg'],
+    fabric: 'Hand-embroidered corset with fluid satin skirt',
+    embellishment: 'Gold crystal and stone embellishment',
+    description: 'A statement gold ensemble pairing a sculpted corset densely hand-embellished with rectangular crystals and stones with a fluid chocolate-satin skirt and matching draped scarf.',
+    fit: 'Structured corset with fluid floor-length skirt.',
+    artVariant: 'grid',
+  }),
 ];
 
 function getProductById(id){
@@ -482,100 +485,41 @@ function escapeHtml(value){
     .replace(/'/g, '&#39;');
 }
 
-function paletteFor(product){
-  const needle = `${product.colorway} ${product.collection} ${product.name}`.toLowerCase();
-  const palette = COLOR_PALETTES.find(entry => entry.match.some(token => needle.includes(token)));
-  return palette ? palette.colors : ['#B08A3C', '#D8C7A8', '#F7F1E8'];
+// Real photo when a product has matched photography; otherwise fall back to the
+// generated SVG placeholder handled by js/placeholder-art.js (.art[data-art]).
+function primaryImage(product){
+  return (product && product.images && product.images.length) ? product.images[0] : '';
 }
 
-function svgDataUri(svg){
-  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+function productImageBlock(product, opts){
+  opts = opts || {};
+  var extraClass = opts.extraClass || '';
+  var inner = opts.inner || '';
+  var cls = ('art ' + extraClass).trim();
+  var img = primaryImage(product);
+  if (img){
+    return '<div class="' + cls + ' has-photo">' +
+      '<img src="' + assetPath(img) + '" alt="' + escapeHtml(product.name + ' — ' + product.colorway) + '"' +
+      ' loading="lazy" decoding="async"' +
+      ' data-art-id="' + escapeHtml(product.id) + '" data-art-variant="' + (product.artVariant || '') + '"' +
+      ' onerror="lrArtFallback(this)">' +
+      inner + '</div>';
+  }
+  return '<div class="' + cls + '" data-art="' + escapeHtml(product.id) + '" data-art-variant="' + (product.artVariant || '') + '">' + inner + '</div>';
 }
 
-function mediaSvg(product, viewKey, viewLabel){
-  const [accent, mist, paper] = paletteFor(product);
-  const name = escapeHtml(product.name);
-  const colorway = escapeHtml(product.colorway);
-  const collection = escapeHtml(product.collection);
-  const safeLabel = escapeHtml(viewLabel);
-  const shift = viewKey === 'back' ? -1 : viewKey === 'side' ? 1 : 0;
-  const closeUp = viewKey === 'close';
-
-  const silhouette = closeUp
-    ? `<path d="M170 430c48-82 128-122 220-122 89 0 170 38 219 116 16 25 24 54 24 84 0 76-41 140-110 176-46 23-98 34-151 34-54 0-106-12-152-36-73-38-120-106-120-184 0-29 8-58 20-68z" fill="url(#dress)" opacity="0.94"/>`
-    : `<path d="M330 214c52-36 114-54 120-54s69 18 120 54c34 24 58 70 58 124 0 91-49 222-80 320-17 53-50 96-98 126-28 18-63 26-100 26-39 0-74-8-102-26-48-30-81-73-98-126-31-98-80-229-80-320 0-54 24-100 58-124 51-36 114-54 120-54s68 18 120 54z" fill="url(#dress)" opacity="0.96"/>`;
-
-  const overlay = closeUp
-    ? `<circle cx="452" cy="487" r="154" fill="none" stroke="${accent}" stroke-width="14" opacity="0.4"/><path d="M324 502c42-51 89-76 128-76s85 26 126 78" fill="none" stroke="${accent}" stroke-width="10" stroke-linecap="round" opacity="0.55"/>`
-    : `<path d="M451 240c-20 0-37 10-48 30l-18 36h132l-18-36c-11-20-28-30-48-30z" fill="${accent}" opacity="0.78"/><path d="M310 560c58-22 95-59 141-59s83 37 141 59" fill="none" stroke="${accent}" stroke-width="12" stroke-linecap="round" opacity="0.5"/>`;
-
-  const details = viewKey === 'front'
-    ? `<circle cx="450" cy="470" r="182" fill="none" stroke="${mist}" stroke-width="2" opacity="0.44"/><path d="M304 336h292" stroke="${mist}" stroke-width="2" opacity="0.3"/><path d="M304 624h292" stroke="${mist}" stroke-width="2" opacity="0.3"/>`
-    : viewKey === 'back'
-      ? `<path d="M374 260c20 26 48 40 76 40s56-14 76-40" fill="none" stroke="${mist}" stroke-width="6" stroke-linecap="round" opacity="0.4"/><path d="M430 408c0 12 8 20 20 20s20-8 20-20-8-20-20-20-20 8-20 20z" fill="${mist}" opacity="0.36"/>`
-      : viewKey === 'side'
-        ? `<path d="M366 286c36 26 76 40 121 40s88-14 123-40" fill="none" stroke="${mist}" stroke-width="6" stroke-linecap="round" opacity="0.4"/><path d="M367 558c46-16 101-22 182-18" fill="none" stroke="${mist}" stroke-width="6" stroke-linecap="round" opacity="0.34"/>`
-        : `<path d="M322 316c44 20 80 46 129 46s85-26 129-46" fill="none" stroke="${mist}" stroke-width="6" stroke-linecap="round" opacity="0.45"/><circle cx="450" cy="492" r="82" fill="none" stroke="${mist}" stroke-width="4" opacity="0.45"/>`;
-
-  return `
-    <svg viewBox="0 0 900 1100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${name} ${safeLabel}">
-      <defs>
-        <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stop-color="${paper}"/>
-          <stop offset="52%" stop-color="#f5ebe0"/>
-          <stop offset="100%" stop-color="${mist}"/>
-        </linearGradient>
-        <linearGradient id="dress" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="${accent}"/>
-          <stop offset="100%" stop-color="#2f2420"/>
-        </linearGradient>
-      </defs>
-      <rect width="900" height="1100" fill="url(#bg)"/>
-      <g opacity="0.22" transform="translate(${180 + shift * 16}, 120) scale(1.1)">
-        <circle cx="0" cy="0" r="230" fill="none" stroke="${accent}" stroke-width="2"/>
-        <circle cx="0" cy="0" r="154" fill="none" stroke="${accent}" stroke-width="1.4"/>
-        <path d="M-220 0H220M0 -220V220" stroke="${accent}" stroke-width="1.4"/>
-      </g>
-      <g transform="translate(${450 + shift * 16} 560)">
-        ${silhouette}
-        ${overlay}
-        ${details}
-      </g>
-      <g fill="${accent}" opacity="0.82">
-        <circle cx="142" cy="210" r="10"/>
-        <circle cx="748" cy="212" r="10"/>
-        <circle cx="182" cy="846" r="12"/>
-        <circle cx="720" cy="832" r="12"/>
-      </g>
-      <text x="72" y="102" fill="#241C18" font-family="Cormorant Garamond, serif" font-size="52" letter-spacing="1.4">${safeLabel}</text>
-      <text x="72" y="148" fill="#6f5c45" font-family="Jost, Arial, sans-serif" font-size="20" letter-spacing="3">${collection}</text>
-      <text x="72" y="994" fill="#241C18" font-family="Cormorant Garamond, serif" font-size="44">${name}</text>
-      <text x="72" y="1032" fill="#6f5c45" font-family="Jost, Arial, sans-serif" font-size="20">${colorway}</text>
-    </svg>
-  `.trim();
+// If a real photo fails to load, degrade gracefully to the SVG placeholder
+// (js/placeholder-art.js) instead of showing a broken-image icon.
+function lrArtFallback(img){
+  var wrap = img && img.closest ? img.closest('.art') : null;
+  if (!wrap) return;
+  var id = img.getAttribute('data-art-id') || '';
+  var variant = img.getAttribute('data-art-variant') || '';
+  var badge = wrap.querySelector('.badge');
+  var badgeHtml = badge ? badge.outerHTML : '';
+  wrap.classList.remove('has-photo');
+  wrap.setAttribute('data-art', id);
+  if (variant) wrap.setAttribute('data-art-variant', variant);
+  if (typeof paintArt === 'function') { paintArt(wrap); } else { wrap.innerHTML = ''; }
+  if (badgeHtml) wrap.insertAdjacentHTML('beforeend', badgeHtml);
 }
-
-function buildProductMedia(product){
-  const local = LOCAL_MEDIA[product.id] || [];
-  const generatedViews = PRODUCT_VIEWS.slice(local.length).map(view => ({
-    key: view.key,
-    label: view.label,
-    src: svgDataUri(mediaSvg(product, view.key, view.label)),
-  }));
-  return {
-    images: [...local, ...generatedViews],
-    video: {
-      src: 'assets/atelier-loop.mp4',
-      poster: 'assets/runway-hero.png',
-      label: `${product.name} motion view`,
-    },
-  };
-}
-
-function getPrimaryProductMedia(product){
-  return product.media && product.media.images && product.media.images[0] ? product.media.images[0].src : '';
-}
-
-PRODUCTS.forEach(product => {
-  product.media = buildProductMedia(product);
-});

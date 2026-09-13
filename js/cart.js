@@ -91,7 +91,7 @@ function renderCartDrawer(){
   if (footer) footer.classList.remove('hidden');
   container.innerHTML = lines.map(l => `
     <div class="cart-line">
-      <div class="art" data-art="${l.productId}" data-art-variant="${l.product.artVariant||''}"></div>
+      ${productImageBlock(l.product)}
       <div class="cart-line-info">
         <span class="name">${l.product.name}</span>
         <span class="meta">Size ${l.size} · ${formatINR(l.product.price)}</span>

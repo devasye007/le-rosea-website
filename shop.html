@@ -78,10 +78,9 @@
   }
 
   function productCard(p){
+    const badge = p.isNew ? '<span class="badge">New Arrival</span>' : '';
     return `<a class="product-card" href="product.html?id=${p.id}">
-      <div class="art" data-art="${p.id}" data-art-variant="${p.artVariant}">
-        ${p.isNew ? '<span class="badge">New Arrival</span>' : ''}
-      </div>
+      ${productImageBlock(p, { inner: badge })}
       <div class="p-cat">${p.collection}</div>
       <div class="p-name">${p.name}</div>
       <div class="p-price">${formatINR(p.price)}</div>

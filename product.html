@@ -42,18 +42,35 @@
 
   document.getElementById('pageTitle').textContent = `${product.name} - LE ROSÈA`;
 
+  const hasPhotos = product.images && product.images.length;
+
+  function galleryMarkup(){
+    if (hasPhotos){
+      const alt = escapeHtml(product.name + ' — ' + product.colorway);
+      const main = `<div class="pdp-gallery-main">
+        <div class="art tall has-photo" id="mainArt">
+          <img id="mainImg" src="${assetPath(product.images[0])}" alt="${alt}" decoding="async" fetchpriority="high" data-art-id="${product.id}" data-art-variant="${product.artVariant}" onerror="lrArtFallback(this)">
+        </div>
+      </div>`;
+      const thumbs = `<div class="pdp-thumbs">${product.images.map((src,i) => `
+        <div class="art thumb has-photo ${i===0?'active':''}" data-thumb data-thumb-img="${assetPath(src)}">
+          <img src="${assetPath(src)}" alt="" loading="lazy" decoding="async" data-art-id="${product.id}" data-art-variant="${product.artVariant}" onerror="lrArtFallback(this)">
+        </div>`).join('')}</div>`;
+      return main + thumbs;
+    }
+    const main = `<div class="pdp-gallery-main">
+      <div class="art tall" id="mainArt" data-art="${product.id}" data-art-variant="${product.artVariant}" data-art-label="${product.colorway}"></div>
+    </div>`;
+    const thumbs = `<div class="pdp-thumbs">${['rose','drape','botanical','grid','bloom'].map((v,i) => `
+      <div class="art thumb ${i===0?'active':''}" data-thumb data-variant="${v}" data-art="${product.id}-${v}" data-art-variant="${v}"></div>`).join('')}</div>`;
+    return main + thumbs;
+  }
+
   function render(){
     document.getElementById('pdpRoot').innerHTML = `
       <div class="pdp">
         <div>
-          <div class="pdp-gallery-main">
-            <div class="art tall" id="mainArt" data-art="${product.id}" data-art-variant="${product.artVariant}" data-art-label="${product.colorway}"></div>
-          </div>
-          <div class="pdp-thumbs">
-            ${['rose','drape','botanical','grid','bloom'].map((v,i) => `
-              <div class="art thumb ${i===0?'active':''}" data-thumb data-variant="${v}" data-art="${product.id}-${v}" data-art-variant="${v}"></div>
-            `).join('')}
-          </div>
+          ${galleryMarkup()}
         </div>
         <div class="pdp-info">
           <div class="p-cat">${product.category} · ${product.collection}</div>
@@ -147,15 +164,20 @@
     document.querySelectorAll('[data-thumb]').forEach(t => t.addEventListener('click', () => {
       document.querySelectorAll('[data-thumb]').forEach(x => x.classList.remove('active'));
       t.classList.add('active');
-      const main = document.getElementById('mainArt');
-      main.setAttribute('data-art-variant', t.dataset.variant);
-      paintArt(main);
+      if (t.dataset.thumbImg){
+        const img = document.getElementById('mainImg');
+        if (img) img.src = t.dataset.thumbImg;
+      } else {
+        const main = document.getElementById('mainArt');
+        main.setAttribute('data-art-variant', t.dataset.variant);
+        paintArt(main);
+      }
     }));
 
     const related = PRODUCTS.filter(p => p.id !== product.id && p.category === product.category).slice(0,6);
     document.getElementById('relatedRow').innerHTML = related.map(p => `
       <a class="product-card" href="product.html?id=${p.id}">
-        <div class="art" data-art="${p.id}" data-art-variant="${p.artVariant}"></div>
+        ${productImageBlock(p)}
         <div class="p-cat">${p.collection}</div>
         <div class="p-name">${p.name}</div>
         <div class="p-price">${formatINR(p.price)}</div>
