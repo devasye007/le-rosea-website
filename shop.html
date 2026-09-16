@@ -25,6 +25,8 @@
           <option value="Dresses">Dresses</option>
           <option value="Gowns">Gowns</option>
           <option value="Co-ords & Separates">Co-ords &amp; Separates</option>
+          <option value="Top">Top</option>
+          <option value="Skirt">Skirt</option>
         </select>
         <select id="filterCollection">
           <option value="">All Collections</option>
@@ -67,8 +69,15 @@
 <script>
   const params = new URLSearchParams(location.search);
 
+  // Include every colour name — the single colorway for standard products, plus
+  // each entry in colors[] for merged multi-colour products.
+  function productColorNames(p){
+    return (p.colors && p.colors.length) ? p.colors.map(c => c.name) : [p.colorway];
+  }
   function populateColorOptions(){
-    const colors = [...new Set(PRODUCTS.map(p => p.colorway))].sort();
+    const set = new Set();
+    PRODUCTS.forEach(p => productColorNames(p).forEach(c => set.add(c)));
+    const colors = [...set].sort();
     const sel = document.getElementById('filterColor');
     colors.forEach(c => {
       const opt = document.createElement('option');
@@ -97,7 +106,7 @@
     let results = PRODUCTS.filter(p => {
       if (cat && p.category !== cat) return false;
       if (col && p.collection !== col) return false;
-      if (color && p.colorway !== color) return false;
+      if (color && !productColorNames(p).includes(color)) return false;
       if (size && !p.sizes.includes(size)) return false;
       if (priceRange){
         const [min, max] = priceRange.split('-').map(Number);

@@ -18,3 +18,11 @@ pricing1.png
 
 # Standalone size chart image (not wired into the site)
 SIZE_CHART.png
+
+# Raw unencoded footage
+craftsman.MP4
+
+# Local test scratch files
+_*
+lol.png
+

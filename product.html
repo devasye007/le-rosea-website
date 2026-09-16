@@ -35,16 +35,41 @@
 <script src="js/components.js"></script>
 <script src="js/motion.js"></script>
 <script>
-  const id = new URLSearchParams(location.search).get('id');
-  const product = getProductById(id) || PRODUCTS[0];
+  const params = new URLSearchParams(location.search);
+  const product = getProductById(params.get('id')) || PRODUCTS[0];
+
+  // Merged multi-colour products carry a colors[] array; single-colour products
+  // fall back to their top-level colorway/images.
+  const COLORS = (product.colors && product.colors.length) ? product.colors : null;
+
+  // Selected colour comes from ?color= (case-insensitive), defaulting to the
+  // first colour when absent or unrecognised.
+  let selectedColor = null;
+  if (COLORS){
+    const wanted = (params.get('color') || '').trim().toLowerCase();
+    const match = COLORS.find(c => c.name.toLowerCase() === wanted);
+    selectedColor = (match || COLORS[0]).name;
+  }
+
   let selectedSize = product.sizes[Math.floor(product.sizes.length/2)];
   let qty = 1;
 
   document.getElementById('pageTitle').textContent = `${product.name} - LE ROSÈA`;
 
-  const hasPhotos = product.images && product.images.length;
-
   const EXPAND_ICON = `<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 4H4v5M15 4h5v5M20 15v5h-5M4 15v5h5"/></svg>`;
+
+  function currentColorObj(){
+    if (!COLORS) return null;
+    return COLORS.find(c => c.name === selectedColor) || COLORS[0];
+  }
+  function currentImages(){
+    const c = currentColorObj();
+    if (c) return (c.images && c.images.length) ? c.images : (product.images || []);
+    return product.images || [];
+  }
+  function colorLabel(){
+    return selectedColor || product.colorway;
+  }
 
   // If a real photo fails to load, reveal the stage's fill instead of a broken-image icon.
   function pdpImgError(img){
@@ -55,45 +80,62 @@
   }
 
   function galleryMarkup(){
-    if (hasPhotos){
-      const alt = escapeHtml(product.name + ' — ' + product.colorway);
-      const multi = product.images.length > 1;
+    const imgs = currentImages();
+    if (imgs.length){
+      const alt = escapeHtml(product.name + ' — ' + colorLabel());
+      const multi = imgs.length > 1;
       const arrows = multi ? `
           <button type="button" class="pdp-nav pdp-prev" id="pdpPrev" aria-label="Previous image">${ICONS.chevron}</button>
           <button type="button" class="pdp-nav pdp-next" id="pdpNext" aria-label="Next image">${ICONS.chevron}</button>` : '';
       const main = `<div class="pdp-gallery-main">
         <div class="pdp-stage" id="pdpStage" tabindex="0" role="group" aria-roledescription="carousel" aria-label="${alt}">
-          <img id="mainImg" class="pdp-main-img" src="${assetPath(product.images[0])}" alt="${alt}" decoding="async" fetchpriority="high" onerror="pdpImgError(this)">${arrows}
+          <img id="mainImg" class="pdp-main-img" src="${assetPath(imgs[0])}" alt="${alt}" decoding="async" fetchpriority="high" onerror="pdpImgError(this)">${arrows}
           <button type="button" class="pdp-expand" id="pdpExpand" aria-label="View full screen">${EXPAND_ICON}</button>
         </div>
       </div>`;
-      const thumbs = multi ? `<div class="pdp-thumbs" id="pdpThumbs">${product.images.map((src,i) => `
-        <button type="button" class="pdp-thumb ${i===0?'active':''}" data-index="${i}" aria-label="View image ${i+1} of ${product.images.length}"${i===0?' aria-current="true"':''}>
+      const thumbs = multi ? `<div class="pdp-thumbs" id="pdpThumbs">${imgs.map((src,i) => `
+        <button type="button" class="pdp-thumb ${i===0?'active':''}" data-index="${i}" aria-label="View image ${i+1} of ${imgs.length}"${i===0?' aria-current="true"':''}>
           <img src="${assetPath(src)}" alt="" loading="lazy" decoding="async" onerror="this.closest('.pdp-thumb').style.display='none'">
         </button>`).join('')}</div>` : '';
       return main + thumbs;
     }
     // No matched photos — a single generated placeholder, no gallery controls.
     return `<div class="pdp-gallery-main">
-      <div class="art tall" id="mainArt" data-art="${product.id}" data-art-variant="${product.artVariant}" data-art-label="${escapeHtml(product.colorway)}"></div>
+      <div class="art tall" id="mainArt" data-art="${product.id}" data-art-variant="${product.artVariant}" data-art-label="${escapeHtml(colorLabel())}"></div>
+    </div>`;
+  }
+
+  // Small circular colour swatches (one per entry in colors[]). Only rendered
+  // for merged multi-colour products; single-colour pieces keep a text label.
+  function colourBlock(){
+    if (COLORS){
+      return `<div class="pdp-colors">
+        <label class="pdp-colors-label">Colour: <strong id="pdpColorName">${escapeHtml(selectedColor)}</strong></label>
+        <div class="swatch-row" id="swatchRow">
+          ${COLORS.map(c => `<button type="button" class="color-swatch ${c.name===selectedColor?'selected':''}" data-color="${escapeHtml(c.name)}" style="--sw:${c.swatch}" aria-label="${escapeHtml(c.name)}" aria-pressed="${c.name===selectedColor}" title="${escapeHtml(c.name)}"></button>`).join('')}
+        </div>
+      </div>`;
+    }
+    return `<div>
+      <label style="font-size:0.78rem; letter-spacing:0.06em; display:block; margin-bottom:8px;">Colourway: ${escapeHtml(product.colorway)}</label>
     </div>`;
   }
 
   function render(){
+    const sizeOptions = product.sizes.concat(['Custom']);
     document.getElementById('pdpRoot').innerHTML = `
       <div class="pdp">
         <div>
-          ${galleryMarkup()}
+          <div id="pdpGallery">${galleryMarkup()}</div>
         </div>
         <div class="pdp-info">
           <div class="p-cat">${product.category} · ${product.collection}</div>
           <h1>${product.name}</h1>
           <p class="p-price">${formatINR(product.price)}</p>
-          <p class="lede">${product.description}</p>
 
-          <div>
-            <label style="font-size:0.78rem; letter-spacing:0.06em; display:block; margin-bottom:8px;">Colourway: ${product.colorway}</label>
-          </div>
+          ${colourBlock()}
+
+          <p class="lede">${product.description}</p>
 
           <div class="spec-grid">
             <div><span>Craft</span><strong>${product.craft}</strong></div>
@@ -104,8 +146,22 @@
 
           <div>
             <label style="font-size:0.78rem; letter-spacing:0.06em; display:block; margin-bottom:8px;">Size</label>
-            <div class="size-row" id="sizeRow"></div>
+            <div class="size-row" id="sizeRow">
+              ${sizeOptions.map(s => `<div class="size-opt ${s===selectedSize?'selected':''}${s==='Custom'?' size-opt-custom':''}" data-size="${s}">${s}</div>`).join('')}
+            </div>
             <a href="size-guide.html" class="text-link" style="font-size:0.74rem;">View size guide</a>
+            <p class="model-note" id="modelNote">Model is wearing ${escapeHtml(product.modelSize)}.</p>
+
+            <div class="custom-size hidden" id="customForm">
+              <p class="custom-size-head">Enter your measurements (cm)</p>
+              <div class="custom-grid">
+                <div class="field"><label for="cmHeight">Height (cm)</label><input id="cmHeight" type="number" min="1" step="0.5" inputmode="decimal"></div>
+                <div class="field"><label for="cmBust">Bust (cm)</label><input id="cmBust" type="number" min="1" step="0.5" inputmode="decimal"></div>
+                <div class="field"><label for="cmWaist">Waist (cm)</label><input id="cmWaist" type="number" min="1" step="0.5" inputmode="decimal"></div>
+                <div class="field"><label for="cmHip">Hip (cm)</label><input id="cmHip" type="number" min="1" step="0.5" inputmode="decimal"></div>
+              </div>
+              <p class="custom-hint hidden" id="customHint">Please enter all four measurements to continue.</p>
+            </div>
           </div>
 
           <div style="margin-top:22px;">
@@ -138,7 +194,7 @@
             </div>
             <div class="accordion-item">
               <button data-acc>Fit &amp; Sizing <span class="accordion-icon">+</span></button>
-              <div class="accordion-body"><div class="accordion-body-inner">${product.fit} Available in sizes ${product.sizes.join(', ')}. If you're between sizes, we recommend sizing up for a relaxed drape.</div></div>
+              <div class="accordion-body"><div class="accordion-body-inner">${product.fit} Available in sizes ${product.sizes.join(', ')}, or choose Custom to order to your own measurements. If you're between sizes, we recommend sizing up for a relaxed drape.</div></div>
             </div>
             <div class="accordion-item">
               <button data-acc>Delivery &amp; Customization <span class="accordion-icon">+</span></button>
@@ -153,19 +209,25 @@
       </div>
     `;
 
+    // Size selection (incl. the Custom option, which reveals the measurement form).
     const sizeRow = document.getElementById('sizeRow');
-    sizeRow.innerHTML = product.sizes.map(s => `<div class="size-opt ${s===selectedSize?'selected':''}" data-size="${s}">${s}</div>`).join('');
     sizeRow.querySelectorAll('.size-opt').forEach(el => el.addEventListener('click', () => {
       selectedSize = el.dataset.size;
       sizeRow.querySelectorAll('.size-opt').forEach(o => o.classList.remove('selected'));
       el.classList.add('selected');
+      updateActions();
     }));
+
+    // Live-validate the custom measurement inputs.
+    ['cmHeight','cmBust','cmWaist','cmHip'].forEach(cid => {
+      document.getElementById(cid)?.addEventListener('input', updateActions);
+    });
 
     document.getElementById('qtyMinus').addEventListener('click', () => { qty = Math.max(1, qty-1); document.getElementById('qtyValue').textContent = qty; });
     document.getElementById('qtyPlus').addEventListener('click', () => { qty += 1; document.getElementById('qtyValue').textContent = qty; });
 
-    document.getElementById('addToCartBtn').addEventListener('click', () => addToCart(product.id, selectedSize, qty));
-    document.getElementById('buyNowBtn').addEventListener('click', () => { addToCart(product.id, selectedSize, qty); location.href = 'checkout.html'; });
+    document.getElementById('addToCartBtn').addEventListener('click', () => doAdd());
+    document.getElementById('buyNowBtn').addEventListener('click', () => { if (doAdd()) location.href = 'checkout.html'; });
 
     document.querySelectorAll('[data-acc]').forEach(btn => btn.addEventListener('click', () => {
       const item = btn.closest('.accordion-item');
@@ -174,7 +236,13 @@
       if (!wasOpen) item.classList.add('open');
     }));
 
-    initGallery();
+    // Colour swatches switch the whole gallery to the chosen colour's media.
+    document.querySelectorAll('#swatchRow .color-swatch').forEach(btn => {
+      btn.addEventListener('click', () => switchColor(btn.dataset.color));
+    });
+
+    mountGallery();
+    updateActions();
 
     const related = PRODUCTS.filter(p => p.id !== product.id && p.category === product.category).slice(0,6);
     document.getElementById('relatedRow').innerHTML = related.map(p => `
@@ -188,19 +256,84 @@
     initPlaceholderArt();
   }
 
+  // Switch the displayed colour: re-render swatches state, gallery and thumbs,
+  // and keep the URL shareable via ?color=.
+  function switchColor(name){
+    if (!COLORS || name === selectedColor) return;
+    const exists = COLORS.some(c => c.name === name);
+    if (!exists) return;
+    selectedColor = name;
+    document.querySelectorAll('#swatchRow .color-swatch').forEach(b => {
+      const on = b.dataset.color === name;
+      b.classList.toggle('selected', on);
+      b.setAttribute('aria-pressed', on);
+    });
+    const nameEl = document.getElementById('pdpColorName');
+    if (nameEl) nameEl.textContent = name;
+    document.getElementById('pdpGallery').innerHTML = galleryMarkup();
+    mountGallery();
+    initPlaceholderArt();
+    try {
+      const u = new URL(location.href);
+      u.searchParams.set('color', name);
+      history.replaceState(null, '', u);
+    } catch(_){}
+  }
+
+  // ----- Custom-size validation -----
+  function customValid(){
+    if (selectedSize !== 'Custom') return true;
+    return ['cmHeight','cmBust','cmWaist','cmHip'].every(cid => {
+      const el = document.getElementById(cid);
+      const v = el ? parseFloat(el.value) : NaN;
+      return !isNaN(v) && v > 0;
+    });
+  }
+  function getCustomMeasurements(){
+    return {
+      height: document.getElementById('cmHeight').value,
+      bust: document.getElementById('cmBust').value,
+      waist: document.getElementById('cmWaist').value,
+      hip: document.getElementById('cmHip').value,
+    };
+  }
+  function updateActions(){
+    const custom = selectedSize === 'Custom';
+    const form = document.getElementById('customForm');
+    if (form) form.classList.toggle('hidden', !custom);
+    const valid = customValid();
+    const hint = document.getElementById('customHint');
+    if (hint) hint.classList.toggle('hidden', !(custom && !valid));
+    ['addToCartBtn','buyNowBtn'].forEach(bid => {
+      const b = document.getElementById(bid);
+      if (b) b.disabled = !valid;
+    });
+  }
+
+  // Returns true when the item was added (used by Buy Now to gate the redirect).
+  function doAdd(){
+    if (!customValid()){ updateActions(); return false; }
+    const opts = {};
+    if (COLORS) opts.color = selectedColor;
+    if (selectedSize === 'Custom') opts.customMeasurements = getCustomMeasurements();
+    addToCart(product.id, selectedSize, qty, opts);
+    return true;
+  }
+
   // Gallery: main-image swap, next/prev (wraparound), thumbnail sync,
-  // keyboard nav, and a fullscreen lightbox. Real photos only.
-  function initGallery(){
-    if (!hasPhotos) return;
-    const imgs = product.images;
+  // keyboard nav, and a fullscreen lightbox. Idempotent — safe to re-run on
+  // colour switch (any prior lightbox is removed first).
+  function mountGallery(){
+    document.getElementById('pdpLightbox')?.remove();
+    const imgs = currentImages();
+    if (!imgs.length) return;
     const multi = imgs.length > 1;
     const mainImg = document.getElementById('mainImg');
     const stage = document.getElementById('pdpStage');
     const thumbEls = Array.from(document.querySelectorAll('.pdp-thumb'));
     let idx = 0;
 
-    // Build the lightbox once and attach it to <body>.
-    const alt = escapeHtml(product.name + ' — ' + product.colorway);
+    const alt = escapeHtml(product.name + ' — ' + colorLabel());
     const lb = document.createElement('div');
     lb.className = 'pdp-lightbox';
     lb.id = 'pdpLightbox';
@@ -238,7 +371,6 @@
     document.getElementById('pdpPrev')?.addEventListener('click', e => { e.stopPropagation(); prev(); });
     document.getElementById('pdpNext')?.addEventListener('click', e => { e.stopPropagation(); next(); });
 
-    // Keyboard nav while the inline gallery is focused.
     stage?.addEventListener('keydown', e => {
       if (e.key === 'ArrowRight'){ e.preventDefault(); next(); }
       else if (e.key === 'ArrowLeft'){ e.preventDefault(); prev(); }

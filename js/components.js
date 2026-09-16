@@ -24,9 +24,9 @@ function renderHeader(){
     el.innerHTML = `
       <div class="home-header">
         <div class="home-header-top">
-          <a href="shop.html" class="home-icon-link" aria-label="Search the collection">${ICONS.search}</a>
+          <button type="button" class="home-icon-link header-search-btn" id="homeSearchToggle" aria-label="Search the collection">${ICONS.search}</button>
           <a href="index.html" class="logo home-logo">
-            <span class="rose-mark hero-emblem" id="heroEmblem">${ICONS.rose}</span>
+            <img class="logo-img" src="assets/logo.png" alt="">
             LE ROSÈA
           </a>
           <div class="home-header-actions">
@@ -51,9 +51,9 @@ function renderHeader(){
               <span></span>
               <a href="shop.html?category=Co-ords+%26+Separates">Co-ord Sets</a>
               <span></span>
-              <a href="shop.html?collection=Day+%26+Resort">Top</a>
+              <a href="shop.html?category=Top">Top</a>
               <span></span>
-              <a href="shop.html?collection=Celebration">Skirt</a>
+              <a href="shop.html?category=Skirt">Skirt</a>
               <span></span>
               <a href="shop.html?category=Gowns">Gowns</a>
             </div>
@@ -66,9 +66,9 @@ function renderHeader(){
               <span></span>
               <a href="shop.html?category=Co-ords+%26+Separates">Co-ord Sets</a>
               <span></span>
-              <a href="shop.html?collection=Day+%26+Resort">Top</a>
+              <a href="shop.html?category=Top">Top</a>
               <span></span>
-              <a href="shop.html?collection=Celebration">Skirt</a>
+              <a href="shop.html?category=Skirt">Skirt</a>
               <span></span>
               <a href="shop.html?category=Gowns">Gowns</a>
             </div>
@@ -82,6 +82,7 @@ function renderHeader(){
       </div>
     `;
     document.getElementById('cartToggle')?.addEventListener('click', openCart);
+    document.getElementById('homeSearchToggle')?.addEventListener('click', openSearch);
     setupCollectionsAccordion();
     return;
   }
@@ -101,10 +102,11 @@ function renderHeader(){
         </nav>
       </div>
       <a href="index.html" class="logo">
-        <span class="rose-mark">${ICONS.rose}</span>
+        <img class="logo-img" src="assets/logo.png" alt="">
         LE ROSÈA
       </a>
       <div class="header-side right">
+        <button class="icon-btn header-search-btn" id="searchToggle" aria-label="Search the collection">${ICONS.search}</button>
         <button class="icon-btn" id="cartToggle" aria-label="Open cart">
           ${ICONS.cart}
           <span class="count" data-cart-count>0</span>
@@ -123,6 +125,69 @@ function renderHeader(){
   });
   navClose?.addEventListener('click', () => mainNav.classList.remove('open'));
   document.getElementById('cartToggle')?.addEventListener('click', openCart);
+  document.getElementById('searchToggle')?.addEventListener('click', openSearch);
+}
+
+// ---- Header search overlay: translucent panel with live name filtering ----
+function renderSearchOverlay(){
+  if (document.getElementById('searchOverlay')) return;
+  const overlay = document.createElement('div');
+  overlay.className = 'search-overlay';
+  overlay.id = 'searchOverlay';
+  overlay.setAttribute('aria-hidden', 'true');
+  overlay.innerHTML = `
+    <div class="search-panel" role="dialog" aria-modal="true" aria-label="Search products">
+      <div class="search-bar">
+        <span class="search-ico" aria-hidden="true">${ICONS.search}</span>
+        <input type="text" id="searchInput" placeholder="Search pieces&hellip;" autocomplete="off" aria-label="Search pieces">
+        <button type="button" class="search-close" id="searchClose" aria-label="Close search">${ICONS.close}</button>
+      </div>
+      <div class="search-results" id="searchResults"></div>
+    </div>`;
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) closeSearch(); });
+  document.getElementById('searchClose').addEventListener('click', closeSearch);
+  document.getElementById('searchInput').addEventListener('input', (e) => runSearch(e.target.value));
+}
+
+function openSearch(){
+  const overlay = document.getElementById('searchOverlay');
+  if (!overlay) return;
+  overlay.classList.add('open');
+  overlay.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+  const input = document.getElementById('searchInput');
+  if (input){ input.value = ''; runSearch(''); requestAnimationFrame(() => input.focus()); }
+}
+
+function closeSearch(){
+  const overlay = document.getElementById('searchOverlay');
+  if (!overlay || !overlay.classList.contains('open')) return;
+  overlay.classList.remove('open');
+  overlay.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+  const input = document.getElementById('searchInput');
+  if (input) input.value = '';
+  const box = document.getElementById('searchResults');
+  if (box) box.innerHTML = '';
+}
+
+function runSearch(q){
+  const box = document.getElementById('searchResults');
+  if (!box) return;
+  q = (q || '').trim().toLowerCase();
+  if (!q){ box.innerHTML = ''; return; }
+  const pool = (typeof PRODUCTS !== 'undefined') ? PRODUCTS : [];
+  const matches = pool.filter(p => p.name.toLowerCase().includes(q)).slice(0, 8);
+  if (!matches.length){
+    box.innerHTML = `<p class="search-empty">No pieces match &ldquo;${escapeHtml(q)}&rdquo;.</p>`;
+    return;
+  }
+  box.innerHTML = matches.map(p => `
+    <a class="search-result" href="product.html?id=${p.id}">
+      <span class="search-result-name">${escapeHtml(p.name)}</span>
+      <span class="search-result-meta">${escapeHtml(p.category)} &middot; ${formatINR(p.price)}</span>
+    </a>`).join('');
 }
 
 // On mobile the persistent collections mega-menu becomes a tap accordion
@@ -163,12 +228,12 @@ function renderFooter(){
     <div class="footer-grid">
       <div class="footer-brand">
         <a href="index.html" class="logo" style="justify-content:flex-start; color:var(--espresso); margin-bottom:16px;">
-          <span class="rose-mark" style="color:var(--gold);">${ICONS.rose}</span>
+          <img class="logo-img" src="assets/logo.png" alt="">
           LE ROSÈA
         </a>
         <p>Modern femininity, elevated through couture-inspired detail and made for the moments worth remembering.</p>
         <div class="social-row">
-          <a href="https://instagram.com" aria-label="Instagram" target="_blank" rel="noopener">Instagram</a>
+          <a href="https://instagram.com/le.rosea" aria-label="Instagram" target="_blank" rel="noopener">Instagram</a>
           <a href="https://pinterest.com" aria-label="Pinterest" target="_blank" rel="noopener">Pinterest</a>
         </div>
       </div>
@@ -188,7 +253,6 @@ function renderFooter(){
           <li><a href="about.html">About Le Rosèa</a></li>
           <li><a href="customization.html">Customization</a></li>
           <li><a href="size-guide.html">Size Guide</a></li>
-          <li><a href="journal.html">Journal</a></li>
         </ul>
       </div>
       <div>
@@ -197,6 +261,11 @@ function renderFooter(){
           <li><a href="contact.html">Contact &amp; Appointments</a></li>
           <li><a href="shipping-returns.html">Shipping &amp; Returns</a></li>
           <li><a href="policies.html">Terms &amp; Privacy</a></li>
+        </ul>
+        <h4 style="margin-top:22px;">Get in Touch</h4>
+        <ul>
+          <li><a href="tel:+919599428824">+91 95994 28824</a></li>
+          <li><a href="mailto:office@lerosea.com">office@lerosea.com</a></li>
         </ul>
       </div>
     </div>
@@ -238,10 +307,22 @@ function renderCartDrawerShell(){
   document.getElementById('cartClose').addEventListener('click', closeCart);
 }
 
+// Use the real rose logo as the favicon (recognisable at small size).
+function setFavicon(){
+  if (document.querySelector('link[rel="icon"]')) return;
+  const link = document.createElement('link');
+  link.rel = 'icon';
+  link.type = 'image/png';
+  link.href = 'assets/logo.png';
+  document.head.appendChild(link);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  setFavicon();
   renderHeader();
   renderFooter();
   renderCartDrawerShell();
   renderCartDrawer();
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeCart(); });
+  renderSearchOverlay();
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape'){ closeCart(); closeSearch(); } });
 });

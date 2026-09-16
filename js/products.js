@@ -16,14 +16,30 @@ function makeProduct(product){
     care: DEFAULT_CARE,
     leadTime: DEFAULT_LEAD_TIME,
     craft: '100% hand embroidery',
+    // Per-product so it can be overridden individually later; defaults to XS.
+    modelSize: 'XS',
     ...product,
   };
 }
 
+// Resolve the image list for a product, optionally for a specific colour.
+// Merged multi-colour products keep per-colour images in `colors[]`; the
+// top-level `images` mirrors the default (first) colour for cards/cart.
+function colorImages(product, colorName){
+  if (product && product.colors && product.colors.length){
+    var match = colorName ? product.colors.find(function(c){ return c.name === colorName; }) : null;
+    var chosen = match || product.colors[0];
+    return chosen && chosen.images && chosen.images.length ? chosen.images : (product.images || []);
+  }
+  return product && product.images ? product.images : [];
+}
+
 const PRODUCTS = [
+  // Merged colour product: crop-top + mini-skirt set offered in two colourways.
+  // Top-level `images`/`colorway`/`artVariant` mirror the default (first) colour
+  // so product cards, cart thumbnails and the shop grid keep working unchanged.
   makeProduct({
-    id: 'sequins-rush-set-sea-green',
-    images: ['assets/products/sequins-rush-set-sea-green/1.jpg', 'assets/products/sequins-rush-set-sea-green/2.jpg', 'assets/products/sequins-rush-set-sea-green/3.jpg'],
+    id: 'sequins-rush-set',
     name: 'Sequins Rush Set',
     category: 'Co-ords & Separates',
     collection: 'Pret',
@@ -33,29 +49,18 @@ const PRODUCTS = [
     isBestseller: true,
     fabric: 'Embroidered mesh with Lycra lining',
     embellishment: 'Sequins, cutdana and cutdana latkans',
-    description: 'An intricately hand-embroidered sea-green set featuring shimmering sequins, cutdana and cascading latkans, designed to catch the light and move beautifully with the body.',
+    description: 'An intricately hand-embroidered set featuring shimmering sequins, cutdana and cascading latkans, designed to catch the light and move beautifully with the body. Available in sea green and pink.',
     fit: 'Fitted crop top with mini skirt.',
     artVariant: 'bloom',
+    images: ['assets/products/sequins-rush-set-sea-green/1.jpg', 'assets/products/sequins-rush-set-sea-green/2.jpg', 'assets/products/sequins-rush-set-sea-green/3.jpg'],
+    colors: [
+      { name: 'Sea Green', swatch: '#3F8374', images: ['assets/products/sequins-rush-set-sea-green/1.jpg', 'assets/products/sequins-rush-set-sea-green/2.jpg', 'assets/products/sequins-rush-set-sea-green/3.jpg'], video: null },
+      { name: 'Pink', swatch: '#E48CB2', images: ['assets/products/sequins-rush-set-pink/1.jpg', 'assets/products/sequins-rush-set-pink/2.jpg', 'assets/products/sequins-rush-set-pink/3.jpg', 'assets/products/sequins-rush-set-pink/4.jpg', 'assets/products/sequins-rush-set-pink/5.jpg', 'assets/products/sequins-rush-set-pink/6.jpg', 'assets/products/sequins-rush-set-pink/7.jpg'], video: null },
+    ],
   }),
+  // Merged colour product: fringe mini dress offered in three colourways.
   makeProduct({
-    id: 'sequins-rush-set-pink',
-    images: ['assets/products/sequins-rush-set-pink/1.jpg', 'assets/products/sequins-rush-set-pink/2.jpg', 'assets/products/sequins-rush-set-pink/3.jpg', 'assets/products/sequins-rush-set-pink/4.jpg', 'assets/products/sequins-rush-set-pink/5.jpg', 'assets/products/sequins-rush-set-pink/6.jpg', 'assets/products/sequins-rush-set-pink/7.jpg'],
-    name: 'Sequins Rush Set',
-    category: 'Co-ords & Separates',
-    collection: 'Pret',
-    price: 14999,
-    colorway: 'Pink',
-    isNew: true,
-    isBestseller: false,
-    fabric: 'Embroidered mesh with Lycra lining',
-    embellishment: 'Sequins, cutdana and cutdana latkans',
-    description: 'A vivid pink interpretation of the sequins rush set, hand-worked to shimmer from every angle and move softly with the body.',
-    fit: 'Fitted crop top with mini skirt.',
-    artVariant: 'rose',
-  }),
-  makeProduct({
-    id: 'fringe-mini-dress-sea-green',
-    images: ['assets/products/fringe-mini-dress-sea-green/1.jpg', 'assets/products/fringe-mini-dress-sea-green/2.jpg', 'assets/products/fringe-mini-dress-sea-green/3.jpg'],
+    id: 'fringe-mini-dress',
     name: 'Fringe Mini Dress',
     category: 'Dresses',
     collection: 'Pret',
@@ -65,41 +70,15 @@ const PRODUCTS = [
     isBestseller: true,
     fabric: 'Satin lyra with matching lining',
     embellishment: 'Sequins, cutdana and cutdana latkans',
-    description: 'An elegant sea-green mini dress elevated with intricate hand embroidery, sparkling sequins and cascading fringe for statement evening dressing.',
+    description: 'An elegant mini dress elevated with intricate hand embroidery, sparkling sequins and cascading fringe for statement evening dressing. Available in sea green, lavender and pink.',
     fit: 'Fitted mini dress with fine shoulder straps.',
     artVariant: 'drape',
-  }),
-  makeProduct({
-    id: 'fringe-mini-dress-lavender',
-    images: ['assets/products/fringe-mini-dress-lavender/1.jpg', 'assets/products/fringe-mini-dress-lavender/2.jpg', 'assets/products/fringe-mini-dress-lavender/3.jpg'],
-    name: 'Fringe Mini Dress',
-    category: 'Dresses',
-    collection: 'Pret',
-    price: 9999,
-    colorway: 'Lavender',
-    isNew: false,
-    isBestseller: false,
-    fabric: 'Satin lyra with matching lining',
-    embellishment: 'Sequins, cutdana and cutdana latkans',
-    description: 'A lavender take on the fringe mini dress, detailed with hand embroidery, beading and an embellished bodice that moves with ease.',
-    fit: 'Fitted mini dress with fine shoulder straps.',
-    artVariant: 'grid',
-  }),
-  makeProduct({
-    id: 'fringe-mini-dress-pink',
-    images: ['assets/products/fringe-mini-dress-pink/1.jpg', 'assets/products/fringe-mini-dress-pink/2.jpg', 'assets/products/fringe-mini-dress-pink/3.jpg'],
-    name: 'Fringe Mini Dress',
-    category: 'Dresses',
-    collection: 'Pret',
-    price: 9999,
-    colorway: 'Pink',
-    isNew: false,
-    isBestseller: false,
-    fabric: 'Satin lyra with matching lining',
-    embellishment: 'Sequins, cutdana and cutdana latkans',
-    description: 'A pink interpretation of the fringe mini dress, detailed with hand embroidery, beading and a cascading fringe bodice.',
-    fit: 'Fitted mini dress with fine shoulder straps.',
-    artVariant: 'bloom',
+    images: ['assets/products/fringe-mini-dress-sea-green/1.jpg', 'assets/products/fringe-mini-dress-sea-green/2.jpg', 'assets/products/fringe-mini-dress-sea-green/3.jpg'],
+    colors: [
+      { name: 'Sea Green', swatch: '#3F8374', images: ['assets/products/fringe-mini-dress-sea-green/1.jpg', 'assets/products/fringe-mini-dress-sea-green/2.jpg', 'assets/products/fringe-mini-dress-sea-green/3.jpg'], video: null },
+      { name: 'Lavender', swatch: '#B7A6DA', images: ['assets/products/fringe-mini-dress-lavender/1.jpg', 'assets/products/fringe-mini-dress-lavender/2.jpg', 'assets/products/fringe-mini-dress-lavender/3.jpg'], video: null },
+      { name: 'Pink', swatch: '#E48CB2', images: ['assets/products/fringe-mini-dress-pink/1.jpg', 'assets/products/fringe-mini-dress-pink/2.jpg', 'assets/products/fringe-mini-dress-pink/3.jpg'], video: null },
+    ],
   }),
   makeProduct({
     id: 'wildflower-coord-set-white',
@@ -116,6 +95,41 @@ const PRODUCTS = [
     description: 'A refined white crepe set adorned with hand-appliqued net flowers and intricate beadwork, inspired by wildflowers in bloom.',
     fit: 'Cropped top with a long, figure-skimming skirt.',
     artVariant: 'botanical',
+  }),
+  // Standalone pieces split out from the Wildflower Corset Quad Set (set kept at
+  // ₹24,500). Images are the set's photos as a placeholder until dedicated
+  // per-garment shots are available.
+  makeProduct({
+    id: 'wildflower-top',
+    name: 'Wildflower Top',
+    category: 'Top',
+    collection: 'Pret',
+    price: 9900,
+    colorway: 'White',
+    isNew: false,
+    isBestseller: false,
+    fabric: 'Crepe with Lycra lining',
+    embellishment: 'Net flowers and intricate beadwork',
+    description: 'The cropped corset top from the Wildflower set, offered on its own — hand-appliqued net flowers and intricate beadwork on refined white crepe. Shown here in set photography; dedicated piece imagery to follow.',
+    fit: 'Cropped corset top.',
+    artVariant: 'botanical',
+    images: ['assets/products/wildflower-coord-set-white/1.jpg', 'assets/products/wildflower-coord-set-white/2.jpg', 'assets/products/wildflower-coord-set-white/3.jpg', 'assets/products/wildflower-coord-set-white/4.jpg'],
+  }),
+  makeProduct({
+    id: 'wildflower-bottom',
+    name: 'Wildflower Bottom',
+    category: 'Skirt',
+    collection: 'Pret',
+    price: 15900,
+    colorway: 'White',
+    isNew: false,
+    isBestseller: false,
+    fabric: 'Crepe with Lycra lining',
+    embellishment: 'Net flowers and intricate beadwork',
+    description: 'The long, figure-skimming skirt from the Wildflower set, offered on its own — hand-appliqued net flowers and intricate beadwork on refined white crepe. Shown here in set photography; dedicated piece imagery to follow.',
+    fit: 'Long, figure-skimming skirt.',
+    artVariant: 'botanical',
+    images: ['assets/products/wildflower-coord-set-white/1.jpg', 'assets/products/wildflower-coord-set-white/2.jpg', 'assets/products/wildflower-coord-set-white/3.jpg', 'assets/products/wildflower-coord-set-white/4.jpg'],
   }),
   makeProduct({
     id: 'blush-dress',
@@ -307,6 +321,41 @@ const PRODUCTS = [
     fit: 'Cropped top with long, fluid skirt.',
     artVariant: 'grid',
   }),
+  // Standalone pieces split out from the Noir Bloom Set (set kept at ₹25,000).
+  // Images are the set's photos as a placeholder until dedicated per-garment
+  // shots are available.
+  makeProduct({
+    id: 'noir-bloom-top',
+    name: 'Noir Bloom Top',
+    category: 'Top',
+    collection: 'Pret',
+    price: 11400,
+    colorway: 'Black',
+    isNew: false,
+    isBestseller: false,
+    fabric: 'Crepe with Lycra lining',
+    embellishment: 'Crystals and glass-bead fringes',
+    description: 'The crystal-trimmed cropped top from the Noir Bloom set, offered on its own — hand-embellished motifs finished with delicate glass-bead fringes. Shown here in set photography; dedicated piece imagery to follow.',
+    fit: 'Cropped top.',
+    artVariant: 'grid',
+    images: ['assets/products/noir-bloom-set-black/1.jpg', 'assets/products/noir-bloom-set-black/2.jpg', 'assets/products/noir-bloom-set-black/3.jpg', 'assets/products/noir-bloom-set-black/4.jpg', 'assets/products/noir-bloom-set-black/5.jpg'],
+  }),
+  makeProduct({
+    id: 'noir-bloom-skirt',
+    name: 'Noir Bloom Skirt',
+    category: 'Skirt',
+    collection: 'Pret',
+    price: 13800,
+    colorway: 'Black',
+    isNew: false,
+    isBestseller: false,
+    fabric: 'Crepe with Lycra lining',
+    embellishment: 'Crystals and glass-bead fringes',
+    description: 'The long, fluid skirt from the Noir Bloom set, offered on its own — refined black crepe with hand-embellished motifs and delicate glass-bead fringes. Shown here in set photography; dedicated piece imagery to follow.',
+    fit: 'Long, fluid skirt.',
+    artVariant: 'grid',
+    images: ['assets/products/noir-bloom-set-black/1.jpg', 'assets/products/noir-bloom-set-black/2.jpg', 'assets/products/noir-bloom-set-black/3.jpg', 'assets/products/noir-bloom-set-black/4.jpg', 'assets/products/noir-bloom-set-black/5.jpg'],
+  }),
   makeProduct({
     id: 'golden-rose-corset-with-skirt',
     images: ['assets/products/golden-rose-corset-with-skirt/1.jpg', 'assets/products/golden-rose-corset-with-skirt/2.jpg', 'assets/products/golden-rose-corset-with-skirt/3.jpg', 'assets/products/golden-rose-corset-with-skirt/4.jpg'],
@@ -340,10 +389,10 @@ const PRODUCTS = [
     artVariant: 'rose',
   }),
   makeProduct({
-    id: 'cream-stone-set',
+    id: 'cream-stone-dress',
     images: ['assets/products/cream-stone-set/1.jpg', 'assets/products/cream-stone-set/2.jpg', 'assets/products/cream-stone-set/3.jpg'],
-    name: 'Cream Stone Set',
-    category: 'Co-ords & Separates',
+    name: 'Cream Stone Dress',
+    category: 'Dresses',
     collection: 'Pret',
     price: 10999,
     colorway: 'Crème',

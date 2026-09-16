@@ -11,7 +11,10 @@
 <div id="site-header"></div>
 
 <section class="hero" style="min-height:60vh;">
-  <div class="hero-art art on-dark" data-art="about-hero" data-art-variant="rose"></div>
+  <div class="hero-art art on-dark has-photo">
+    <img src="assets/about/hero.jpg" alt="LE ROSÈA editorial — fringe cascade gown" loading="eager" decoding="async" data-art-id="about-hero" data-art-variant="rose" onerror="lrArtFallback(this)">
+  </div>
+  <div style="position:absolute; inset:0; z-index:1; background:linear-gradient(180deg, rgba(9,8,7,0.30) 0%, rgba(9,8,7,0.58) 100%); pointer-events:none;"></div>
   <div class="hero-content">
     <span class="eyebrow">The House</span>
     <h1>Where Craft Meets Celebration.</h1>
@@ -28,7 +31,9 @@
         <p>The house brings together the richness of couture-inspired craftsmanship with the ease and relevance of contemporary prêt-couture &mdash; creating distinctive pieces for women who value individuality, elegance and the art of dressing.</p>
         <p class="lede">Rooted in the belief that true luxury is found in the details, LE ROSÈA creates pieces designed not only to be worn, but to become part of the memories made in them.</p>
       </div>
-      <div class="art tall" data-art="about-essence" data-art-variant="botanical"></div>
+      <div class="art tall has-photo">
+        <img src="assets/about/essence.jpg" alt="LE ROSÈA blush mini dress" loading="lazy" decoding="async" data-art-id="about-essence" data-art-variant="botanical" onerror="lrArtFallback(this)">
+      </div>
     </div>
   </div>
 </section>
@@ -36,7 +41,9 @@
 <section class="section section-dark">
   <div class="container">
     <div class="split reverse">
-      <div class="art tall on-dark" data-art="about-story" data-art-variant="drape"></div>
+      <div class="art tall on-dark has-photo">
+        <img src="assets/about/story.jpg" alt="LE ROSÈA royal draped gown" loading="lazy" decoding="async" data-art-id="about-story" data-art-variant="drape" onerror="lrArtFallback(this)">
+      </div>
       <div>
         <span class="eyebrow" style="color:var(--gold-ink);">Brand Story</span>
         <h2>Born from a Love for Beauty in the Details</h2>
@@ -82,7 +89,11 @@
 <section class="section-tight">
   <div class="container">
     <div class="split">
-      <div class="art square" data-art="about-founder" data-art-variant="rose"></div>
+      <div class="art square has-photo">
+        <video autoplay muted loop playsinline poster="assets/video/craftsmanship-poster.jpg">
+          <source src="assets/video/craftsmanship.mp4" type="video/mp4">
+        </video>
+      </div>
       <div>
         <span class="eyebrow">A Note from the House</span>
         <h2>Craft Should Be Seen, Felt and Remembered</h2>

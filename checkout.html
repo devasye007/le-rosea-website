@@ -96,16 +96,19 @@
 <script>
   function renderSummary(){
     const lines = cartLinesWithData();
-    document.getElementById('summaryLines').innerHTML = lines.map(l => `
+    document.getElementById('summaryLines').innerHTML = lines.map(l => {
+      const measure = lineMeasurementsLabel(l);
+      return `
       <div class="order-line">
-        ${productImageBlock(l.product)}
+        ${productImageBlock(lineProductView(l))}
         <div style="flex:1;">
           <div style="font-family:var(--serif); font-size:0.95rem;">${l.product.name}</div>
-          <div style="font-size:0.74rem; color:var(--taupe);">Size ${l.size} &middot; Qty ${l.qty}</div>
+          <div style="font-size:0.74rem; color:var(--taupe);">${escapeHtml(lineMetaLabel(l))} &middot; Qty ${l.qty}</div>
+          ${measure ? `<div style="font-size:0.72rem; color:var(--taupe); margin-top:2px;">${escapeHtml(measure)}</div>` : ''}
         </div>
         <div style="font-size:0.85rem;">${formatINR(l.product.price * l.qty)}</div>
       </div>
-    `).join('') || '<p style="color:var(--taupe); font-size:0.88rem;">Your bag is empty.</p>';
+    `;}).join('') || '<p style="color:var(--taupe); font-size:0.88rem;">Your bag is empty.</p>';
     const subtotal = cartSubtotal();
     document.getElementById('sumSubtotal').textContent = formatINR(subtotal);
     document.getElementById('sumTotal').textContent = formatINR(subtotal);

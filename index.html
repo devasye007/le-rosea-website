@@ -11,19 +11,7 @@
 
 <div class="splash-screen" id="splashScreen" aria-hidden="true">
   <div class="splash-screen-inner">
-    <span class="splash-mark" aria-hidden="true">
-      <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="1.4">
-        <path d="M24 21c3.5 0 6.5-2.7 6.5-6.5S27.5 8 24 8s-6.5 2.8-6.5 6.5S20.5 21 24 21z"/>
-        <path d="M24 21c-3.8 1-6 3.6-6 6.8 0 3.6 3 6.7 6.8 6.4"/>
-        <path d="M24 21c3.8 1 6 3.6 6 6.8 0 3.6-3 6.7-6.8 6.4"/>
-        <path d="M18.6 16.4c-2.4-1.6-5.6-1.3-7.6.9-2 2.3-1.9 5.7.3 7.8"/>
-        <path d="M29.4 16.4c2.4-1.6 5.6-1.3 7.6.9 2 2.3 1.9 5.7-.3 7.8"/>
-        <path d="M24 34v8"/>
-        <path d="M24 38c-2.6 0-4.7 1.5-5.6 3.6"/>
-        <path d="M24 38c2.6 0 4.7 1.5 5.6 3.6"/>
-        <path d="M20 40.5c1-.6 2.4-1 4-1s3 .4 4 1"/>
-      </svg>
-    </span>
+    <img src="assets/logo.png" alt="LE ROSÈA" class="splash-logo">
     <div class="splash-title">LE ROSÈA</div>
     <div class="splash-subtitle">Private couture atelier</div>
   </div>
@@ -99,7 +87,11 @@
 <section class="section">
   <div class="container">
     <div class="split">
-      <div class="art tall" data-art="story-home" data-art-variant="drape"></div>
+      <div class="art tall has-photo">
+        <video autoplay muted loop playsinline poster="assets/video/craftsmanship-poster.jpg">
+          <source src="assets/video/craftsmanship.mp4" type="video/mp4">
+        </video>
+      </div>
       <div>
         <span class="eyebrow">The House</span>
         <h2>Craftsmanship as a Signature</h2>
@@ -162,8 +154,7 @@
 <section class="section-dark" style="padding: 90px 0;">
   <div class="container center" style="max-width:640px;">
     <span class="eyebrow" style="color:var(--gold-ink);">The LE ROSÈA Woman</span>
-    <h2 style="margin-top:14px;">She is not only buying a garment.</h2>
-    <p class="lede" style="margin:0 auto; color:var(--ink-soft);">She is buying the feeling of arriving, being remembered, and marking an occasion beautifully.</p>
+    <h2 style="margin-top:14px;">Made for the moments worth remembering.</h2>
   </div>
 </section>
 
@@ -171,7 +162,7 @@
   <div class="container">
     <div class="section-head center">
       <span class="eyebrow">From the Journal</span>
-      <h2>Stories from the Atelier</h2>
+      <h2>Pret Edition</h2>
     </div>
     <div class="journal-grid" id="journalPreview"></div>
   </div>
@@ -274,19 +265,24 @@
     const bestsellers = PRODUCTS.filter(p => p.isBestseller).concat(PRODUCTS.slice(0,4)).slice(0,4);
     document.getElementById('bestsellersGrid').innerHTML = bestsellers.map(productCard).join('');
 
+    // Pret Edition preview. The atelier feature plays the reel_2 video; the
+    // other two show a matched garment photo.
     const journalPosts = [
-      { title: 'Inside the Atelier: The Making of Écrin d\u2019Or', tag: 'Craftsmanship', variant: 'grid', img: 'assets/products/golden-crystal-corset-with-skirt/1.jpg' },
+      { title: "Inside the Atelier: The Making of Écrin d'Or", tag: 'Craftsmanship', variant: 'grid', video: 'assets/video/atelier.mp4', poster: 'assets/video/atelier-poster.jpg' },
       { title: 'A Season of Statement Prêt-Couture', tag: 'Collection Story', variant: 'bloom', img: 'assets/products/starry-night-beaded-fringe-dress/1.jpg' },
       { title: 'Styling the Reine des Roses Gown', tag: 'Styling', variant: 'rose', img: 'assets/products/secret-rose-corset-gown/1.jpg' },
     ];
-    document.getElementById('journalPreview').innerHTML = journalPosts.map(j => `
+    document.getElementById('journalPreview').innerHTML = journalPosts.map(j => {
+      const media = j.video
+        ? `<video class="journal-video" autoplay muted loop playsinline poster="${j.poster}"><source src="${j.video}" type="video/mp4"></video>`
+        : `<img src="${assetPath(j.img)}" alt="${escapeHtml(j.title)}" loading="lazy" decoding="async" data-art-id="${escapeHtml(j.title)}" data-art-variant="${j.variant}" onerror="lrArtFallback(this)">`;
+      return `
       <a class="journal-card" href="journal.html">
-        <div class="art has-photo">
-          <img src="${assetPath(j.img)}" alt="${escapeHtml(j.title)}" loading="lazy" decoding="async" data-art-id="${escapeHtml(j.title)}" data-art-variant="${j.variant}" onerror="lrArtFallback(this)">
-        </div>
+        <div class="art has-photo">${media}</div>
         <span class="eyebrow">${j.tag}</span>
         <h3 style="margin:0;">${j.title}</h3>
-      </a>`).join('');
+      </a>`;
+    }).join('');
 
     initPlaceholderArt();
   });

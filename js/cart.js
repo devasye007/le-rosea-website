@@ -15,12 +15,24 @@ function writeCart(lines){
   updateCartCount();
 }
 
-function addToCart(productId, size, qty=1){
+// opts: { color, customMeasurements:{height,bust,waist,hip} }
+// Two lines only merge when product + size + colour + custom measurements all
+// match, so different colours (or different custom measurements) of the same
+// piece/size stay as separate cart lines.
+function addToCart(productId, size, qty=1, opts={}){
   const lines = readCart();
-  const key = productId + '|' + size;
+  const color = opts.color || null;
+  const custom = (size === 'Custom' && opts.customMeasurements) ? opts.customMeasurements : null;
+  const customSig = custom ? [custom.height, custom.bust, custom.waist, custom.hip].join('x') : '';
+  const key = [productId, size, color || '', customSig].join('|');
   const existing = lines.find(l => l.key === key);
   if (existing){ existing.qty += qty; }
-  else { lines.push({ key, productId, size, qty }); }
+  else {
+    const line = { key, productId, size, qty };
+    if (color) line.color = color;
+    if (custom) line.customMeasurements = custom;
+    lines.push(line);
+  }
   writeCart(lines);
   renderCartDrawer();
   openCart();
@@ -49,6 +61,31 @@ function cartCount(){
 
 function cartLinesWithData(){
   return readCart().map(l => ({ ...l, product: getProductById(l.productId) })).filter(l => l.product);
+}
+
+// A product view whose images/colourway reflect the line's chosen colour, so
+// cart/checkout thumbnails show the right variant.
+function lineProductView(line){
+  const p = line.product;
+  if (line.color && p.colors){
+    const imgs = (typeof colorImages === 'function') ? colorImages(p, line.color) : p.images;
+    return { ...p, images: imgs, colorway: line.color };
+  }
+  return p;
+}
+
+// "Size M · Sea Green" — colour appended only when the line carries one.
+function lineMetaLabel(line){
+  let label = 'Size ' + line.size;
+  if (line.color) label += ' · ' + line.color;
+  return label;
+}
+
+// Formatted custom measurements, or '' when the line isn't a custom order.
+function lineMeasurementsLabel(line){
+  const m = line.customMeasurements;
+  if (line.size !== 'Custom' || !m) return '';
+  return 'Height ' + m.height + ' · Bust ' + m.bust + ' · Waist ' + m.waist + ' · Hip ' + m.hip + ' (cm)';
 }
 
 function cartSubtotal(){
@@ -89,12 +126,15 @@ function renderCartDrawer(){
     return;
   }
   if (footer) footer.classList.remove('hidden');
-  container.innerHTML = lines.map(l => `
+  container.innerHTML = lines.map(l => {
+    const measure = lineMeasurementsLabel(l);
+    return `
     <div class="cart-line">
-      ${productImageBlock(l.product)}
+      ${productImageBlock(lineProductView(l))}
       <div class="cart-line-info">
         <span class="name">${l.product.name}</span>
-        <span class="meta">Size ${l.size} · ${formatINR(l.product.price)}</span>
+        <span class="meta">${escapeHtml(lineMetaLabel(l))} · ${formatINR(l.product.price)}</span>
+        ${measure ? `<span class="meta cart-line-measure">${escapeHtml(measure)}</span>` : ''}
         <div class="row">
           <div class="qty-control">
             <button aria-label="Decrease quantity" onclick="updateLineQty('${l.key}', ${l.qty - 1})">−</button>
@@ -105,7 +145,7 @@ function renderCartDrawer(){
         </div>
       </div>
     </div>
-  `).join('');
+  `;}).join('');
   initPlaceholderArt(container);
   const subtotalEl = document.getElementById('cartSubtotalValue');
   if (subtotalEl) subtotalEl.textContent = formatINR(cartSubtotal());
