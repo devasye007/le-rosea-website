@@ -74,11 +74,6 @@ function renderHeader(){
             </div>
           </div>
         </div>
-        <div class="home-collections-video" aria-label="Sky Fringe Gown campaign video">
-          <video class="home-collections-video-frame" autoplay muted loop playsinline preload="metadata" poster="assets/video/collections-poster.jpg">
-            <source src="assets/video/collections.mp4" type="video/mp4">
-          </video>
-        </div>
       </div>
     `;
     document.getElementById('cartToggle')?.addEventListener('click', openCart);
@@ -196,17 +191,14 @@ function runSearch(q){
 function setupCollectionsAccordion(){
   const toggle = document.querySelector('.home-collections-toggle');
   const panel = document.querySelector('.home-collections-panel');
-  const video = document.querySelector('.home-collections-video');
   if (!toggle || !panel) return;
   const mq = window.matchMedia('(max-width: 980px)');
   const applyMode = () => {
     if (mq.matches){
       panel.classList.add('is-collapsible');
-      video?.classList.add('is-collapsible');
       toggle.setAttribute('aria-expanded', panel.classList.contains('is-open') ? 'true' : 'false');
     } else {
       panel.classList.remove('is-collapsible', 'is-open');
-      video?.classList.remove('is-collapsible', 'is-open');
       toggle.removeAttribute('aria-expanded');
     }
   };
@@ -216,7 +208,6 @@ function setupCollectionsAccordion(){
     if (!mq.matches) return; // desktop: follow the link to the shop
     e.preventDefault();
     const open = panel.classList.toggle('is-open');
-    video?.classList.toggle('is-open', open);
     toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
   });
 }
@@ -259,6 +250,7 @@ function renderFooter(){
         <h4>Customer Care</h4>
         <ul>
           <li><a href="contact.html">Contact &amp; Appointments</a></li>
+          <li><a href="appointment.html">Book an Atelier Appointment</a></li>
           <li><a href="shipping-returns.html">Shipping &amp; Returns</a></li>
           <li><a href="policies.html">Terms &amp; Privacy</a></li>
         </ul>

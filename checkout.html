@@ -5,6 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Checkout - LE ROSÈA</title>
 <link rel="stylesheet" href="css/style.css">
+<style>
+  /* Phone field: fixed-width dial-code select + flexible number input. */
+  .phone-input{ display: flex; gap: 8px; }
+  .phone-input select{ width: auto; flex: 0 0 auto; max-width: 42%; }
+  .phone-input input{ flex: 1 1 auto; }
+  /* PIN suggestion hint below the PIN field. */
+  .pin-suggest{ font-size: 0.76rem; margin: 8px 0 0; color: var(--espresso); }
+  .pin-suggest a{ color: var(--gold-ink); text-decoration: underline; font-weight: 600; }
+  .pin-suggest .muted{ color: var(--taupe); }
+</style>
 </head>
 <body class="page-checkout">
 
@@ -24,18 +34,18 @@
           <h3>Contact</h3>
           <div class="field-row">
             <div class="field"><label for="fName">Full name</label><input id="fName" required></div>
-            <div class="field"><label for="fPhone">Phone</label><input id="fPhone" type="tel" required></div>
+            <div class="field"><label for="fPhone">Phone</label>
+              <div class="phone-input">
+                <select id="fPhoneCode" aria-label="Country dialing code"></select>
+                <input id="fPhone" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="10-digit number" pattern="[0-9 ]{6,15}" required>
+              </div>
+            </div>
           </div>
           <div class="field"><label for="fEmail">Email</label><input id="fEmail" type="email" required></div>
 
           <h3 style="margin-top:34px;">Shipping Address</h3>
           <div class="field"><label for="fAddr">Address</label><input id="fAddr" required></div>
           <div class="field-row">
-            <div class="field"><label for="fCity">City</label><input id="fCity" required></div>
-            <div class="field"><label for="fState">State</label><input id="fState" required></div>
-          </div>
-          <div class="field-row">
-            <div class="field"><label for="fPin">PIN / postal code</label><input id="fPin" required></div>
             <div class="field"><label for="fCountry">Country</label>
               <select id="fCountry">
                 <option>India</option>
@@ -45,19 +55,22 @@
                 <option>Other</option>
               </select>
             </div>
+            <div class="field"><label for="fState">State</label><div id="stateControl"></div></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label for="fCity">City</label><div id="cityControl"></div></div>
+            <div class="field"><label for="fPin">PIN / postal code</label>
+              <input id="fPin" inputmode="numeric" autocomplete="postal-code" required>
+              <p id="pinSuggest" class="pin-suggest hidden"></p>
+            </div>
           </div>
 
-          <h3 style="margin-top:34px;">Payment Method</h3>
-          <div class="pay-options" id="payOptions">
-            <label class="pay-opt selected"><input type="radio" name="pay" value="upi" checked> UPI</label>
-            <label class="pay-opt"><input type="radio" name="pay" value="card"> Credit / Debit Card</label>
-            <label class="pay-opt"><input type="radio" name="pay" value="cod"> Cash on Delivery</label>
-          </div>
-          <p style="font-size:0.76rem; color:var(--taupe); margin-top:-10px; margin-bottom:26px;">
-            Payment is processed securely at the next step. Made-to-order and customized pieces follow the lead time shown at checkout.
+          <p style="font-size:0.76rem; color:var(--taupe); margin-top:8px; margin-bottom:26px;">
+            You'll choose how to pay (UPI, card, netbanking or wallet) in the secure Razorpay window. Made-to-order and customized pieces follow the lead time shown at checkout.
           </p>
 
-          <button type="submit" class="btn btn-primary btn-block" id="placeOrderBtn">Place Order</button>
+          <button type="submit" class="btn btn-primary btn-block" id="placeOrderBtn">Pay</button>
+          <p id="checkoutError" class="hidden" role="alert" style="margin-top:14px; font-size:0.82rem; color:#b00020;"></p>
         </form>
 
         <aside class="order-summary">
@@ -93,7 +106,21 @@
 <script src="js/cart.js"></script>
 <script src="js/components.js"></script>
 <script src="js/motion.js"></script>
+<script src="js/checkout-data.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
+  const errorEl = document.getElementById('checkoutError');
+  const placeBtn = document.getElementById('placeOrderBtn');
+  function showError(msg){ errorEl.textContent = msg; errorEl.classList.remove('hidden'); }
+  function clearError(){ errorEl.textContent = ''; errorEl.classList.add('hidden'); }
+  function setBtn(label, disabled){ placeBtn.textContent = label; placeBtn.disabled = !!disabled; }
+  // The primary button always shows the live total, e.g. "Pay ₹14,999".
+  function payLabel(){ return 'Pay ' + formatINR(cartSubtotal()); }
+  function resetBtn(){
+    const empty = cartLinesWithData().length === 0;
+    setBtn(empty ? 'Your bag is empty' : payLabel(), empty);
+  }
+
   function renderSummary(){
     const lines = cartLinesWithData();
     document.getElementById('summaryLines').innerHTML = lines.map(l => {
@@ -112,24 +139,83 @@
     const subtotal = cartSubtotal();
     document.getElementById('sumSubtotal').textContent = formatINR(subtotal);
     document.getElementById('sumTotal').textContent = formatINR(subtotal);
+    resetBtn();
     initPlaceholderArt();
   }
 
-  document.querySelectorAll('.pay-opt').forEach(opt => opt.addEventListener('click', () => {
-    document.querySelectorAll('.pay-opt').forEach(o => o.classList.remove('selected'));
-    opt.classList.add('selected');
-  }));
+  // ---- Phone dial code + cascading Country → State → City → PIN ----
+  function isIndia(){ return document.getElementById('fCountry').value === 'India'; }
 
-  // NOTE for integration: this demo does not process a real payment.
-  // To go live, replace the block below with a call to your payment
-  // gateway (e.g. Razorpay Orders API / Stripe PaymentIntents) from a
-  // backend you control, and only show the confirmation view once that
-  // backend confirms the payment succeeded and the order is persisted.
-  function placeOrder(e){
-    e.preventDefault();
-    if (cartLinesWithData().length === 0){ return; }
-    const orderId = 'LR' + Math.floor(100000 + Math.random()*900000);
-    document.getElementById('confirmOrderId').textContent = '#' + orderId;
+  function populatePhoneCodes(){
+    const sel = document.getElementById('fPhoneCode');
+    sel.innerHTML = DIAL_CODES.map(d =>
+      `<option value="${d.code}"${d.code === '+91' ? ' selected' : ''}>${d.code} ${escapeHtml(d.name)}</option>`
+    ).join('');
+  }
+
+  function renderStateField(){
+    const control = document.getElementById('stateControl');
+    if (isIndia()){
+      const states = Object.keys(INDIA_STATES).sort();
+      control.innerHTML = '<select id="fState" required><option value="" disabled selected>Select state</option>' +
+        states.map(s => `<option>${escapeHtml(s)}</option>`).join('') + '</select>';
+      document.getElementById('fState').addEventListener('change', renderCityField);
+    } else {
+      control.innerHTML = '<input id="fState" required>';
+    }
+    renderCityField();
+  }
+
+  function renderCityField(){
+    const control = document.getElementById('cityControl');
+    if (isIndia()){
+      const stateEl = document.getElementById('fState');
+      const cities = (stateEl && INDIA_STATES[stateEl.value]) || [];
+      if (cities.length){
+        control.innerHTML = '<select id="fCity" required><option value="" disabled selected>Select city</option>' +
+          cities.slice().sort().map(c => `<option>${escapeHtml(c)}</option>`).join('') + '</select>';
+        document.getElementById('fCity').addEventListener('change', suggestPin);
+      } else {
+        control.innerHTML = '<select id="fCity" required disabled><option value="" disabled selected>Select a state first</option></select>';
+      }
+    } else {
+      control.innerHTML = '<input id="fCity" required>';
+    }
+    clearPinSuggestion();
+  }
+
+  function clearPinSuggestion(){
+    const box = document.getElementById('pinSuggest');
+    box.classList.add('hidden');
+    box.innerHTML = '';
+  }
+
+  // Show a PIN suggestion the customer can accept or overwrite — never forced,
+  // since one city can have many PIN codes.
+  function suggestPin(){
+    const box = document.getElementById('pinSuggest');
+    const cityEl = document.getElementById('fCity');
+    if (!isIndia() || !cityEl){ clearPinSuggestion(); return; }
+    const pin = INDIA_CITY_PIN[cityEl.value];
+    if (!pin){ clearPinSuggestion(); return; }
+    box.innerHTML = `Suggested PIN for ${escapeHtml(cityEl.value)}: <strong>${pin}</strong> ` +
+      `<a href="#" id="pinUse">Use this</a> <span class="muted">— edit if yours differs</span>`;
+    box.classList.remove('hidden');
+    document.getElementById('pinUse').addEventListener('click', (e) => {
+      e.preventDefault();
+      document.getElementById('fPin').value = pin;
+    });
+  }
+
+  // Full phone number = selected dial code + the digits the customer typed.
+  function fullPhone(){
+    const code = document.getElementById('fPhoneCode').value;
+    const digits = (document.getElementById('fPhone').value || '').replace(/\D/g, '');
+    return code + digits;
+  }
+
+  function finishOrder(orderRef){
+    document.getElementById('confirmOrderId').textContent = '#' + orderRef;
     document.getElementById('confirmRose').innerHTML = ICONS.rose;
     document.getElementById('checkoutView').classList.add('hidden');
     document.getElementById('confirmView').classList.remove('hidden');
@@ -137,8 +223,145 @@
     window.scrollTo({top: 0, behavior: 'smooth'});
   }
 
+  // Razorpay Standard Checkout. The amount is derived server-side from a real
+  // order; the browser only ever sees the publishable key_id. The signature
+  // Razorpay returns is verified by /api/verify-payment before we treat the
+  // order as paid.
+  async function payWithRazorpay(){
+    const amountPaise = Math.round(cartSubtotal() * 100);
+    setBtn('Starting secure payment…', true);
+
+    const orderPayload = {
+      amount: amountPaise,
+      currency: 'INR',
+      receipt: 'LR' + Date.now(),
+      notes: {
+        name: document.getElementById('fName').value,
+        phone: fullPhone(),
+        address: document.getElementById('fAddr').value,
+        city: (document.getElementById('fCity') || {}).value || '',
+        state: (document.getElementById('fState') || {}).value || '',
+        pin: document.getElementById('fPin').value,
+        country: document.getElementById('fCountry').value
+      }
+    };
+
+    // --- Create the order (this is the call that was failing before) ---
+    let res;
+    try {
+      res = await fetch('/api/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderPayload)
+      });
+    } catch (netErr) {
+      // fetch() only rejects on a network-level failure (server not running,
+      // DNS, connection refused, offline) — NOT on HTTP error status codes.
+      console.error('[checkout] create-order network failure:', netErr);
+      showError('Could not reach the server. Make sure the backend is running (npm start), then retry.');
+      resetBtn();
+      return;
+    }
+
+    let data = {};
+    try { data = await res.json(); } catch (parseErr) {
+      console.error('[checkout] create-order returned non-JSON (HTTP ' + res.status + ')', parseErr);
+    }
+
+    if (!res.ok){
+      // Surface the real reason instead of one generic string.
+      console.error('[checkout] create-order failed — HTTP', res.status, data);
+      const reason = (data && data.error) ? data.error : ('HTTP ' + res.status);
+      if (res.status === 401){
+        showError('The payment gateway rejected the request (authentication). Check RAZORPAY_KEY_ID / KEY_SECRET in .env.');
+      } else if (res.status >= 500){
+        showError('The payment gateway could not create the order (' + reason + '). Please try again shortly.');
+      } else {
+        showError('Could not start payment: ' + reason);
+      }
+      resetBtn();
+      return;
+    }
+
+    const order = data;
+
+    if (typeof Razorpay === 'undefined'){
+      console.error('[checkout] Razorpay checkout.js did not load');
+      showError('The payment library could not load. Check your connection and retry.');
+      resetBtn();
+      return;
+    }
+
+    const rzp = new Razorpay({
+      key: order.key_id,
+      order_id: order.order_id,
+      amount: order.amount,
+      currency: order.currency,
+      name: 'LE ROSÈA',
+      description: 'Prêt-couture order',
+      image: 'assets/logo.png',
+      prefill: {
+        name: document.getElementById('fName').value,
+        email: document.getElementById('fEmail').value,
+        contact: fullPhone()
+      },
+      theme: { color: '#B6944D' },
+      handler: async function(response){
+        setBtn('Confirming payment…', true);
+        try {
+          const vr = await fetch('/api/verify-payment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(response)
+          });
+          const vdata = await vr.json().catch(() => ({}));
+          if (vr.ok && vdata.success){
+            clearError();
+            finishOrder(response.razorpay_order_id);
+          } else {
+            console.error('[checkout] verify-payment failed — HTTP', vr.status, vdata);
+            showError('Payment could not be verified. If any amount was debited it will be refunded automatically.');
+            resetBtn();
+          }
+        } catch (verifyErr){
+          console.error('[checkout] verify-payment network failure:', verifyErr);
+          showError('We could not confirm the payment. Please contact us before retrying.');
+          resetBtn();
+        }
+      },
+      modal: {
+        ondismiss: function(){
+          showError('Payment cancelled. Your bag has been kept so you can try again.');
+          resetBtn();
+        }
+      }
+    });
+
+    rzp.on('payment.failed', function(resp){
+      const desc = resp && resp.error && resp.error.description;
+      console.error('[checkout] payment.failed:', resp && resp.error);
+      showError(desc || 'The payment failed. Please try a different method.');
+      resetBtn();
+    });
+
+    clearError();
+    rzp.open();
+  }
+
+  function placeOrder(e){
+    e.preventDefault();
+    clearError();
+    if (cartLinesWithData().length === 0){ showError('Your bag is empty.'); return; }
+    payWithRazorpay();
+  }
+
+  document.getElementById('fCountry').addEventListener('change', renderStateField);
   document.getElementById('checkoutForm').addEventListener('submit', placeOrder);
-  document.addEventListener('DOMContentLoaded', renderSummary);
+  document.addEventListener('DOMContentLoaded', () => {
+    populatePhoneCodes();
+    renderStateField();
+    renderSummary();
+  });
 </script>
 </body>
 </html>

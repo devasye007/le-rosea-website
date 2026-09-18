@@ -49,12 +49,15 @@ const PRODUCTS = [
     isBestseller: true,
     fabric: 'Embroidered mesh with Lycra lining',
     embellishment: 'Sequins, cutdana and cutdana latkans',
-    description: 'An intricately hand-embroidered set featuring shimmering sequins, cutdana and cascading latkans, designed to catch the light and move beautifully with the body. Available in sea green and pink.',
+    description: 'An intricately hand-embroidered set featuring shimmering sequins, cutdana and cascading latkans, designed to catch the light and move beautifully with the body. Available in sea green, lavender and pink.',
     fit: 'Fitted crop top with mini skirt.',
     artVariant: 'bloom',
+    // Group campaign shot used on cards/grids; per-colour galleries below.
+    cardImage: 'assets/products/sequins-rush-set-trio.jpg',
     images: ['assets/products/sequins-rush-set-sea-green/1.jpg', 'assets/products/sequins-rush-set-sea-green/2.jpg', 'assets/products/sequins-rush-set-sea-green/3.jpg'],
     colors: [
       { name: 'Sea Green', swatch: '#3F8374', images: ['assets/products/sequins-rush-set-sea-green/1.jpg', 'assets/products/sequins-rush-set-sea-green/2.jpg', 'assets/products/sequins-rush-set-sea-green/3.jpg'], video: null },
+      { name: 'Lavender', swatch: '#B7A6DA', images: ['assets/products/sequins-rush-set-trio.jpg'], video: null },
       { name: 'Pink', swatch: '#E48CB2', images: ['assets/products/sequins-rush-set-pink/1.jpg', 'assets/products/sequins-rush-set-pink/2.jpg', 'assets/products/sequins-rush-set-pink/3.jpg', 'assets/products/sequins-rush-set-pink/4.jpg', 'assets/products/sequins-rush-set-pink/5.jpg', 'assets/products/sequins-rush-set-pink/6.jpg', 'assets/products/sequins-rush-set-pink/7.jpg'], video: null },
     ],
   }),
@@ -73,6 +76,8 @@ const PRODUCTS = [
     description: 'An elegant mini dress elevated with intricate hand embroidery, sparkling sequins and cascading fringe for statement evening dressing. Available in sea green, lavender and pink.',
     fit: 'Fitted mini dress with fine shoulder straps.',
     artVariant: 'drape',
+    // Group campaign shot used on cards/grids; per-colour galleries below.
+    cardImage: 'assets/products/fringe-mini-dress-trio.jpg',
     images: ['assets/products/fringe-mini-dress-sea-green/1.jpg', 'assets/products/fringe-mini-dress-sea-green/2.jpg', 'assets/products/fringe-mini-dress-sea-green/3.jpg'],
     colors: [
       { name: 'Sea Green', swatch: '#3F8374', images: ['assets/products/fringe-mini-dress-sea-green/1.jpg', 'assets/products/fringe-mini-dress-sea-green/2.jpg', 'assets/products/fringe-mini-dress-sea-green/3.jpg'], video: null },
@@ -537,6 +542,9 @@ function escapeHtml(value){
 // Real photo when a product has matched photography; otherwise fall back to the
 // generated SVG placeholder handled by js/placeholder-art.js (.art[data-art]).
 function primaryImage(product){
+  // Prefer a dedicated card/campaign image when set (e.g. multi-colour group
+  // shots); cart/checkout thumbnails strip cardImage so they show the variant.
+  if (product && product.cardImage) return product.cardImage;
   return (product && product.images && product.images.length) ? product.images[0] : '';
 }
 

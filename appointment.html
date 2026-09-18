@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book an Atelier Appointment - LE ROSÈA</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="page-contact">
+
+<div id="site-header"></div>
+
+<section class="section-tight">
+  <div class="container">
+    <div class="section-head center">
+      <span class="eyebrow">By Appointment</span>
+      <h1>Book an Atelier Appointment</h1>
+      <p class="lede center">Meet the House for a private styling or fitting session. Share a few details and a member of our team will confirm your slot.</p>
+    </div>
+
+    <div class="split">
+      <form id="appointmentForm">
+        <div class="field-row">
+          <div class="field"><label for="aName">Full name</label><input id="aName" required></div>
+          <div class="field"><label for="aPhone">Phone</label>
+            <div class="phone-input">
+              <select id="aPhoneCode" aria-label="Country dialing code"></select>
+              <input id="aPhone" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="10-digit number" pattern="[0-9 ]{6,15}" required>
+            </div>
+          </div>
+        </div>
+        <div class="field"><label for="aEmail">Email</label><input id="aEmail" type="email" required></div>
+        <div class="field-row">
+          <div class="field"><label for="aDate">Preferred date</label><input id="aDate" type="date" required></div>
+          <div class="field"><label for="aTime">Preferred time</label>
+            <select id="aTime" required>
+              <option value="" disabled selected>Select a slot</option>
+              <option>11:00 AM</option>
+              <option>12:00 PM</option>
+              <option>1:00 PM</option>
+              <option>2:00 PM</option>
+              <option>3:00 PM</option>
+              <option>4:00 PM</option>
+              <option>5:00 PM</option>
+              <option>6:00 PM</option>
+              <option>7:00 PM</option>
+            </select>
+          </div>
+        </div>
+        <div class="field"><label for="aNote">Note (occasion, pieces of interest, anything we should know)</label><textarea id="aNote" rows="5"></textarea></div>
+        <button type="submit" class="btn btn-primary btn-block" id="apptSubmit">Request Appointment</button>
+        <p id="apptSent" class="hidden" style="margin-top:14px; font-size:0.86rem; color:var(--gold);">Thank you — your appointment request has been received. A member of the House will be in touch shortly to confirm.</p>
+      </form>
+
+      <div>
+        <h3 class="mt-0">The Atelier</h3>
+        <p>Our appointments are one-to-one sessions for styling advice, made-to-order consultations and fittings. Tell us what you have in mind and we'll tailor the visit.</p>
+        <ul style="list-style:none; padding:0; display:flex; flex-direction:column; gap:22px; margin:26px 0 0;">
+          <li>
+            <span class="eyebrow" style="display:block; margin-bottom:4px;">Phone / WhatsApp</span>
+            <a href="https://wa.me/919599428824" target="_blank" rel="noopener" class="text-link">+91 95994 28824</a>
+          </li>
+          <li>
+            <span class="eyebrow" style="display:block; margin-bottom:4px;">Email</span>
+            <a href="mailto:office@lerosea.com" class="text-link">office@lerosea.com</a>
+          </li>
+          <li>
+            <span class="eyebrow" style="display:block; margin-bottom:4px;">Hours</span>
+            <span>Mon–Sat, 11:00 – 19:00 IST</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div id="site-footer"></div>
+
+<script src="js/icons.js"></script>
+<script src="js/products.js"></script>
+<script src="js/placeholder-art.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/components.js"></script>
+<script src="js/motion.js"></script>
+<script src="js/checkout-data.js"></script>
+<script>
+  // Reuse the shared dial-code list (js/checkout-data.js) so the phone control
+  // matches checkout. Default to +91 India.
+  (function populateApptDialCodes(){
+    const sel = document.getElementById('aPhoneCode');
+    if (!sel || typeof DIAL_CODES === 'undefined') return;
+    sel.innerHTML = DIAL_CODES.map(d =>
+      `<option value="${d.code}"${d.code === '+91' ? ' selected' : ''}>${d.code} ${escapeHtml(d.name)}</option>`
+    ).join('');
+  })();
+
+  // Don't allow past dates for the preferred date.
+  (function setMinDate(){
+    const d = document.getElementById('aDate');
+    if (d) d.min = new Date().toISOString().split('T')[0];
+  })();
+
+  document.getElementById('appointmentForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    // NOTE: mirrors the contact.html pattern — this confirms client-side only.
+    // TODO (needs a backend): deliver the request to the House, e.g. send an
+    // email via a mail service (Resend/SendGrid) from a serverless function,
+    // or create a note/task in a CRM. No customer data is stored client-side.
+    const code = document.getElementById('aPhoneCode').value;
+    const phone = code + (document.getElementById('aPhone').value || '').replace(/\D/g, '');
+    console.log('[appointment] request (not yet delivered to a backend):', {
+      name: document.getElementById('aName').value,
+      email: document.getElementById('aEmail').value,
+      phone: phone,
+      date: document.getElementById('aDate').value,
+      time: document.getElementById('aTime').value,
+      note: document.getElementById('aNote').value
+    });
+    document.getElementById('apptSent').classList.remove('hidden');
+    const btn = document.getElementById('apptSubmit');
+    btn.textContent = 'Request Sent';
+    btn.disabled = true;
+  });
+</script>
+</body>
+</html>

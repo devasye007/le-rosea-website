@@ -2,6 +2,12 @@
 .DS_Store
 **/.DS_Store
 
+# Secrets & Node deps (Razorpay serverless functions)
+.env
+.env.*
+node_modules/
+.vercel
+
 # Source originals — NOT used by the site (photos are copied/compressed into
 # assets/products/ and the hero into assets/video/). ~2GB, keep out of git.
 le-rosea images/
@@ -18,6 +24,10 @@ pricing1.png
 
 # Standalone size chart image (not wired into the site)
 SIZE_CHART.png
+
+# Full-res campaign originals — optimized copies live in assets/products/
+sequinsrushtrio.jpeg
+fringeminitrio.jpeg
 
 # Raw unencoded footage
 craftsman.MP4

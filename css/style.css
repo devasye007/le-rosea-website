@@ -364,23 +364,6 @@ body.homepage #site-header{
   gap: 0;
   padding: 28px 38px;
 }
-.home-collections-video{
-  margin: 0 auto;
-  max-width: 1440px;
-  border-left: 1px solid rgba(176,138,60,0.18);
-  border-right: 1px solid rgba(176,138,60,0.18);
-  border-bottom: 1px solid rgba(176,138,60,0.18);
-  overflow: hidden;
-  aspect-ratio: 16 / 9;
-  border-radius: var(--radius);
-}
-.home-collections-video-frame{
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: cover;
-  background: linear-gradient(140deg, #f7efe1 0%, #e9d4b8 100%);
-}
 .home-collections-col{
   text-align: center;
 }
@@ -691,9 +674,6 @@ body.homepage #site-header{
   .home-collections-panel{
     grid-template-columns: 1fr;
     padding: 26px 24px;
-  }
-  .home-collections-video-frame{
-    aspect-ratio: 16 / 9;
   }
   .home-collections-divider{
     display: none;
@@ -1609,6 +1589,25 @@ body.homepage #site-header{
 .field-row{ display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 @media (max-width: 560px){ .field-row{ grid-template-columns: 1fr; } }
 
+/* Phone field: fixed-width dial-code select + flexible number input.
+   Shared by checkout.html and appointment.html. */
+.phone-input{ display: flex; gap: 8px; }
+.phone-input select{ width: auto; flex: 0 0 auto; max-width: 42%; }
+.phone-input input{ flex: 1 1 auto; }
+
+/* Reviews stub (product.html) — placeholder until a reviews app is chosen. */
+.reviews-placeholder{
+  border: var(--border-hair);
+  border-radius: var(--radius);
+  padding: 28px 30px;
+  background: var(--white);
+  color: var(--taupe);
+  font-size: 0.92rem;
+  line-height: 1.7;
+  max-width: 720px;
+}
+.reviews-placeholder .reviews-note{ margin-bottom: 0; }
+
 .pay-options{ display: grid; gap: 10px; margin-bottom: 26px; }
 .pay-opt{ display: flex; align-items: center; gap: 12px; border: var(--border-hair); border-radius: var(--radius); padding: 14px 16px; cursor: pointer; font-size: 0.88rem; }
 .pay-opt input{ accent-color: var(--espresso); }
@@ -1692,8 +1691,7 @@ p,
 .cart-line-info .meta,
 .footer-brand p,
 .feature-card p,
-.delivery-note,
-.home-collections-video-copy span:last-child{
+.delivery-note{
   color: rgba(242,230,214,0.82);
 }
 
@@ -1846,12 +1844,6 @@ body > section:nth-of-type(even) .section-head .eyebrow{
   border: 1px solid rgba(182,148,77,0.16);
   box-shadow: 0 18px 48px rgba(0,0,0,0.32);
 }
-.home-collections-video{
-  border-left: 1px solid rgba(182,148,77,0.16);
-  border-right: 1px solid rgba(182,148,77,0.16);
-  border-bottom: 1px solid rgba(182,148,77,0.16);
-  box-shadow: 0 24px 56px rgba(0,0,0,0.34);
-}
 .home-collections-col h3{
   color: var(--gold);
 }
@@ -1861,9 +1853,6 @@ body > section:nth-of-type(even) .section-head .eyebrow{
 }
 .home-collections-links span{
   background: rgba(182,148,77,0.28);
-}
-.home-collections-video-frame{
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.2)), #0f0c0b;
 }
 
 .product-grid .product-card,
@@ -1933,7 +1922,6 @@ body > section:nth-of-type(even) .section-head .eyebrow{
 .contact-card,
 .journal-card,
 .home-collections-panel,
-.home-collections-video,
 .media-stage{
   background: rgba(13,10,9,0.72);
   border-color: rgba(242,230,214,0.09);
@@ -2355,12 +2343,6 @@ body > section:nth-of-type(even) .eyebrow{
   color: rgba(242,230,214,0.8);
   font-size: 0.68rem;
   letter-spacing: 0.18em;
-}
-.home-collections-video{
-  border-left-color: rgba(182,148,77,0.12);
-  border-right-color: rgba(182,148,77,0.12);
-  border-bottom-color: rgba(182,148,77,0.12);
-  box-shadow: 0 24px 58px rgba(0,0,0,0.28);
 }
 
 .product-grid,
@@ -2889,7 +2871,6 @@ body.homepage #site-header{
 .home-collections-links,
 .home-collections-links a{ color: var(--espresso); }
 .home-collections-links span{ background: rgba(182,148,77,0.30); }
-.home-collections-video-frame{ background: #EAE0CE; }
 
 /* ---- Home hero ---- */
 .opening-hero{
@@ -3095,10 +3076,8 @@ body > section.hero .eyebrow{ color: var(--gold); }
 
 /* ---- Mobile: collapse the home collections mega-menu into a tap accordion ---- */
 @media (max-width: 980px){
-  .home-collections-panel.is-collapsible,
-  .home-collections-video.is-collapsible{ display: none; }
+  .home-collections-panel.is-collapsible{ display: none; }
   .home-collections-panel.is-collapsible.is-open{ display: grid; }
-  .home-collections-video.is-collapsible.is-open{ display: block; }
   .home-collections-toggle span{ transition: transform 300ms var(--ease-premium); }
   .home-collections-toggle[aria-expanded="true"] span{ transform: rotate(180deg); }
 }

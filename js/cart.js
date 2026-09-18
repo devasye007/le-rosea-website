@@ -69,7 +69,9 @@ function lineProductView(line){
   const p = line.product;
   if (line.color && p.colors){
     const imgs = (typeof colorImages === 'function') ? colorImages(p, line.color) : p.images;
-    return { ...p, images: imgs, colorway: line.color };
+    // Drop cardImage so the thumbnail shows the chosen colour, not the group shot.
+    const { cardImage, ...rest } = p;
+    return { ...rest, images: imgs, colorway: line.color };
   }
   return p;
 }

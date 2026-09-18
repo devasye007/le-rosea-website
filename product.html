@@ -16,6 +16,31 @@
   </div>
 </section>
 
+<!-- ================================================================
+     REVIEWS — STUB ONLY. PENDING A REVIEWS-APP DECISION.
+     Do NOT build custom review storage here. Recommendation: Judge.me
+     (free tier) in headless/API mode, which works outside Shopify's
+     theme editor and exposes a REST/GraphQL API + a widget you can mount.
+     Once the app is chosen & installed:
+       - mount its widget/data into #reviewsMount
+         (product id is set on data-product-id by the inline script), and
+       - remove the placeholder copy below.
+     The matching account-area "Reviews" tab is deferred with the rest of
+     the account/login area (blocked on the Shopify/auth decision).
+     ================================================================ -->
+<section class="section-tight" id="reviewsSection" aria-label="Customer reviews">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Rate &amp; Reviews</span>
+      <h2 class="mt-0">What Our Clients Say</h2>
+    </div>
+    <div id="reviewsMount" class="reviews-placeholder">
+      <p>Verified client reviews are coming soon — we're adding them through a dedicated reviews service.</p>
+      <p class="reviews-note">Worn this piece? We'd love to hear from you — <a href="contact.html">share your experience</a>.</p>
+    </div>
+  </div>
+</section>
+
 <section class="section-tight" id="relatedSection">
   <div class="container">
     <div class="section-head">
@@ -37,6 +62,13 @@
 <script>
   const params = new URLSearchParams(location.search);
   const product = getProductById(params.get('id')) || PRODUCTS[0];
+
+  // Tag the reviews mount with the product id for the future reviews app
+  // (see the REVIEWS stub comment above #reviewsSection).
+  (function tagReviewsMount(){
+    const mount = document.getElementById('reviewsMount');
+    if (mount) mount.dataset.productId = product.id;
+  })();
 
   // Merged multi-colour products carry a colors[] array; single-colour products
   // fall back to their top-level colorway/images.
