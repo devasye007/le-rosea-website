@@ -1608,6 +1608,72 @@ body.homepage #site-header{
 }
 .reviews-placeholder .reviews-note{ margin-bottom: 0; }
 
+/* ---- Account area (account.html) ---- */
+.account-preview-note{
+  border: var(--border-hair);
+  border-left: 3px solid var(--gold);
+  border-radius: var(--radius);
+  background: var(--sand);
+  padding: 14px 18px;
+  font-size: 0.86rem;
+  line-height: 1.6;
+  color: var(--espresso);
+  margin-bottom: 30px;
+}
+.account-layout{ display: grid; grid-template-columns: 230px 1fr; gap: 40px; align-items: start; }
+@media (max-width: 760px){ .account-layout{ grid-template-columns: 1fr; gap: 24px; } }
+.account-nav{ display: flex; flex-direction: column; gap: 4px; position: sticky; top: 100px; }
+@media (max-width: 760px){ .account-nav{ position: static; } }
+.account-nav button,
+.account-nav .account-nav-link{
+  text-align: left; background: transparent; border: none;
+  border-left: 2px solid transparent; padding: 11px 14px;
+  font-family: var(--sans); font-size: 0.86rem; letter-spacing: 0.04em;
+  color: var(--taupe); cursor: pointer;
+  border-radius: 0 var(--radius) var(--radius) 0; text-decoration: none;
+}
+.account-nav button:hover,
+.account-nav .account-nav-link:hover{ color: var(--espresso); background: var(--sand); }
+.account-nav button.active{ color: var(--espresso); border-left-color: var(--gold); background: var(--sand); font-weight: 600; }
+.account-panels [data-panel]{ max-width: 640px; }
+.account-hint{ font-size: 0.8rem; color: var(--taupe); line-height: 1.6; }
+.account-empty{ color: var(--taupe); font-size: 0.9rem; }
+.account-inline-msg{ margin-top: 14px; font-size: 0.82rem; color: var(--gold-ink); line-height: 1.6; }
+
+.address-list{ display: flex; flex-direction: column; gap: 14px; }
+.address-card{
+  display: flex; justify-content: space-between; gap: 16px;
+  border: var(--border-hair); border-radius: var(--radius);
+  padding: 16px 18px; background: var(--white); font-size: 0.85rem; line-height: 1.6;
+}
+.address-card strong{ display: block; margin-bottom: 4px; }
+.address-actions{ display: flex; flex-direction: column; gap: 8px; flex: 0 0 auto; }
+.address-actions button{
+  background: transparent; border: var(--border-hair); border-radius: var(--radius);
+  padding: 6px 14px; font-size: 0.74rem; cursor: pointer; color: var(--espresso);
+}
+.address-actions button:hover{ border-color: var(--gold); }
+
+.order-history{ display: flex; flex-direction: column; gap: 16px; margin: 18px 0; }
+.order-hist-card{ border: var(--border-hair); border-radius: var(--radius); padding: 18px 20px; background: var(--white); }
+.order-hist-card.is-sample{ border-style: dashed; }
+.order-hist-head{ display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 14px; flex-wrap: wrap; }
+.order-hist-meta{ display: flex; flex-direction: column; gap: 6px; align-items: flex-end; font-size: 0.82rem; }
+.order-status{ font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 10px; border-radius: 999px; }
+.status-fulfilled{ background: rgba(63,131,116,0.14); color: #2f6558; }
+.order-hist-lines{ display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem; border-top: var(--border-hair); padding-top: 12px; }
+.order-hist-line{ display: flex; justify-content: space-between; gap: 12px; }
+.refund-line{ color: var(--gold-ink); }
+.order-detail-link{ display: inline-block; margin-top: 14px; font-size: 0.78rem; letter-spacing: 0.06em; color: var(--taupe); }
+
+.danger-zone{ margin-top: 40px; border: 1px solid rgba(155,27,46,0.28); border-radius: var(--radius); padding: 20px 22px; background: rgba(155,27,46,0.03); }
+.danger-zone h3{ margin-top: 0; color: #9b1b2e; }
+.btn-ghost{ background: transparent; margin-left: 10px; }
+.btn-danger{ background: #9b1b2e; border-color: #9b1b2e; color: #fff; }
+.btn-danger:hover{ background: #7d1525; border-color: #7d1525; color: #fff; }
+.btn-danger:disabled{ opacity: 0.4; cursor: not-allowed; }
+.btn-danger:disabled:hover{ transform: none; box-shadow: none; background: #9b1b2e; }
+
 .pay-options{ display: grid; gap: 10px; margin-bottom: 26px; }
 .pay-opt{ display: flex; align-items: center; gap: 12px; border: var(--border-hair); border-radius: var(--radius); padding: 14px 16px; cursor: pointer; font-size: 0.88rem; }
 .pay-opt input{ accent-color: var(--espresso); }

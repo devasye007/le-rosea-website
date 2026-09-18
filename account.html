@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Account - LE ROSÈA</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="page-account">
+
+<div id="site-header"></div>
+
+<section class="section-tight">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">My Account</span>
+      <h1 class="mt-0">Account</h1>
+    </div>
+
+    <!-- Preview banner: no auth yet. Shopify Customer Accounts login is deferred;
+         for now this area is a working preview backed by this browser only. -->
+    <div class="account-preview-note">
+      <strong>Preview.</strong> Secure sign-in connects to Shopify Customer Accounts later.
+      For now this is a preview so you can see the sections — any changes are saved to
+      <em>this browser only</em> and never leave your device.
+    </div>
+
+    <div class="account-layout">
+      <nav class="account-nav" aria-label="Account sections">
+        <button type="button" data-tab="info" class="active">Account Info</button>
+        <button type="button" data-tab="addresses">Saved Addresses</button>
+        <button type="button" data-tab="orders">Orders &amp; Refunds</button>
+        <button type="button" data-tab="reviews">Reviews</button>
+        <a href="appointment.html" class="account-nav-link">Book an Appointment &rsaquo;</a>
+        <button type="button" data-tab="security">Sign out &amp; Security</button>
+      </nav>
+
+      <div class="account-panels">
+
+        <!-- ACCOUNT INFO -->
+        <section data-panel="info">
+          <h2 class="mt-0">Account Information</h2>
+          <form id="profileForm">
+            <div class="field"><label for="pName">Full name</label><input id="pName" required></div>
+            <div class="field-row">
+              <div class="field"><label for="pPhone">Phone</label>
+                <div class="phone-input">
+                  <select id="pPhoneCode" aria-label="Country dialing code"></select>
+                  <input id="pPhone" type="tel" inputmode="numeric" placeholder="10-digit number" pattern="[0-9 ]{6,15}">
+                </div>
+              </div>
+              <div class="field"><label for="pBirthday">Birthday</label><input id="pBirthday" type="date"></div>
+            </div>
+            <div class="field"><label for="pEmail">Email</label><input id="pEmail" type="email" placeholder="(managed by your sign-in — read only once Shopify is connected)"></div>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+            <p id="profileSaved" class="account-inline-msg hidden">Saved to this browser. Will sync to Shopify (name &amp; phone via the Customer Account API, birthday as a <code>custom.birthday</code> metafield) once connected.</p>
+          </form>
+        </section>
+
+        <!-- SAVED ADDRESSES -->
+        <section data-panel="addresses" class="hidden">
+          <h2 class="mt-0">Saved Addresses</h2>
+          <div id="addressList" class="address-list"></div>
+
+          <h3 id="addressFormTitle" style="margin-top:30px;">Add an address</h3>
+          <form id="addressForm">
+            <div class="field-row">
+              <div class="field"><label for="adrLabel">Label</label>
+                <select id="adrLabel"><option>Home</option><option>Work</option><option>Other</option></select>
+              </div>
+              <div class="field"><label for="adrName">Full name</label><input id="adrName" required></div>
+            </div>
+            <div class="field"><label for="adrPhone">Phone</label>
+              <div class="phone-input">
+                <select id="adrPhoneCode" aria-label="Country dialing code"></select>
+                <input id="adrPhone" type="tel" inputmode="numeric" placeholder="10-digit number" pattern="[0-9 ]{6,15}" required>
+              </div>
+            </div>
+            <div class="field"><label for="adrLine">Address</label><input id="adrLine" required></div>
+            <div class="field-row">
+              <div class="field"><label for="adrCountry">Country</label>
+                <select id="adrCountry">
+                  <option>India</option>
+                  <option>United States</option>
+                  <option>United Kingdom</option>
+                  <option>United Arab Emirates</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="field"><label for="adrState">State</label><div id="adrStateControl"></div></div>
+            </div>
+            <div class="field-row">
+              <div class="field"><label for="adrCity">City</label><div id="adrCityControl"></div></div>
+              <div class="field"><label for="adrPin">PIN / postal code</label>
+                <input id="adrPin" inputmode="numeric" required>
+                <p id="adrPinSuggest" class="pin-suggest hidden"></p>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary" id="addressSubmit">Save address</button>
+            <button type="button" class="btn btn-ghost" id="addressCancel" style="display:none;">Cancel edit</button>
+          </form>
+          <p class="account-hint">Once Shopify is connected, these will use your native Shopify address book (add / edit / delete synced to your account).</p>
+        </section>
+
+        <!-- ORDERS & REFUNDS -->
+        <section data-panel="orders" class="hidden">
+          <h2 class="mt-0">Orders &amp; Refunds</h2>
+          <p class="account-hint">Your real order history — items, status, totals and any refunds per item — will appear here once you're signed in and Shopify is connected. Below is an <strong>example</strong> of the layout.</p>
+          <div class="order-history">
+            <div class="order-hist-card is-sample">
+              <div class="order-hist-head">
+                <div>
+                  <span class="eyebrow">Order</span>
+                  <strong>#LR-EXAMPLE-1042</strong>
+                </div>
+                <div class="order-hist-meta">
+                  <span class="order-status status-fulfilled">Fulfilled</span>
+                  <span>Total: <strong>₹24,999</strong></span>
+                </div>
+              </div>
+              <div class="order-hist-lines">
+                <div class="order-hist-line">
+                  <span>Wildflower Co-ord Set · Size M</span>
+                  <span>₹24,500</span>
+                </div>
+                <div class="order-hist-line">
+                  <span>Shipping</span>
+                  <span>₹499</span>
+                </div>
+                <div class="order-hist-line refund-line">
+                  <span>Refund — Wildflower Co-ord Set (returned)</span>
+                  <span>−₹24,500 · Refunded</span>
+                </div>
+              </div>
+              <span class="order-detail-link">Sample · View order detail &rsaquo;</span>
+            </div>
+          </div>
+          <p class="account-hint">Refund status and amounts come straight from Shopify's order object — no separate refunds system is needed.</p>
+        </section>
+
+        <!-- REVIEWS -->
+        <section data-panel="reviews" class="hidden">
+          <h2 class="mt-0">Reviews</h2>
+          <!-- TODO: Reviews pending a reviews-app decision (recommend Judge.me free
+               tier, headless/API mode). Do not build custom review storage. This
+               tab will list the customer's submitted reviews via that app. -->
+          <div class="reviews-placeholder">
+            <p>Your reviews will live here. We're adding reviews through a dedicated app (recommended: <strong>Judge.me</strong> free tier, headless/API mode) rather than building custom storage.</p>
+            <p class="reviews-note">Status: <strong>pending app decision / install.</strong></p>
+          </div>
+        </section>
+
+        <!-- SIGN OUT & SECURITY -->
+        <section data-panel="security" class="hidden">
+          <h2 class="mt-0">Sign out &amp; Security</h2>
+          <p>End your session on this device.</p>
+          <button type="button" class="btn btn-primary" id="logoutBtn">Sign out</button>
+
+          <div class="danger-zone">
+            <h3>Delete account</h3>
+            <p>Permanently deletes your account and personal data. This cannot be undone. Once Shopify is connected this calls the Shopify Admin API to remove the customer record; for now it clears your local preview data.</p>
+            <div class="field" style="max-width:280px;">
+              <label for="deleteConfirm">Type <strong>DELETE</strong> to enable</label>
+              <input id="deleteConfirm" autocomplete="off" placeholder="DELETE">
+            </div>
+            <button type="button" class="btn btn-danger" id="deleteBtn" disabled>Delete my account</button>
+            <p id="deleteMsg" class="account-inline-msg hidden"></p>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<div id="site-footer"></div>
+
+<script src="js/icons.js"></script>
+<script src="js/products.js"></script>
+<script src="js/placeholder-art.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/components.js"></script>
+<script src="js/motion.js"></script>
+<script src="js/checkout-data.js"></script>
+<script>
+  // ---------------------------------------------------------------------------
+  // Account area — LOCAL PREVIEW ONLY. No auth/Shopify yet: profile & addresses
+  // persist to localStorage on this device so the sections are usable now.
+  // Clearly-marked TODOs show where each piece connects to Shopify later.
+  // ---------------------------------------------------------------------------
+  const PROFILE_KEY = 'lerosea_account_profile';
+  const ADDR_KEY = 'lerosea_account_addresses';
+  const jget = (k) => { try { return JSON.parse(localStorage.getItem(k)); } catch (_) { return null; } };
+  const jset = (k, v) => localStorage.setItem(k, JSON.stringify(v));
+
+  function dialOptions(selectedCode){
+    return DIAL_CODES.map(d =>
+      `<option value="${d.code}"${d.code === (selectedCode || '+91') ? ' selected' : ''}>${d.code} ${escapeHtml(d.name)}</option>`
+    ).join('');
+  }
+
+  // ---- Tabs ----
+  const VALID = ['info', 'addresses', 'orders', 'reviews', 'security'];
+  function showTab(name){
+    if (!VALID.includes(name)) name = 'info';
+    document.querySelectorAll('.account-nav [data-tab]').forEach(t =>
+      t.classList.toggle('active', t.dataset.tab === name));
+    document.querySelectorAll('[data-panel]').forEach(p =>
+      p.classList.toggle('hidden', p.dataset.panel !== name));
+    history.replaceState(null, '', '#' + name);
+  }
+  document.querySelectorAll('.account-nav [data-tab]').forEach(t =>
+    t.addEventListener('click', () => showTab(t.dataset.tab)));
+
+  // ---- Account info ----
+  (function initProfile(){
+    document.getElementById('pPhoneCode').innerHTML = dialOptions('+91');
+    const p = jget(PROFILE_KEY) || {};
+    if (p.name) document.getElementById('pName').value = p.name;
+    if (p.phoneCode) document.getElementById('pPhoneCode').value = p.phoneCode;
+    if (p.phone) document.getElementById('pPhone').value = p.phone;
+    if (p.birthday) document.getElementById('pBirthday').value = p.birthday;
+    if (p.email) document.getElementById('pEmail').value = p.email;
+    document.getElementById('profileForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      jset(PROFILE_KEY, {
+        name: document.getElementById('pName').value,
+        phoneCode: document.getElementById('pPhoneCode').value,
+        phone: document.getElementById('pPhone').value,
+        birthday: document.getElementById('pBirthday').value,
+        email: document.getElementById('pEmail').value
+      });
+      document.getElementById('profileSaved').classList.remove('hidden');
+    });
+  })();
+
+  // ---- Address book (with the checkout country/state/city cascade) ----
+  const adrPhoneCode = document.getElementById('adrPhoneCode');
+  adrPhoneCode.innerHTML = dialOptions('+91');
+
+  function adrIsIndia(){ return document.getElementById('adrCountry').value === 'India'; }
+  function adrRenderState(){
+    const c = document.getElementById('adrStateControl');
+    if (adrIsIndia()){
+      const states = Object.keys(INDIA_STATES).sort();
+      c.innerHTML = '<select id="adrState" required><option value="" disabled selected>Select state</option>' +
+        states.map(s => `<option>${escapeHtml(s)}</option>`).join('') + '</select>';
+      document.getElementById('adrState').addEventListener('change', adrRenderCity);
+    } else {
+      c.innerHTML = '<input id="adrState" required>';
+    }
+    adrRenderCity();
+  }
+  function adrRenderCity(){
+    const c = document.getElementById('adrCityControl');
+    if (adrIsIndia()){
+      const st = document.getElementById('adrState');
+      const cities = (st && INDIA_STATES[st.value]) || [];
+      if (cities.length){
+        c.innerHTML = '<select id="adrCity" required><option value="" disabled selected>Select city</option>' +
+          cities.slice().sort().map(x => `<option>${escapeHtml(x)}</option>`).join('') + '</select>';
+        document.getElementById('adrCity').addEventListener('change', adrSuggestPin);
+      } else {
+        c.innerHTML = '<select id="adrCity" required disabled><option value="" disabled selected>Select a state first</option></select>';
+      }
+    } else {
+      c.innerHTML = '<input id="adrCity" required>';
+    }
+    adrClearPin();
+  }
+  function adrClearPin(){ const b = document.getElementById('adrPinSuggest'); b.classList.add('hidden'); b.innerHTML = ''; }
+  function adrSuggestPin(){
+    const b = document.getElementById('adrPinSuggest');
+    const cityEl = document.getElementById('adrCity');
+    if (!adrIsIndia() || !cityEl){ adrClearPin(); return; }
+    const pin = INDIA_CITY_PIN[cityEl.value];
+    if (!pin){ adrClearPin(); return; }
+    b.innerHTML = `Suggested PIN for ${escapeHtml(cityEl.value)}: <strong>${pin}</strong> <a href="#" id="adrPinUse">Use this</a> <span class="muted">— edit if yours differs</span>`;
+    b.classList.remove('hidden');
+    document.getElementById('adrPinUse').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('adrPin').value = pin; });
+  }
+  document.getElementById('adrCountry').addEventListener('change', adrRenderState);
+  adrRenderState();
+
+  let editIndex = -1;
+  function loadAddresses(){ return jget(ADDR_KEY) || []; }
+  function renderAddressList(){
+    const box = document.getElementById('addressList');
+    const items = loadAddresses();
+    if (!items.length){ box.innerHTML = '<p class="account-empty">No saved addresses yet — add one below.</p>'; return; }
+    box.innerHTML = items.map((a, i) => `
+      <div class="address-card">
+        <div>
+          <strong>${escapeHtml(a.label || 'Address')}</strong>
+          <div>${escapeHtml(a.name)} &middot; ${escapeHtml(a.phone)}</div>
+          <div>${escapeHtml(a.line)}</div>
+          <div>${escapeHtml(a.city)}, ${escapeHtml(a.state)} ${escapeHtml(a.pin)}</div>
+          <div>${escapeHtml(a.country)}</div>
+        </div>
+        <div class="address-actions">
+          <button type="button" data-edit="${i}">Edit</button>
+          <button type="button" data-del="${i}">Delete</button>
+        </div>
+      </div>`).join('');
+    box.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', () => {
+      const arr = loadAddresses(); arr.splice(+b.dataset.del, 1); jset(ADDR_KEY, arr); renderAddressList();
+      if (editIndex === +b.dataset.del) resetAddressForm();
+    }));
+    box.querySelectorAll('[data-edit]').forEach(b => b.addEventListener('click', () => editAddress(+b.dataset.edit)));
+  }
+  function resetAddressForm(){
+    editIndex = -1;
+    document.getElementById('addressForm').reset();
+    document.getElementById('adrPhoneCode').value = '+91';
+    document.getElementById('addressFormTitle').textContent = 'Add an address';
+    document.getElementById('addressSubmit').textContent = 'Save address';
+    document.getElementById('addressCancel').style.display = 'none';
+    adrRenderState();
+  }
+  function editAddress(i){
+    const a = loadAddresses()[i];
+    if (!a) return;
+    editIndex = i;
+    document.getElementById('adrLabel').value = a.label || 'Home';
+    document.getElementById('adrName').value = a.name || '';
+    document.getElementById('adrPhoneCode').value = a.phoneCode || '+91';
+    document.getElementById('adrPhone').value = a.phoneNumber || '';
+    document.getElementById('adrLine').value = a.line || '';
+    document.getElementById('adrCountry').value = a.country || 'India';
+    adrRenderState();
+    // Set state → re-render city → set city → suggest pin (order matters).
+    const stateEl = document.getElementById('adrState');
+    if (stateEl) stateEl.value = a.state || '';
+    adrRenderCity();
+    const cityEl = document.getElementById('adrCity');
+    if (cityEl) cityEl.value = a.city || '';
+    adrSuggestPin();
+    document.getElementById('adrPin').value = a.pin || '';
+    document.getElementById('addressFormTitle').textContent = 'Edit address';
+    document.getElementById('addressSubmit').textContent = 'Update address';
+    document.getElementById('addressCancel').style.display = '';
+    window.scrollTo({ top: document.getElementById('addressFormTitle').offsetTop - 100, behavior: 'smooth' });
+  }
+  document.getElementById('addressCancel').addEventListener('click', resetAddressForm);
+  document.getElementById('addressForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const code = document.getElementById('adrPhoneCode').value;
+    const num = (document.getElementById('adrPhone').value || '').replace(/\D/g, '');
+    const entry = {
+      label: document.getElementById('adrLabel').value,
+      name: document.getElementById('adrName').value,
+      phoneCode: code,
+      phoneNumber: document.getElementById('adrPhone').value,
+      phone: code + num,
+      line: document.getElementById('adrLine').value,
+      country: document.getElementById('adrCountry').value,
+      state: (document.getElementById('adrState') || {}).value || '',
+      city: (document.getElementById('adrCity') || {}).value || '',
+      pin: document.getElementById('adrPin').value
+    };
+    const arr = loadAddresses();
+    if (editIndex >= 0) arr[editIndex] = entry; else arr.push(entry);
+    jset(ADDR_KEY, arr);
+    renderAddressList();
+    resetAddressForm();
+  });
+  renderAddressList();
+
+  // ---- Sign out & delete ----
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    // TODO (Shopify): revoke the Customer Account token / clear the httpOnly
+    // session cookie via a serverless logout endpoint. For now clears preview data.
+    localStorage.removeItem(PROFILE_KEY);
+    localStorage.removeItem(ADDR_KEY);
+    location.href = 'index.html';
+  });
+  const deleteConfirm = document.getElementById('deleteConfirm');
+  const deleteBtn = document.getElementById('deleteBtn');
+  deleteConfirm.addEventListener('input', () => { deleteBtn.disabled = deleteConfirm.value.trim() !== 'DELETE'; });
+  deleteBtn.addEventListener('click', () => {
+    // TODO (Shopify): call the Admin API (server-side) to delete the customer
+    // record, then clear the session. For now clears local preview data only.
+    localStorage.removeItem(PROFILE_KEY);
+    localStorage.removeItem(ADDR_KEY);
+    const msg = document.getElementById('deleteMsg');
+    msg.textContent = 'Your local preview data has been deleted. Once Shopify is connected this will also remove your Shopify customer record, then sign you out.';
+    msg.classList.remove('hidden');
+    deleteBtn.disabled = true;
+    deleteConfirm.value = '';
+  });
+
+  // Open the tab named in the URL hash (e.g. account.html#addresses).
+  showTab((location.hash || '').slice(1));
+</script>
+</body>
+</html>

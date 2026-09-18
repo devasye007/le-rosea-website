@@ -265,12 +265,9 @@
     const bestsellers = PRODUCTS.filter(p => p.isBestseller).concat(PRODUCTS.slice(0,4)).slice(0,4);
     document.getElementById('bestsellersGrid').innerHTML = bestsellers.map(productCard).join('');
 
-    // Pret Edition preview. The atelier feature plays the reel_2 video; the
-    // other two show a matched garment photo.
+    // Pret Edition preview. The atelier feature plays the reel_2 video.
     const journalPosts = [
       { title: "Inside the Atelier: The Making of Écrin d'Or", tag: 'Craftsmanship', variant: 'grid', video: 'assets/video/atelier.mp4', poster: 'assets/video/atelier-poster.jpg' },
-      { title: 'A Season of Statement Prêt-Couture', tag: 'Collection Story', variant: 'bloom', img: 'assets/products/starry-night-beaded-fringe-dress/1.jpg' },
-      { title: 'Styling the Reine des Roses Gown', tag: 'Styling', variant: 'rose', img: 'assets/products/secret-rose-corset-gown/1.jpg' },
     ];
     document.getElementById('journalPreview').innerHTML = journalPosts.map(j => {
       const media = j.video

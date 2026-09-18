@@ -30,7 +30,7 @@ function renderHeader(){
             LE ROSÈA
           </a>
           <div class="home-header-actions">
-            <button class="icon-btn home-icon-btn" aria-label="Account">${ICONS.user}</button>
+            <a href="account.html" class="icon-btn home-icon-btn" aria-label="My account">${ICONS.user}</a>
             <button class="icon-btn home-icon-btn" id="cartToggle" aria-label="Open cart">
               ${ICONS.cart}
             </button>
@@ -101,6 +101,7 @@ function renderHeader(){
         LE ROSÈA
       </a>
       <div class="header-side right">
+        <a href="account.html" class="icon-btn" aria-label="My account">${ICONS.user}</a>
         <button class="icon-btn header-search-btn" id="searchToggle" aria-label="Search the collection">${ICONS.search}</button>
         <button class="icon-btn" id="cartToggle" aria-label="Open cart">
           ${ICONS.cart}
