@@ -32,7 +32,8 @@ fringeminitrio.jpeg
 # Raw unencoded footage
 craftsman.MP4
 
-# Local test scratch files
-_*
+# Local test scratch files (root-level only, so nested files like
+# api/_razorpay-config.js are still tracked)
+/_*
 lol.png
 
