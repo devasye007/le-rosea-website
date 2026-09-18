@@ -276,7 +276,7 @@
     mountGallery();
     updateActions();
 
-    const related = PRODUCTS.filter(p => p.id !== product.id && p.category === product.category).slice(0,6);
+    const related = PRODUCTS.filter(p => p.id !== product.id && p.category === product.category && !p.hidden).slice(0,6);
     document.getElementById('relatedRow').innerHTML = related.map(p => `
       <a class="product-card" href="product.html?id=${p.id}">
         ${productImageBlock(p)}

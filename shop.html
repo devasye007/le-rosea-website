@@ -76,7 +76,7 @@
   }
   function populateColorOptions(){
     const set = new Set();
-    PRODUCTS.forEach(p => productColorNames(p).forEach(c => set.add(c)));
+    PRODUCTS.forEach(p => { if (p.hidden) return; productColorNames(p).forEach(c => set.add(c)); });
     const colors = [...set].sort();
     const sel = document.getElementById('filterColor');
     colors.forEach(c => {
@@ -104,6 +104,7 @@
     const priceRange = document.getElementById('filterPrice').value;
 
     let results = PRODUCTS.filter(p => {
+      if (p.hidden) return false;
       if (cat && p.category !== cat) return false;
       if (col && p.collection !== col) return false;
       if (color && !productColorNames(p).includes(color)) return false;

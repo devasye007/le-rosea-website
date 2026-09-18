@@ -174,7 +174,7 @@ function runSearch(q){
   q = (q || '').trim().toLowerCase();
   if (!q){ box.innerHTML = ''; return; }
   const pool = (typeof PRODUCTS !== 'undefined') ? PRODUCTS : [];
-  const matches = pool.filter(p => p.name.toLowerCase().includes(q)).slice(0, 8);
+  const matches = pool.filter(p => !p.hidden && p.name.toLowerCase().includes(q)).slice(0, 8);
   if (!matches.length){
     box.innerHTML = `<p class="search-empty">No pieces match &ldquo;${escapeHtml(q)}&rdquo;.</p>`;
     return;

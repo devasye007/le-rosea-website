@@ -5,6 +5,7 @@
 # Secrets & Node deps (Razorpay serverless functions)
 .env
 .env.*
+!.env.example
 node_modules/
 .vercel
 

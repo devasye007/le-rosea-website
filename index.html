@@ -260,9 +260,10 @@
       if (ICONS[key]) el.innerHTML = ICONS[key];
     });
 
-    const newArrivals = PRODUCTS.filter(p => p.isNew);
+    const shoppable = PRODUCTS.filter(p => !p.hidden);
+    const newArrivals = shoppable.filter(p => p.isNew);
     document.getElementById('newArrivalsRow').innerHTML = newArrivals.map(productCard).join('');
-    const bestsellers = PRODUCTS.filter(p => p.isBestseller).concat(PRODUCTS.slice(0,4)).slice(0,4);
+    const bestsellers = shoppable.filter(p => p.isBestseller).concat(shoppable.slice(0,4)).slice(0,4);
     document.getElementById('bestsellersGrid').innerHTML = bestsellers.map(productCard).join('');
 
     // Pret Edition preview. The atelier feature plays the reel_2 video.

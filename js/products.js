@@ -520,6 +520,29 @@ const PRODUCTS = [
     fit: 'Structured corset with fluid floor-length skirt.',
     artVariant: 'grid',
   }),
+  // ---------------------------------------------------------------------------
+  // PAYMENT TEST PRODUCT — ₹99. For the owner to run a real end-to-end payment
+  // test cheaply. `hidden: true` keeps it out of the shop grid, search, home
+  // rows and related-products, so customers never see it. Reach it directly:
+  //   product.html?id=payment-test-99
+  // (Kept last in the array so home "first 4" slices never pick it up.)
+  // ---------------------------------------------------------------------------
+  makeProduct({
+    id: 'payment-test-99',
+    name: 'Payment Test Piece',
+    category: 'Test',
+    collection: 'Payment Test',
+    price: 99,
+    colorway: 'Test',
+    isNew: false,
+    isBestseller: false,
+    hidden: true,
+    fabric: 'N/A — internal payment test item',
+    embellishment: 'N/A',
+    description: 'Internal ₹99 item used only to verify the checkout and payment flow end to end. Not a real product; hidden from the shop, search and homepage. Add to bag and proceed to checkout to test a payment.',
+    fit: 'N/A',
+    artVariant: 'grid',
+  }),
 ];
 
 function getProductById(id){
