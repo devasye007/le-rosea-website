@@ -100,7 +100,6 @@ async function createPaidOrder(payload) {
     billing_address: address,
     financial_status: 'paid',
     currency: payload.currency || 'INR',
-    source_name: 'web',
     tags: 'lerosea-web, razorpay',
     note: 'Paid through Razorpay on lerosea.com',
     note_attributes: [
