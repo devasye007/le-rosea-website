@@ -16,31 +16,6 @@
   </div>
 </section>
 
-<!-- ================================================================
-     REVIEWS — STUB ONLY. PENDING A REVIEWS-APP DECISION.
-     Do NOT build custom review storage here. Recommendation: Judge.me
-     (free tier) in headless/API mode, which works outside Shopify's
-     theme editor and exposes a REST/GraphQL API + a widget you can mount.
-     Once the app is chosen & installed:
-       - mount its widget/data into #reviewsMount
-         (product id is set on data-product-id by the inline script), and
-       - remove the placeholder copy below.
-     The matching account-area "Reviews" tab is deferred with the rest of
-     the account/login area (blocked on the Shopify/auth decision).
-     ================================================================ -->
-<section class="section-tight" id="reviewsSection" aria-label="Customer reviews">
-  <div class="container">
-    <div class="section-head">
-      <span class="eyebrow">Rate &amp; Reviews</span>
-      <h2 class="mt-0">What Our Clients Say</h2>
-    </div>
-    <div id="reviewsMount" class="reviews-placeholder">
-      <p>Verified client reviews are coming soon — we're adding them through a dedicated reviews service.</p>
-      <p class="reviews-note">Worn this piece? We'd love to hear from you — <a href="contact.html">share your experience</a>.</p>
-    </div>
-  </div>
-</section>
-
 <section class="section-tight" id="relatedSection">
   <div class="container">
     <div class="section-head">
@@ -62,13 +37,6 @@
 <script>
   const params = new URLSearchParams(location.search);
   const product = getProductById(params.get('id')) || PRODUCTS[0];
-
-  // Tag the reviews mount with the product id for the future reviews app
-  // (see the REVIEWS stub comment above #reviewsSection).
-  (function tagReviewsMount(){
-    const mount = document.getElementById('reviewsMount');
-    if (mount) mount.dataset.productId = product.id;
-  })();
 
   // Merged multi-colour products carry a colors[] array; single-colour products
   // fall back to their top-level colorway/images.
@@ -99,6 +67,24 @@
     if (c) return (c.images && c.images.length) ? c.images : (product.images || []);
     return product.images || [];
   }
+  function currentVideo(){
+    const c = currentColorObj();
+    if (c && c.video) return c.video;
+    return product.video || null;
+  }
+  function currentMediaItems(){
+    const imgs = currentImages();
+    const items = imgs.map(src => ({ type: 'image', src: src }));
+    const vid = currentVideo();
+    if (!items.length){
+      items.push({ type: 'art' });
+    }
+    if (vid){
+      const poster = imgs.length ? imgs[0] : '';
+      items.push({ type: 'video', src: vid, poster: poster });
+    }
+    return items;
+  }
   function colorLabel(){
     return selectedColor || product.colorway;
   }
@@ -112,26 +98,44 @@
   }
 
   function galleryMarkup(){
-    const imgs = currentImages();
-    if (imgs.length){
+    const items = currentMediaItems();
+    if (items.length){
       const alt = escapeHtml(product.name + ' — ' + colorLabel());
-      const multi = imgs.length > 1;
+      const multi = items.length > 1;
       const arrows = multi ? `
-          <button type="button" class="pdp-nav pdp-prev" id="pdpPrev" aria-label="Previous image">${ICONS.chevron}</button>
-          <button type="button" class="pdp-nav pdp-next" id="pdpNext" aria-label="Next image">${ICONS.chevron}</button>` : '';
+          <button type="button" class="pdp-nav pdp-prev" id="pdpPrev" aria-label="Previous media">${ICONS.chevron}</button>
+          <button type="button" class="pdp-nav pdp-next" id="pdpNext" aria-label="Next media">${ICONS.chevron}</button>` : '';
+      const firstItem = items[0];
       const main = `<div class="pdp-gallery-main">
         <div class="pdp-stage" id="pdpStage" tabindex="0" role="group" aria-roledescription="carousel" aria-label="${alt}">
-          <img id="mainImg" class="pdp-main-img" src="${assetPath(imgs[0])}" alt="${alt}" decoding="async" fetchpriority="high" onerror="pdpImgError(this)">${arrows}
+          <img id="mainImg" class="pdp-main-img" src="${firstItem.type==='image'?assetPath(firstItem.src):''}" alt="${alt}" decoding="async" fetchpriority="high" onerror="pdpImgError(this)" style="${firstItem.type==='image'?'':'display:none;'}">
+          <div id="mainArt" class="art tall pdp-main-img" data-art="${product.id}" data-art-variant="${product.artVariant}" data-art-label="${escapeHtml(colorLabel())}" style="${firstItem.type==='art'?'':'display:none;'}"></div>
+          <video id="mainVideo" class="pdp-main-video" autoplay muted loop playsinline controls preload="metadata" style="${firstItem.type==='video'?'':'display:none;'}"${firstItem.poster ? ` poster="${assetPath(firstItem.poster)}"` : ''}>
+            <source id="mainVideoSrc" src="${firstItem.type==='video'?assetPath(firstItem.src):''}" type="video/mp4">
+          </video>
+          ${arrows}
           <button type="button" class="pdp-expand" id="pdpExpand" aria-label="View full screen">${EXPAND_ICON}</button>
         </div>
       </div>`;
-      const thumbs = multi ? `<div class="pdp-thumbs" id="pdpThumbs">${imgs.map((src,i) => `
-        <button type="button" class="pdp-thumb ${i===0?'active':''}" data-index="${i}" aria-label="View image ${i+1} of ${imgs.length}"${i===0?' aria-current="true"':''}>
-          <img src="${assetPath(src)}" alt="" loading="lazy" decoding="async" onerror="this.closest('.pdp-thumb').style.display='none'">
-        </button>`).join('')}</div>` : '';
+      const thumbs = multi ? `<div class="pdp-thumbs" id="pdpThumbs">${items.map((item, i) => {
+        if (item.type === 'video'){
+          const poster = item.poster || (items[0] && items[0].src) || '';
+          return `<button type="button" class="pdp-thumb pdp-thumb-video ${i===0?'active':''}" data-index="${i}" aria-label="Play garment video"${i===0?' aria-current="true"':''}>
+            ${poster ? `<img src="${assetPath(poster)}" alt="" loading="lazy" decoding="async">` : '<div style="width:100%;height:100%;background:#1b1612;"></div>'}
+            <span class="pdp-thumb-play" aria-hidden="true">${ICONS.play}</span>
+          </button>`;
+        }
+        if (item.type === 'art'){
+          return `<button type="button" class="pdp-thumb ${i===0?'active':''}" data-index="${i}" aria-label="View garment preview"${i===0?' aria-current="true"':''}>
+            <div class="art tall" style="width:100%;height:100%;" data-art="${product.id}" data-art-variant="${product.artVariant}"></div>
+          </button>`;
+        }
+        return `<button type="button" class="pdp-thumb ${i===0?'active':''}" data-index="${i}" aria-label="View image ${i+1} of ${items.length}"${i===0?' aria-current="true"':''}>
+          <img src="${assetPath(item.src)}" alt="" loading="lazy" decoding="async" onerror="this.closest('.pdp-thumb').style.display='none'">
+        </button>`;
+      }).join('')}</div>` : '';
       return main + thumbs;
     }
-    // No matched photos — a single generated placeholder, no gallery controls.
     return `<div class="pdp-gallery-main">
       <div class="art tall" id="mainArt" data-art="${product.id}" data-art-variant="${product.artVariant}" data-art-label="${escapeHtml(colorLabel())}"></div>
     </div>`;
@@ -222,7 +226,15 @@
           <div class="accordion" style="margin-top:34px;">
             <div class="accordion-item open">
               <button data-acc>Fabric &amp; Craftsmanship <span class="accordion-icon">+</span></button>
-              <div class="accordion-body"><div class="accordion-body-inner">${product.fabric} ${product.embellishment}</div></div>
+              <div class="accordion-body">
+                <div class="accordion-body-inner">
+                  <div class="fabric-specs">
+                    <div class="fabric-spec-item"><span class="fabric-spec-label">Main fabric :</span> <span class="fabric-spec-val">${escapeHtml(product.mainFabric || product.fabric || '')}</span></div>
+                    <div class="fabric-spec-item"><span class="fabric-spec-label">Lining :</span> <span class="fabric-spec-val">${escapeHtml(product.lining || 'Lycra')}</span></div>
+                    <div class="fabric-spec-item"><span class="fabric-spec-label">Embroidery :</span> <span class="fabric-spec-val">${escapeHtml(product.embroidery || product.embellishment || '')}</span></div>
+                  </div>
+                </div>
+              </div>
             </div>
             <div class="accordion-item">
               <button data-acc>Fit &amp; Sizing <span class="accordion-icon">+</span></button>
@@ -357,10 +369,13 @@
   // colour switch (any prior lightbox is removed first).
   function mountGallery(){
     document.getElementById('pdpLightbox')?.remove();
-    const imgs = currentImages();
-    if (!imgs.length) return;
-    const multi = imgs.length > 1;
+    const items = currentMediaItems();
+    if (!items.length) return;
+    const multi = items.length > 1;
     const mainImg = document.getElementById('mainImg');
+    const mainArt = document.getElementById('mainArt');
+    const mainVideo = document.getElementById('mainVideo');
+    const mainVideoSrc = document.getElementById('mainVideoSrc');
     const stage = document.getElementById('pdpStage');
     const thumbEls = Array.from(document.querySelectorAll('.pdp-thumb'));
     let idx = 0;
@@ -372,30 +387,88 @@
     lb.tabIndex = -1;
     lb.setAttribute('role', 'dialog');
     lb.setAttribute('aria-modal', 'true');
-    lb.setAttribute('aria-label', product.name + ' image viewer');
+    lb.setAttribute('aria-label', product.name + ' media viewer');
     lb.setAttribute('aria-hidden', 'true');
     lb.innerHTML = `
-      <button type="button" class="pdp-lb-close" aria-label="Close image viewer">${ICONS.close}</button>
-      ${multi ? `<button type="button" class="pdp-lb-nav pdp-lb-prev" aria-label="Previous image">${ICONS.chevron}</button>` : ''}
-      <img class="pdp-lb-img" id="pdpLbImg" alt="${alt}">
-      ${multi ? `<button type="button" class="pdp-lb-nav pdp-lb-next" aria-label="Next image">${ICONS.chevron}</button>` : ''}
+      <button type="button" class="pdp-lb-close" aria-label="Close media viewer">${ICONS.close}</button>
+      ${multi ? `<button type="button" class="pdp-lb-nav pdp-lb-prev" aria-label="Previous media">${ICONS.chevron}</button>` : ''}
+      <img class="pdp-lb-img" id="pdpLbImg" alt="${alt}" style="display:none">
+      <video class="pdp-lb-video" id="pdpLbVideo" autoplay muted loop playsinline controls style="display:none"></video>
+      ${multi ? `<button type="button" class="pdp-lb-nav pdp-lb-next" aria-label="Next media">${ICONS.chevron}</button>` : ''}
       ${multi ? `<div class="pdp-lb-counter" id="pdpLbCounter" aria-hidden="true"></div>` : ''}`;
     document.body.appendChild(lb);
     const lbImg = lb.querySelector('#pdpLbImg');
+    const lbVideo = lb.querySelector('#pdpLbVideo');
     const lbCounter = lb.querySelector('#pdpLbCounter');
 
     function show(i){
-      idx = (i % imgs.length + imgs.length) % imgs.length;   // wraparound both directions
-      const src = assetPath(imgs[idx]);
-      if (mainImg){ mainImg.style.visibility = ''; mainImg.src = src; }
-      if (lbImg) lbImg.src = src;
+      idx = (i % items.length + items.length) % items.length;   // wraparound both directions
+      const item = items[idx];
+
+      if (item.type === 'video'){
+        if (mainImg) mainImg.style.display = 'none';
+        if (mainArt) mainArt.style.display = 'none';
+        if (mainVideo){
+          mainVideo.style.display = 'block';
+          const vPath = assetPath(item.src);
+          if (mainVideoSrc && mainVideoSrc.getAttribute('src') !== vPath){
+            mainVideoSrc.src = vPath;
+            mainVideo.load();
+          }
+          mainVideo.play().catch(function(){});
+        }
+      } else if (item.type === 'art'){
+        if (mainVideo){ mainVideo.pause(); mainVideo.style.display = 'none'; }
+        if (mainImg) mainImg.style.display = 'none';
+        if (mainArt) mainArt.style.display = 'block';
+      } else {
+        if (mainVideo){ mainVideo.pause(); mainVideo.style.display = 'none'; }
+        if (mainArt) mainArt.style.display = 'none';
+        if (mainImg){
+          mainImg.style.display = 'block';
+          mainImg.style.visibility = '';
+          mainImg.src = assetPath(item.src);
+        }
+      }
+
+      if (lb.classList.contains('is-open')){
+        updateLightbox();
+      }
+
       thumbEls.forEach((t, ti) => {
         const on = ti === idx;
         t.classList.toggle('active', on);
         if (on) t.setAttribute('aria-current', 'true'); else t.removeAttribute('aria-current');
       });
-      if (lbCounter) lbCounter.textContent = `${idx + 1} / ${imgs.length}`;
+      if (lbCounter) lbCounter.textContent = `${idx + 1} / ${items.length}`;
     }
+
+    function updateLightbox(){
+      const item = items[idx];
+      if (item.type === 'video'){
+        if (lbImg) lbImg.style.display = 'none';
+        if (lbVideo){
+          lbVideo.style.display = 'block';
+          const vPath = assetPath(item.src);
+          if (lbVideo.getAttribute('src') !== vPath){
+            lbVideo.src = vPath;
+            lbVideo.load();
+          }
+          lbVideo.play().catch(function(){});
+        }
+      } else if (item.type === 'image'){
+        if (lbVideo){ lbVideo.pause(); lbVideo.style.display = 'none'; }
+        if (lbImg){
+          lbImg.style.display = 'block';
+          lbImg.src = assetPath(item.src);
+        }
+      } else {
+        if (lbVideo){ lbVideo.pause(); lbVideo.style.display = 'none'; }
+        if (lbImg) lbImg.style.display = 'none';
+      }
+      if (lbCounter) lbCounter.textContent = `${idx + 1} / ${items.length}`;
+    }
+
     const next = () => show(idx + 1);
     const prev = () => show(idx - 1);
 
@@ -410,14 +483,14 @@
     });
 
     function openLb(){
-      if (lbImg) lbImg.src = assetPath(imgs[idx]);
-      if (lbCounter) lbCounter.textContent = `${idx + 1} / ${imgs.length}`;
+      updateLightbox();
       lb.classList.add('is-open');
       lb.setAttribute('aria-hidden', 'false');
       document.body.classList.add('pdp-lb-open');
       lb.focus();
     }
     function closeLb(){
+      if (lbVideo) lbVideo.pause();
       lb.classList.remove('is-open');
       lb.setAttribute('aria-hidden', 'true');
       document.body.classList.remove('pdp-lb-open');

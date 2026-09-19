@@ -22,6 +22,13 @@ app.use(express.json());
 app.post('/api/create-order', require('./api/create-order'));
 app.post('/api/verify-payment', require('./api/verify-payment'));
 
+// One-time Shopify OAuth handshake (GET endpoints; see api/shopify/*).
+app.get('/api/shopify/install', require('./api/shopify/install'));
+app.get('/api/shopify/callback', require('./api/shopify/callback'));
+
+// TEMPORARY diagnostic — remove after confirming env is loaded.
+app.get('/api/debug-env-check', require('./api/debug-env-check'));
+
 // Everything else is the static site (index.html served at /).
 app.use(express.static(__dirname, { extensions: ['html'] }));
 

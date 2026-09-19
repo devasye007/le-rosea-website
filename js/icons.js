@@ -23,4 +23,5 @@ const ICONS = {
   dress: `<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M10 4.5c.5 1.5 1.2 2.2 2 2.2s1.5-.7 2-2.2"/><path d="M9 7l-2 3 2 2.4V20h6v-7.6L17 10l-2-3.5"/><path d="M8 7.5h8"/></svg>`,
   truck: `<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 8h10v8H3z"/><path d="M13 10h4l3 3v3h-7z"/><circle cx="7" cy="18" r="1.8"/><circle cx="17" cy="18" r="1.8"/></svg>`,
   support: `<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4.5 12a7.5 7.5 0 0 1 15 0"/><path d="M4.5 12v4"/><path d="M19.5 12v4"/><path d="M6.5 16.5c0 1.3 1 2.3 2.3 2.3h1.2"/></svg>`,
+  play: `<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor"><polygon points="7 4 19 12 7 20"/></svg>`,
 };

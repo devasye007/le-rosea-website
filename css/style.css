@@ -1556,7 +1556,8 @@ body.homepage #site-header{
   padding: 22px 24px; border-bottom: var(--border-hair);
 }
 .cart-head h3{ margin: 0; font-size: 1.3rem; }
-.cart-close{ background: none; border: none; cursor: pointer; font-size: 1.3rem; color: var(--espresso); }
+.cart-close{ background: none; border: none; cursor: pointer; color: var(--espresso); padding: 6px; margin: -6px; line-height: 0; }
+.cart-close svg{ width: 22px; height: 22px; }
 .cart-items{ flex: 1; overflow-y: auto; padding: 10px 24px; }
 .cart-line{ display: flex; gap: 14px; padding: 18px 0; border-bottom: 1px solid #A99B8B33; }
 .cart-line .art{ width: 78px; flex: 0 0 78px; aspect-ratio: 3/4; }
@@ -3068,7 +3069,14 @@ body > section:nth-of-type(even) .product-card .p-price{ color: var(--gold-ink);
   background: linear-gradient(180deg, #FBF8F2 0%, #F4EFE5 100%);
   color: var(--espresso);
 }
-.cart-head, .cart-foot{ border-color: rgba(18,16,14,0.10); }
+/* The dark-theme block above gave these inner drawer sections a dark
+   background + shadow; reset them so they inherit the drawer's cream gradient
+   (otherwise the "Your Bag" header renders as a dark bar over a light body). */
+.cart-head, .cart-foot, .cart-line{
+  background: transparent;
+  box-shadow: none;
+  border-color: rgba(18,16,14,0.10);
+}
 .cart-line .name,
 .cart-subtotal strong,
 .cart-close,
@@ -3187,6 +3195,15 @@ html, body{ overflow-x: hidden; max-width: 100%; }
   display: block;
   cursor: zoom-in;
 }
+.pdp-main-video{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  background: #000;
+}
 
 /* Overlaid next/prev arrows + expand control */
 .pdp-nav,
@@ -3248,6 +3265,26 @@ html, body{ overflow-x: hidden; max-width: 100%; }
 .pdp-thumb:hover{ transform: translateY(-2px); border-color: rgba(176,138,60,0.6); }
 .pdp-thumb.active{ border-color: var(--gold-ink); box-shadow: 0 0 0 2px var(--gold-ink); }
 .pdp-thumb:focus-visible{ outline: 2px solid var(--gold-ink); outline-offset: 2px; }
+.pdp-thumb-video{ position: relative; }
+.pdp-thumb-play{
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(18,16,14,0.4);
+  color: #fff;
+  transition: background .2s var(--ease);
+  pointer-events: none;
+}
+.pdp-thumb-play svg{
+  width: 22px;
+  height: 22px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));
+}
+.pdp-thumb-video:hover .pdp-thumb-play{
+  background: rgba(18,16,14,0.22);
+}
 @media (max-width: 540px){
   .pdp-thumbs{ grid-template-columns: repeat(auto-fill, minmax(52px, 70px)); }
 }
@@ -3274,6 +3311,38 @@ html, body{ overflow-x: hidden; max-width: 100%; }
   box-shadow: 0 30px 80px rgba(0,0,0,0.5);
   user-select: none;
   -webkit-user-drag: none;
+}
+.pdp-lb-video{
+  max-width: 90vw;
+  max-height: 85vh;
+  object-fit: contain;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+  border-radius: var(--radius);
+  outline: none;
+}
+
+/* Fabric & Craftsmanship divided specifications */
+.fabric-specs{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 4px 0;
+}
+.fabric-spec-item{
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+.fabric-spec-label{
+  font-weight: 600;
+  color: var(--espresso);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.fabric-spec-val{
+  color: var(--espresso-soft, #4a4038);
 }
 .pdp-lb-close,
 .pdp-lb-nav{

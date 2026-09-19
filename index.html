@@ -207,38 +207,23 @@
     setTimeout(() => splash.remove(), 2600);
   })();
 
-  // On phones (<=600px) don't autoplay/download the background hero video —
-  // show the poster still image instead to save mobile data and battery.
+  // Play the background hero video on ALL devices. Mobile browsers autoplay a
+  // video only when it's muted + inline, so enforce those, then nudge play()
+  // (some mobile browsers ignore the autoplay attribute until play() is called).
+  // If autoplay is still blocked (e.g. Low Power Mode), start on first tap.
+  // Note: this streams ~15MB on mobile; the poster shows until it begins.
   (function(){
     function initHeroMedia(){
-      const wrap = document.querySelector('.opening-hero-visual');
-      const video = wrap && wrap.querySelector('video.opening-hero-video');
-      if (!wrap || !video) return;
-      const poster = video.getAttribute('poster') || 'assets/video/hero-poster.jpg';
-      let img = null;
-      const mq = window.matchMedia('(max-width: 600px)');
-      function apply(){
-        if (mq.matches){
-          try { video.pause(); } catch(_){}
-          video.removeAttribute('autoplay');
-          video.preload = 'none';
-          video.style.display = 'none';
-          if (!img){
-            img = document.createElement('img');
-            img.className = 'opening-hero-video';
-            img.alt = 'LE ROSÈA collection';
-            img.decoding = 'async';
-            img.src = poster;
-            wrap.appendChild(img);
-          }
-          img.style.display = 'block';
-        } else {
-          if (img) img.style.display = 'none';
-          video.style.display = '';
-        }
-      }
-      apply();
-      mq.addEventListener('change', apply);
+      const video = document.querySelector('video.opening-hero-video');
+      if (!video) return;
+      video.muted = true;
+      video.playsInline = true;
+      video.setAttribute('playsinline', '');
+      const tryPlay = () => { const p = video.play(); if (p && p.catch) p.catch(function(){}); };
+      tryPlay();
+      const kick = () => { tryPlay(); window.removeEventListener('touchstart', kick); window.removeEventListener('click', kick); };
+      window.addEventListener('touchstart', kick, { once: true, passive: true });
+      window.addEventListener('click', kick, { once: true });
     }
     if (document.readyState === 'loading'){
       document.addEventListener('DOMContentLoaded', initHeroMedia, { once: true });

@@ -18,6 +18,9 @@ function makeProduct(product){
     craft: '100% hand embroidery',
     // Per-product so it can be overridden individually later; defaults to XS.
     modelSize: 'XS',
+    mainFabric: product.mainFabric || product.fabric || '',
+    lining: product.lining || 'Lycra',
+    embroidery: product.embroidery || product.embellishment || '',
     ...product,
   };
 }
@@ -42,6 +45,8 @@ const PRODUCTS = [
     id: 'sequins-rush-set',
     name: 'Sequins Rush Set',
     category: 'Co-ords & Separates',
+    // Also surfaced under the Top and Skirt category filters (it's a co-ord set).
+    extraCategories: ['Top', 'Skirt'],
     collection: 'Pret',
     price: 14999,
     colorway: 'Sea Green',
@@ -118,11 +123,12 @@ const PRODUCTS = [
     description: 'The cropped corset top from the Wildflower set, offered on its own — hand-appliqued net flowers and intricate beadwork on refined white crepe. Shown here in set photography; dedicated piece imagery to follow.',
     fit: 'Cropped corset top.',
     artVariant: 'botanical',
+    cardImage: 'assets/products/wildflower-coord-set-white/2.jpg',
     images: ['assets/products/wildflower-coord-set-white/1.jpg', 'assets/products/wildflower-coord-set-white/2.jpg', 'assets/products/wildflower-coord-set-white/3.jpg', 'assets/products/wildflower-coord-set-white/4.jpg'],
   }),
   makeProduct({
     id: 'wildflower-bottom',
-    name: 'Wildflower Bottom',
+    name: 'Wildflower Skirt',
     category: 'Skirt',
     collection: 'Pret',
     price: 15900,
@@ -134,6 +140,7 @@ const PRODUCTS = [
     description: 'The long, figure-skimming skirt from the Wildflower set, offered on its own — hand-appliqued net flowers and intricate beadwork on refined white crepe. Shown here in set photography; dedicated piece imagery to follow.',
     fit: 'Long, figure-skimming skirt.',
     artVariant: 'botanical',
+    cardImage: 'assets/products/wildflower-coord-set-white/3.jpg',
     images: ['assets/products/wildflower-coord-set-white/1.jpg', 'assets/products/wildflower-coord-set-white/2.jpg', 'assets/products/wildflower-coord-set-white/3.jpg', 'assets/products/wildflower-coord-set-white/4.jpg'],
   }),
   makeProduct({
@@ -234,6 +241,7 @@ const PRODUCTS = [
   }),
   makeProduct({
     id: 'mocha-gold-mini-dress',
+    images: ['assets/products/mocha-gold-mini-dress/1.jpg', 'assets/products/mocha-gold-mini-dress/2.jpg', 'assets/products/mocha-gold-mini-dress/3.jpg'],
     name: 'Mocha Gold Mini Dress',
     category: 'Dresses',
     collection: 'Pret',
@@ -281,6 +289,7 @@ const PRODUCTS = [
   }),
   makeProduct({
     id: 'midnight-rain-gown',
+    images: ['assets/products/midnight-rain-gown/1.jpg', 'assets/products/midnight-rain-gown/2.jpg', 'assets/products/midnight-rain-gown/3.jpg', 'assets/products/midnight-rain-gown/4.jpg', 'assets/products/midnight-rain-gown/5.jpg', 'assets/products/midnight-rain-gown/6.jpg'],
     name: 'Midnight Rain Gown',
     category: 'Gowns',
     collection: 'Couture',
@@ -343,6 +352,7 @@ const PRODUCTS = [
     description: 'The crystal-trimmed cropped top from the Noir Bloom set, offered on its own — hand-embellished motifs finished with delicate glass-bead fringes. Shown here in set photography; dedicated piece imagery to follow.',
     fit: 'Cropped top.',
     artVariant: 'grid',
+    cardImage: 'assets/products/noir-bloom-set-black/3.jpg',
     images: ['assets/products/noir-bloom-set-black/1.jpg', 'assets/products/noir-bloom-set-black/2.jpg', 'assets/products/noir-bloom-set-black/3.jpg', 'assets/products/noir-bloom-set-black/4.jpg', 'assets/products/noir-bloom-set-black/5.jpg'],
   }),
   makeProduct({
@@ -359,6 +369,7 @@ const PRODUCTS = [
     description: 'The long, fluid skirt from the Noir Bloom set, offered on its own — refined black crepe with hand-embellished motifs and delicate glass-bead fringes. Shown here in set photography; dedicated piece imagery to follow.',
     fit: 'Long, fluid skirt.',
     artVariant: 'grid',
+    cardImage: 'assets/products/noir-bloom-set-black/4.jpg',
     images: ['assets/products/noir-bloom-set-black/1.jpg', 'assets/products/noir-bloom-set-black/2.jpg', 'assets/products/noir-bloom-set-black/3.jpg', 'assets/products/noir-bloom-set-black/4.jpg', 'assets/products/noir-bloom-set-black/5.jpg'],
   }),
   makeProduct({
@@ -475,6 +486,7 @@ const PRODUCTS = [
   }),
   makeProduct({
     id: 'hand-embellished-bridal-gown',
+    images: ['assets/products/hand-embellished-bridal-gown/1.jpg', 'assets/products/hand-embellished-bridal-gown/2.jpg', 'assets/products/hand-embellished-bridal-gown/3.jpg', 'assets/products/hand-embellished-bridal-gown/4.jpg'],
     name: 'Hand Embellished Bridal Gown',
     category: 'Gowns',
     collection: 'Couture',
@@ -544,6 +556,128 @@ const PRODUCTS = [
     artVariant: 'grid',
   }),
 ];
+
+// Occasion collections — "Day & Resort" / "Celebration" / "Evening". A piece
+// can belong to more than one. Kept as a single mapping (rather than inline on
+// each product) so it's easy to see and edit in one place. Drives the shop's
+// Collections filter (shop.html). Pieces not listed here belong to no occasion
+// collection and simply won't appear under those filters.
+const OCCASION_COLLECTIONS = {
+  // Day & Resort
+  'sequins-rush-set': ['Day & Resort'],
+  'fringe-mini-dress': ['Day & Resort'],
+  'ivory-bloom-dress': ['Day & Resort'],
+  'cream-stone-dress': ['Day & Resort'],
+  // Day & Resort + Evening
+  'wildflower-coord-set-white': ['Day & Resort', 'Evening'],
+  'wildflower-top': ['Day & Resort', 'Evening'],
+  'wildflower-bottom': ['Day & Resort', 'Evening'],
+  'blush-dress': ['Day & Resort', 'Evening'],
+  'azure-petal-midi-dress': ['Day & Resort', 'Evening'],
+  'aqua-pearl-mini-dress': ['Day & Resort', 'Evening'],
+  'bubblegum-ombre-mini-dress': ['Day & Resort', 'Evening'],
+  // Celebration
+  'secret-rose-corset-gown': ['Celebration'],
+  'starfall-cowl-dress-sky-blue': ['Celebration'],
+  'starfall-cowl-dress-black': ['Celebration'],
+  'noir-bloom-set-black': ['Celebration'],
+  'noir-bloom-top': ['Celebration'],
+  'noir-bloom-skirt': ['Celebration'],
+  // Celebration + Evening
+  'fringe-cascade-gown-brown': ['Celebration', 'Evening'],
+  'royal-draped-gown-dark-blue': ['Celebration', 'Evening'],
+  'mocha-gold-mini-dress': ['Celebration', 'Evening'],
+  'black-jewel-dress': ['Celebration', 'Evening'],
+  'midnight-rain-gown': ['Celebration', 'Evening'],
+  'crystal-bow-dress': ['Celebration', 'Evening'],
+  'sky-fringe-gown': ['Celebration', 'Evening'],
+  // Evening only
+  'blue-bell-dress': ['Evening'],
+};
+PRODUCTS.forEach(function(p){ p.collections = OCCASION_COLLECTIONS[p.id] || []; });
+
+// Per-garment campaign videos (web-optimized H.264 in assets/video/products/).
+// The set/top/skirt pieces share the set's clip. Applied here in one place, like
+// the collections map above. Products not listed simply have no video.
+const PRODUCT_VIDEOS = {
+  'sequins-rush-set': 'assets/video/products/sequins-rush-set.mp4',
+  'fringe-mini-dress': 'assets/video/products/fringe-mini-dress.mp4',
+  'wildflower-coord-set-white': 'assets/video/products/wildflower-set.mp4',
+  'wildflower-top': 'assets/video/products/wildflower-set.mp4',
+  'wildflower-bottom': 'assets/video/products/wildflower-set.mp4',
+  'blush-dress': 'assets/video/products/blush-dress.mp4',
+  'secret-rose-corset-gown': 'assets/video/products/secret-rose-corset-gown.mp4',
+  'starfall-cowl-dress-sky-blue': 'assets/video/products/starfall-sky-blue.mp4',
+  'starfall-cowl-dress-black': 'assets/video/products/starfall-black.mp4',
+  'fringe-cascade-gown-brown': 'assets/video/products/fringe-cascade.mp4',
+  'royal-draped-gown-dark-blue': 'assets/video/products/royal-draped.mp4',
+  'mocha-gold-mini-dress': 'assets/video/products/mocha-gold.mp4',
+  'black-jewel-dress': 'assets/video/products/black-jewel.mp4',
+  'ivory-bloom-dress': 'assets/video/products/ivory-bloom.mp4',
+  'midnight-rain-gown': 'assets/video/products/midnight-rain.mp4',
+  'crystal-bow-dress': 'assets/video/products/crystal-bow.mp4',
+  'noir-bloom-set-black': 'assets/video/products/noir-bloom.mp4',
+  'noir-bloom-top': 'assets/video/products/noir-bloom.mp4',
+  'noir-bloom-skirt': 'assets/video/products/noir-bloom.mp4',
+  'golden-rose-corset-with-skirt': 'assets/video/products/rose-gold-corset.mp4',
+  'blue-bell-dress': 'assets/video/products/blue-bell.mp4',
+  'cream-stone-dress': 'assets/video/products/cream-stone.mp4',
+  'azure-petal-midi-dress': 'assets/video/products/azure-petal.mp4',
+  'sky-fringe-gown': 'assets/video/products/sky-fringe.mp4',
+  'aqua-pearl-mini-dress': 'assets/video/products/aqua-pearl.mp4',
+  'bubblegum-ombre-mini-dress': 'assets/video/products/bubblegum-ombre.mp4',
+  'hand-embellished-bridal-gown': 'assets/video/products/bridal-gown.mp4',
+  'starry-night-beaded-fringe-dress': 'assets/video/products/starry-night.mp4',
+  'golden-crystal-corset-with-skirt': 'assets/video/products/golden-crystal-corset.mp4',
+};
+PRODUCTS.forEach(function(p){ if (PRODUCT_VIDEOS[p.id]) p.video = PRODUCT_VIDEOS[p.id]; });
+
+// Divided Fabric & Craftsmanship specs for each garment:
+// Main fabric / Lining / Embroidery
+const PRODUCT_FABRIC_SPECS = {
+  'sequins-rush-set': { mainFabric: 'Embroidered mesh', lining: 'Lycra', embroidery: 'Sequins, cutdana and cutdana latkans' },
+  'fringe-mini-dress': { mainFabric: 'Satin Lycra', lining: 'Matching Lycra', embroidery: 'Sequins, cutdana and cutdana latkans' },
+  'wildflower-coord-set-white': { mainFabric: 'Luxury Crepe', lining: 'Lycra', embroidery: 'Net flowers and intricate beadwork' },
+  'wildflower-top': { mainFabric: 'Luxury Crepe', lining: 'Lycra', embroidery: 'Net flowers and intricate beadwork' },
+  'wildflower-bottom': { mainFabric: 'Luxury Crepe', lining: 'Lycra', embroidery: 'Net flowers and intricate beadwork' },
+  'blush-dress': { mainFabric: 'Suede-like fabric', lining: 'Lycra', embroidery: 'Assorted crystals' },
+  'secret-rose-corset-gown': { mainFabric: 'Duchess satin corset with embroidered mesh skirt', lining: 'Two layers of mesh with Lycra', embroidery: '3D floral sequins and crystals' },
+  'starfall-cowl-dress-sky-blue': { mainFabric: 'Satin', lining: 'Lycra', embroidery: 'Crystals, glass beads and assorted beads' },
+  'starfall-cowl-dress-black': { mainFabric: 'Satin', lining: 'Lycra', embroidery: 'Crystals, glass beads and assorted beads' },
+  'fringe-cascade-gown-brown': { mainFabric: 'Embroidered mesh bodice with georgette skirt', lining: 'Lycra lining through the embroidered top', embroidery: 'Bugle beads, round beads and sequins' },
+  'royal-draped-gown-dark-blue': { mainFabric: 'Poly georgette', lining: 'Smooth stretch lining', embroidery: 'Intricate naqshi work and crystals' },
+  'mocha-gold-mini-dress': { mainFabric: 'Embellished net bodice with satin Lycra skirt', lining: 'Satin', embroidery: 'Heat-applied stones' },
+  'black-jewel-dress': { mainFabric: 'Luxury Crepe', lining: 'Lycra', embroidery: 'Beads, crystals and pearls' },
+  'ivory-bloom-dress': { mainFabric: 'Embroidered mesh bodice with crepe skirt', lining: 'Two layers of mesh through bodice with Lycra-lined skirt', embroidery: 'Three varieties of 3D floral sequins and crystals' },
+  'midnight-rain-gown': { mainFabric: 'Luxury Crepe', lining: 'Lycra', embroidery: 'Crystals and glass beads' },
+  'crystal-bow-dress': { mainFabric: 'Luxury Crepe', lining: 'Lycra', embroidery: 'Crystals' },
+  'noir-bloom-set-black': { mainFabric: 'Luxury Crepe', lining: 'Lycra', embroidery: 'Crystals and glass-bead fringes' },
+  'noir-bloom-top': { mainFabric: 'Luxury Crepe', lining: 'Lycra', embroidery: 'Crystals and glass-bead fringes' },
+  'noir-bloom-skirt': { mainFabric: 'Luxury Crepe', lining: 'Lycra', embroidery: 'Crystals and glass-bead fringes' },
+  'golden-rose-corset-with-skirt': { mainFabric: 'Embroidered mesh corset with satin skirt', lining: 'Silk lining', embroidery: '3D floral embroidery and crystals' },
+  'blue-bell-dress': { mainFabric: 'Dupion silk', lining: 'Satin', embroidery: '3D floral embroidery and sequins' },
+  'cream-stone-dress': { mainFabric: 'Luxury Crepe', lining: 'Lycra', embroidery: 'Crystal trims' },
+  'azure-petal-midi-dress': { mainFabric: 'Poly georgette', lining: 'Soft lining', embroidery: '3D floral motifs and crystals' },
+  'sky-fringe-gown': { mainFabric: 'Luxury crepe top with satin skirt', lining: 'Lycra', embroidery: 'Beaded fringe' },
+  'aqua-pearl-mini-dress': { mainFabric: 'Satin', lining: 'Lycra', embroidery: 'Dense cutdana, crystals and pearls' },
+  'bubblegum-ombre-mini-dress': { mainFabric: 'Embroidered mesh', lining: 'Lycra', embroidery: '3D sequin flowers with beads' },
+  'hand-embellished-bridal-gown': { mainFabric: 'Net embroidered bodice with crepe skirt', lining: 'Crepe', embroidery: 'Fine hand bridal embroidery' },
+  'starry-night-beaded-fringe-dress': { mainFabric: 'Silk velvet corset with embroidered mesh skirt', lining: 'Lycra', embroidery: 'Mix of beads and crystals with cascading glass-bead fringes' },
+  'golden-crystal-corset-with-skirt': { mainFabric: 'Hand-embroidered corset with fluid satin skirt', lining: 'Satin', embroidery: 'Gold crystal and stone embellishment' },
+  'payment-test-99': { mainFabric: 'Luxury Crepe', lining: 'Lycra', embroidery: 'Internal test specimen' },
+};
+PRODUCTS.forEach(function(p){
+  var spec = PRODUCT_FABRIC_SPECS[p.id];
+  if (spec){
+    p.mainFabric = spec.mainFabric;
+    p.lining = spec.lining;
+    p.embroidery = spec.embroidery;
+  } else {
+    p.mainFabric = p.mainFabric || p.fabric || '';
+    p.lining = p.lining || 'Lycra';
+    p.embroidery = p.embroidery || p.embellishment || '';
+  }
+});
 
 function getProductById(id){
   return PRODUCTS.find(p => p.id === id);

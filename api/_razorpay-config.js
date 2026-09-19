@@ -17,12 +17,17 @@ module.exports = function razorpayConfig() {
       mode: 'live',
       keyId: process.env.RAZORPAY_LIVE_KEY_ID,
       keySecret: process.env.RAZORPAY_LIVE_KEY_SECRET,
+      keyIdVar: 'RAZORPAY_LIVE_KEY_ID',
+      keySecretVar: 'RAZORPAY_LIVE_KEY_SECRET',
     };
   }
+  // Test mode: prefer RAZORPAY_TEST_KEY_*, fall back to the original
+  // RAZORPAY_KEY_* names for backward compatibility.
   return {
     mode: 'test',
-    // Fall back to the original RAZORPAY_KEY_* names for backward compatibility.
     keyId: process.env.RAZORPAY_TEST_KEY_ID || process.env.RAZORPAY_KEY_ID,
     keySecret: process.env.RAZORPAY_TEST_KEY_SECRET || process.env.RAZORPAY_KEY_SECRET,
+    keyIdVar: process.env.RAZORPAY_TEST_KEY_ID ? 'RAZORPAY_TEST_KEY_ID' : 'RAZORPAY_KEY_ID',
+    keySecretVar: process.env.RAZORPAY_TEST_KEY_SECRET ? 'RAZORPAY_TEST_KEY_SECRET' : 'RAZORPAY_KEY_SECRET',
   };
 };

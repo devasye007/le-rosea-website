@@ -226,7 +226,6 @@ function renderFooter(){
         <p>Modern femininity, elevated through couture-inspired detail and made for the moments worth remembering.</p>
         <div class="social-row">
           <a href="https://instagram.com/le.rosea" aria-label="Instagram" target="_blank" rel="noopener">Instagram</a>
-          <a href="https://pinterest.com" aria-label="Pinterest" target="_blank" rel="noopener">Pinterest</a>
         </div>
       </div>
       <div>
@@ -257,7 +256,7 @@ function renderFooter(){
         </ul>
         <h4 style="margin-top:22px;">Get in Touch</h4>
         <ul>
-          <li><a href="tel:+919599428824">+91 95994 28824</a></li>
+          <li><a href="tel:+919667751677">+91 96677 51677</a></li>
           <li><a href="mailto:office@lerosea.com">office@lerosea.com</a></li>
         </ul>
       </div>

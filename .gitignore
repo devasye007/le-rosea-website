@@ -38,3 +38,9 @@ craftsman.MP4
 /_*
 lol.png
 
+
+# Large source video bundle (only transcoded copies belong in assets/video/products/)
+website_videos.zip
+*.zip
+website_videos/
+Website videos/

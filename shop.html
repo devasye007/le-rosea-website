@@ -28,13 +28,6 @@
           <option value="Top">Top</option>
           <option value="Skirt">Skirt</option>
         </select>
-        <select id="filterCollection">
-          <option value="">All Collections</option>
-          <option value="Day & Resort">Day &amp; Resort</option>
-          <option value="Celebration">Celebration</option>
-          <option value="Evening">Evening</option>
-          <option value="Statement Prêt-Couture">Statement Prêt-Couture</option>
-        </select>
         <select id="filterColor">
           <option value="">All Colours</option>
         </select>
@@ -98,15 +91,13 @@
 
   function applyFilters(){
     const cat = document.getElementById('filterCategory').value;
-    const col = document.getElementById('filterCollection').value;
     const color = document.getElementById('filterColor').value;
     const size = document.getElementById('filterSize').value;
     const priceRange = document.getElementById('filterPrice').value;
 
     let results = PRODUCTS.filter(p => {
       if (p.hidden) return false;
-      if (cat && p.category !== cat) return false;
-      if (col && p.collection !== col) return false;
+      if (cat && p.category !== cat && !(p.extraCategories || []).includes(cat)) return false;
       if (color && !productColorNames(p).includes(color)) return false;
       if (size && !p.sizes.includes(size)) return false;
       if (priceRange){
@@ -127,8 +118,7 @@
   document.addEventListener('DOMContentLoaded', () => {
     populateColorOptions();
     if (params.get('category')) document.getElementById('filterCategory').value = params.get('category');
-    if (params.get('collection')) document.getElementById('filterCollection').value = params.get('collection');
-    ['filterCategory','filterCollection','filterColor','filterSize','filterPrice'].forEach(id =>
+    ['filterCategory','filterColor','filterSize','filterPrice'].forEach(id =>
       document.getElementById(id).addEventListener('change', applyFilters)
     );
     applyFilters();

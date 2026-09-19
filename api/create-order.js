@@ -12,8 +12,17 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { keyId, keySecret } = razorpayConfig();
+  const cfg = razorpayConfig();
+  const { keyId, keySecret, mode } = cfg;
   if (!keyId || !keySecret) {
+    // Log (server-side only) exactly which env var is missing at runtime, by
+    // NAME — never the value — so Vercel function logs pinpoint the problem.
+    console.error(
+      '[create-order] Razorpay not configured. RAZORPAY_MODE=' + mode +
+      ' | ' + cfg.keyIdVar + ' present=' + (!!keyId) +
+      ' | ' + cfg.keySecretVar + ' present=' + (!!keySecret) +
+      ' (mode=live reads RAZORPAY_LIVE_KEY_*; mode=test reads RAZORPAY_TEST_KEY_* then RAZORPAY_KEY_*)'
+    );
     return res.status(500).json({ error: 'Payment gateway is not configured' });
   }
 
