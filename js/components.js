@@ -299,6 +299,20 @@ function renderCartDrawerShell(){
   document.getElementById('cartClose').addEventListener('click', closeCart);
 }
 
+function renderWhatsappButton(){
+  if (document.getElementById('whatsappFloat')) return;
+  const message = encodeURIComponent('Hello LE ROSEA, I would like to chat about an order.');
+  const link = document.createElement('a');
+  link.className = 'whatsapp-float';
+  link.id = 'whatsappFloat';
+  link.href = 'https://wa.me/919667751677?text=' + message;
+  link.target = '_blank';
+  link.rel = 'noopener';
+  link.setAttribute('aria-label', 'Chat with us on WhatsApp');
+  link.innerHTML = ICONS.whatsapp;
+  document.body.appendChild(link);
+}
+
 // Use the real rose logo as the favicon (recognisable at small size).
 function setFavicon(){
   if (document.querySelector('link[rel="icon"]')) return;
@@ -316,5 +330,6 @@ document.addEventListener('DOMContentLoaded', () => {
   renderCartDrawerShell();
   renderCartDrawer();
   renderSearchOverlay();
+  renderWhatsappButton();
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape'){ closeCart(); closeSearch(); } });
 });

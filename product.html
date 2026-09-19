@@ -271,7 +271,7 @@
     document.getElementById('qtyPlus').addEventListener('click', () => { qty += 1; document.getElementById('qtyValue').textContent = qty; });
 
     document.getElementById('addToCartBtn').addEventListener('click', () => doAdd());
-    document.getElementById('buyNowBtn').addEventListener('click', () => { if (doAdd()) location.href = 'checkout.html'; });
+    document.getElementById('buyNowBtn').addEventListener('click', () => doAdd());
 
     document.querySelectorAll('[data-acc]').forEach(btn => btn.addEventListener('click', () => {
       const item = btn.closest('.accordion-item');
@@ -354,7 +354,7 @@
     });
   }
 
-  // Returns true when the item was added (used by Buy Now to gate the redirect).
+  // Returns true when the item was added. addToCart opens the bag for review.
   function doAdd(){
     if (!customValid()){ updateActions(); return false; }
     const opts = {};
