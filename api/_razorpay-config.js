@@ -11,14 +11,14 @@
 // The filename is underscore-prefixed so Vercel does NOT expose it as a
 // routable /api endpoint; it's a shared module, required by the handlers.
 module.exports = function razorpayConfig() {
-  const mode = (process.env.RAZORPAY_MODE || 'test').trim().toLowerCase();
+  const mode = (process.env.RAZORPAY_MODE || 'live').trim().toLowerCase();
   if (mode === 'live') {
     return {
       mode: 'live',
-      keyId: process.env.RAZORPAY_LIVE_KEY_ID,
-      keySecret: process.env.RAZORPAY_LIVE_KEY_SECRET,
-      keyIdVar: 'RAZORPAY_LIVE_KEY_ID',
-      keySecretVar: 'RAZORPAY_LIVE_KEY_SECRET',
+      keyId: process.env.RAZORPAY_LIVE_KEY_ID || process.env.RAZORPAY_KEY_ID,
+      keySecret: process.env.RAZORPAY_LIVE_KEY_SECRET || process.env.RAZORPAY_KEY_SECRET,
+      keyIdVar: process.env.RAZORPAY_LIVE_KEY_ID ? 'RAZORPAY_LIVE_KEY_ID' : 'RAZORPAY_KEY_ID',
+      keySecretVar: process.env.RAZORPAY_LIVE_KEY_SECRET ? 'RAZORPAY_LIVE_KEY_SECRET' : 'RAZORPAY_KEY_SECRET',
     };
   }
   // Test mode: prefer RAZORPAY_TEST_KEY_*, fall back to the original
