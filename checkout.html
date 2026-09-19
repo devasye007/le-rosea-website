@@ -214,8 +214,39 @@
     return code + digits;
   }
 
-  function finishOrder(orderRef){
-    document.getElementById('confirmOrderId').textContent = '#' + orderRef;
+  function checkoutPayload(){
+    const lines = cartLinesWithData().map(l => ({
+      productId: l.product.id,
+      name: l.product.name,
+      size: l.size,
+      color: l.color || '',
+      measurements: lineMeasurementsLabel(l),
+      quantity: l.qty,
+      price: l.product.price
+    }));
+    return {
+      currency: 'INR',
+      total: cartSubtotal(),
+      customer: {
+        name: document.getElementById('fName').value,
+        email: document.getElementById('fEmail').value,
+        phone: fullPhone()
+      },
+      shipping: {
+        name: document.getElementById('fName').value,
+        phone: fullPhone(),
+        address: document.getElementById('fAddr').value,
+        city: (document.getElementById('fCity') || {}).value || '',
+        state: (document.getElementById('fState') || {}).value || '',
+        pin: document.getElementById('fPin').value,
+        country: document.getElementById('fCountry').value
+      },
+      lines
+    };
+  }
+
+  function finishOrder(orderRef, shopifyName){
+    document.getElementById('confirmOrderId').textContent = shopifyName || ('#' + orderRef);
     document.getElementById('confirmRose').innerHTML = ICONS.rose;
     document.getElementById('checkoutView').classList.add('hidden');
     document.getElementById('confirmView').classList.remove('hidden');
@@ -312,12 +343,12 @@
           const vr = await fetch('/api/verify-payment', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(response)
+            body: JSON.stringify({ ...response, checkout: checkoutPayload() })
           });
           const vdata = await vr.json().catch(() => ({}));
           if (vr.ok && vdata.success){
             clearError();
-            finishOrder(response.razorpay_order_id);
+            finishOrder(response.razorpay_order_id, vdata.shopify_order && vdata.shopify_order.name);
           } else {
             console.error('[checkout] verify-payment failed — HTTP', vr.status, vdata);
             showError('Payment could not be verified. If any amount was debited it will be refunded automatically.');

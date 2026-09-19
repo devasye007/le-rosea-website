@@ -21,6 +21,7 @@ app.use(express.json());
 // Backend API — reuse the Vercel-style handlers verbatim.
 app.post('/api/create-order', require('./api/create-order'));
 app.post('/api/verify-payment', require('./api/verify-payment'));
+app.post('/api/create-shopify-order', require('./api/create-shopify-order'));
 
 // One-time Shopify OAuth handshake (GET endpoints; see api/shopify/*).
 app.get('/api/shopify/install', require('./api/shopify/install'));
