@@ -83,6 +83,13 @@ const PRODUCTS = [
     artVariant: 'bloom',
     cardImage: 'assets/products/sequins-rush-set-sea-green/2.jpg',
     images: ['assets/products/sequins-rush-set-sea-green/2.jpg', 'assets/products/sequins-rush-set-sea-green/1.jpg', 'assets/products/sequins-rush-set-sea-green/3.jpg'],
+    // Same three colourways as the set; shares the set's photography (no dedicated
+    // top-only lavender/pink shots yet, so those mirror the set's galleries).
+    colors: [
+      { name: 'Sea Green', swatch: '#3F8374', images: ['assets/products/sequins-rush-set-sea-green/2.jpg', 'assets/products/sequins-rush-set-sea-green/1.jpg', 'assets/products/sequins-rush-set-sea-green/3.jpg'], video: null },
+      { name: 'Lavender', swatch: '#B7A6DA', images: ['assets/products/sequins-rush-set-trio.jpg'], video: null },
+      { name: 'Pink', swatch: '#E48CB2', images: ['assets/products/sequins-rush-set-pink/1.jpg', 'assets/products/sequins-rush-set-pink/2.jpg', 'assets/products/sequins-rush-set-pink/3.jpg', 'assets/products/sequins-rush-set-pink/4.jpg', 'assets/products/sequins-rush-set-pink/5.jpg', 'assets/products/sequins-rush-set-pink/6.jpg', 'assets/products/sequins-rush-set-pink/7.jpg'], video: null },
+    ],
   }),
   makeProduct({
     id: 'sequins-rush-skirt',
@@ -100,6 +107,13 @@ const PRODUCTS = [
     artVariant: 'bloom',
     cardImage: 'assets/products/sequins-rush-set-sea-green/3.jpg',
     images: ['assets/products/sequins-rush-set-sea-green/3.jpg', 'assets/products/sequins-rush-set-sea-green/1.jpg', 'assets/products/sequins-rush-set-sea-green/2.jpg'],
+    // Same three colourways as the set; shares the set's photography (no dedicated
+    // skirt-only lavender/pink shots yet, so those mirror the set's galleries).
+    colors: [
+      { name: 'Sea Green', swatch: '#3F8374', images: ['assets/products/sequins-rush-set-sea-green/3.jpg', 'assets/products/sequins-rush-set-sea-green/1.jpg', 'assets/products/sequins-rush-set-sea-green/2.jpg'], video: null },
+      { name: 'Lavender', swatch: '#B7A6DA', images: ['assets/products/sequins-rush-set-trio.jpg'], video: null },
+      { name: 'Pink', swatch: '#E48CB2', images: ['assets/products/sequins-rush-set-pink/1.jpg', 'assets/products/sequins-rush-set-pink/2.jpg', 'assets/products/sequins-rush-set-pink/3.jpg', 'assets/products/sequins-rush-set-pink/4.jpg', 'assets/products/sequins-rush-set-pink/5.jpg', 'assets/products/sequins-rush-set-pink/6.jpg', 'assets/products/sequins-rush-set-pink/7.jpg'], video: null },
+    ],
   }),
   // Merged colour product: fringe mini dress offered in three colourways.
   makeProduct({
