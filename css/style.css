@@ -255,7 +255,7 @@ body.homepage #site-header{
 }
 .logo .rose-mark{ width: 22px; height: 22px; color: var(--gold); }
 
-/* Real rose logo (transparent gold PNG) — reads on the dark header + footer. */
+/* Real rose logo (transparent gold PNG) - reads on the dark header + footer. */
 .logo-img{ height: 40px; width: auto; display: block; }
 .home-logo .logo-img{ height: 58px; }
 .footer-brand .logo-img{ height: 44px; }
@@ -513,7 +513,15 @@ body.homepage #site-header{
   overflow: hidden;
   background: var(--espresso);
 }
-.hero-art{ position: absolute; inset: 0; }
+.hero-art{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  border-radius: 0;
+  border: none;
+}
 .hero-emblem{
   display: inline-flex;
   width: 58px;
@@ -586,7 +594,7 @@ body.homepage #site-header{
   position: absolute;
   inset: 0;
   border: 1px solid rgba(176,138,60,0.12);
-  /* Neutral gradient fallback only — shown before the video loads. No stray
+  /* Neutral gradient fallback only - shown before the video loads. No stray
      image layer behind the video, so nothing can bleed at the edges. */
   background: linear-gradient(140deg, #f7efe1 0%, #e9d4b8 100%);
   box-shadow: 0 26px 62px rgba(36, 28, 24, 0.12);
@@ -1596,7 +1604,7 @@ body.homepage #site-header{
 .phone-input select{ width: auto; flex: 0 0 auto; max-width: 42%; }
 .phone-input input{ flex: 1 1 auto; }
 
-/* Reviews stub (product.html) — placeholder until a reviews app is chosen. */
+/* Reviews stub (product.html) - placeholder until a reviews app is chosen. */
 .reviews-placeholder{
   border: var(--border-hair);
   border-radius: var(--radius);
@@ -2065,7 +2073,7 @@ body > section:nth-of-type(even) .section-head .eyebrow{
   color: #120e0c;
 }
 
-/* Off-canvas drawer background only — must not paint behind the desktop inline nav. */
+/* Off-canvas drawer background only - must not paint behind the desktop inline nav. */
 @media (max-width: 880px){
   .main-nav{ background: rgba(10,8,7,0.96); }
 }
@@ -2619,32 +2627,137 @@ body > section:nth-of-type(even) .eyebrow{
   line-height: 1.75;
 }
 
-.page-about .hero{
-  min-height: 66vh;
+.page-about-hero{
+  position: relative;
+  min-height: 72vh;
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  background: var(--espresso);
+  overflow: hidden;
+  align-items: stretch;
 }
-.page-about .hero-content{
-  padding-bottom: 60px;
+.page-about-hero .hero-media{
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 72vh;
+  border-radius: 0;
+  border: none;
+  aspect-ratio: auto;
+  overflow: hidden;
 }
+.page-about-hero .hero-media img{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 20%;
+  display: block;
+}
+.page-about-hero .hero-pane{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: clamp(48px, 6vw, 96px);
+  background: var(--espresso);
+  color: var(--white);
+  z-index: 2;
+}
+.page-about-hero .hero-pane .eyebrow{
+  color: var(--gold);
+  display: block;
+  margin-bottom: 16px;
+  letter-spacing: 0.22em;
+  font-size: 0.72rem;
+}
+.page-about-hero .hero-pane h1{
+  color: var(--white);
+  font-size: clamp(2.3rem, 3.8vw, 3.6rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  max-width: 16ch;
+  margin: 0;
+}
+@media (max-width: 880px){
+  .page-about-hero{
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+  .page-about-hero .hero-media{
+    min-height: 52vh;
+    aspect-ratio: 4 / 5;
+  }
+  .page-about-hero .hero-pane{
+    padding: 44px 24px 56px;
+    align-items: flex-start;
+    text-align: left;
+  }
+  .page-about-hero .hero-pane h1{
+    font-size: clamp(2.2rem, 8vw, 3rem);
+  }
+}
+
+.page-about .section-head,
+.page-about .section-head.center{
+  margin: 0 0 44px 0;
+  text-align: left;
+  max-width: 800px;
+}
+.page-about .section-head .eyebrow{
+  display: block;
+  margin-bottom: 12px;
+}
+.page-about .section-head h2{
+  font-size: clamp(2.1rem, 3.2vw, 2.75rem);
+  line-height: 1.15;
+  margin: 0;
+}
+
 .page-about .product-grid{
+  display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 0;
-  border-top: 1px solid rgba(242,230,214,0.12);
-  border-bottom: 1px solid rgba(242,230,214,0.12);
+  border-top: 1px solid rgba(18,16,14,0.12);
+  border-bottom: 1px solid rgba(18,16,14,0.12);
+  align-items: stretch;
 }
 .page-about .product-grid > div{
-  padding: 24px 18px 28px;
-  min-height: 180px;
-  border-right: 1px solid rgba(242,230,214,0.1);
+  padding: 28px 20px 32px;
+  min-height: 170px;
+  border-right: 1px solid rgba(18,16,14,0.1);
+  display: flex;
+  flex-direction: column;
 }
 .page-about .product-grid > div:last-child{
   border-right: none;
 }
 .page-about .product-grid h4{
-  margin-bottom: 14px;
+  font-size: clamp(0.68rem, 0.82vw, 0.76rem);
+  letter-spacing: 0.14em;
+  white-space: nowrap;
+  margin-bottom: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
 }
 .page-about .product-grid p{
-  font-size: 0.82rem;
-  line-height: 1.8;
+  font-size: 0.84rem;
+  line-height: 1.75;
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+.founder-signoff{
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 20px;
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--taupe);
+  font-size: 0.95rem;
+  line-height: 1.6;
 }
 
 .page-customization .product-grid{
@@ -2773,6 +2886,9 @@ body > section:nth-of-type(even) .eyebrow{
   .page-about .product-grid > div:last-child,
   .page-customization .product-grid > div:last-child{
     border-bottom: none;
+  }
+  .page-about .product-grid h4{
+    white-space: normal;
   }
   .pdp-info,
   .order-summary{
@@ -2974,7 +3090,7 @@ body.homepage #site-header{
   border-color: rgba(18,16,14,0.08);
   box-shadow: none;
 }
-/* Image containers sit behind a cover photo — a soft ivory fill (never pure
+/* Image containers sit behind a cover photo - a soft ivory fill (never pure
    white) avoids a flash-of-white before the photo loads. */
 .product-card-media,
 .media-stage{
@@ -3169,7 +3285,7 @@ html, body{ overflow-x: hidden; max-width: 100%; }
 }
 
 /* ==========================================================================
-   PDP GALLERY — full-garment visibility, next/prev, thumbnails, lightbox
+   PDP GALLERY - full-garment visibility, next/prev, thumbnails, lightbox
    ========================================================================== */
 
 /* Main image: object-fit: contain in a tall 2/3 box so heads/hems are never
@@ -3540,7 +3656,7 @@ html, body{ overflow-x: clip; }
 .search-empty{ padding: 22px 18px; color: var(--taupe); font-size: 0.9rem; margin: 0; }
 
 /* ============================================================
-   PAGE HEADERS — one shared, moderate scale for content/utility
+   PAGE HEADERS - one shared, moderate scale for content/utility
    pages (checkout, contact, size guide, shipping, policies,
    customization). Distinct from the homepage hero: smaller, and
    left-aligned to the .container gutter, so every page's heading

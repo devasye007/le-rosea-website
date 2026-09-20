@@ -2,7 +2,7 @@
 //
 // Serves the static site AND the Razorpay backend from ONE origin, so the
 // front-end's fetch('/api/...') calls resolve without CORS/proxy issues.
-// (`python3 -m http.server` cannot do this — it only serves static files and
+// (`python3 -m http.server` cannot do this - it only serves static files and
 // cannot execute the /api handlers.)
 //
 // The exact same handler files in /api are used here and by Vercel in
@@ -18,7 +18,7 @@ const path = require('path');
 const app = express();
 app.use(express.json());
 
-// Backend API — reuse the Vercel-style handlers verbatim.
+// Backend API - reuse the Vercel-style handlers verbatim.
 app.post('/api/create-order', require('./api/create-order'));
 app.post('/api/verify-payment', require('./api/verify-payment'));
 app.post('/api/create-shopify-order', require('./api/create-shopify-order'));
@@ -29,7 +29,7 @@ app.get('/api/check-first-order', require('./api/check-first-order'));
 app.get('/api/shopify/install', require('./api/shopify/install'));
 app.get('/api/shopify/callback', require('./api/shopify/callback'));
 
-// TEMPORARY diagnostic — remove after confirming env is loaded.
+// TEMPORARY diagnostic - remove after confirming env is loaded.
 app.get('/api/debug-env-check', require('./api/debug-env-check'));
 
 // Everything else is the static site (index.html served at /).
@@ -42,8 +42,8 @@ app.listen(PORT, () => {
   const cfg = razorpayConfig();
   const loaded = !!(cfg.keyId && cfg.keySecret);
   console.log(`LE ROSÈA running at http://localhost:${PORT}`);
-  console.log(`Razorpay mode: ${cfg.mode.toUpperCase()}  |  keys loaded: ${loaded ? 'yes' : 'NO — check .env'}`);
+  console.log(`Razorpay mode: ${cfg.mode.toUpperCase()}  |  keys loaded: ${loaded ? 'yes' : 'NO - check .env'}`);
   if (cfg.mode === 'live') {
-    console.log('⚠  LIVE mode — real payments will be charged. Do not use test cards.');
+    console.log('⚠  LIVE mode - real payments will be charged. Do not use test cards.');
   }
 });

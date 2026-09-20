@@ -16,7 +16,7 @@ module.exports = async function handler(req, res) {
   const { keyId, keySecret, mode } = cfg;
   if (!keyId || !keySecret) {
     // Log (server-side only) exactly which env var is missing at runtime, by
-    // NAME — never the value — so Vercel function logs pinpoint the problem.
+    // NAME - never the value - so Vercel function logs pinpoint the problem.
     console.error(
       '[create-order] Razorpay not configured. RAZORPAY_MODE=' + mode +
       ' | ' + cfg.keyIdVar + ' present=' + (!!keyId) +
@@ -52,7 +52,7 @@ module.exports = async function handler(req, res) {
       order_id: order.id,
       amount: order.amount,
       currency: order.currency,
-      key_id: keyId, // publishable — safe to expose to the browser
+      key_id: keyId, // publishable - safe to expose to the browser
     });
   } catch (err) {
     // Bad/expired keys → surface as an auth failure; everything else → 500.

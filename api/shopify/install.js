@@ -7,7 +7,7 @@
 // Env required: SHOPIFY_STORE_DOMAIN (e.g. your-store.myshopify.com),
 //               SHOPIFY_CLIENT_ID, SHOPIFY_CLIENT_SECRET (used only to sign the
 //               short-lived CSRF `state` cookie).
-// Env optional: SHOPIFY_REDIRECT_URI — the exact callback URL registered in the
+// Env optional: SHOPIFY_REDIRECT_URI - the exact callback URL registered in the
 //               Shopify Dev Dashboard. Defaults to https://<this-host>/api/shopify/callback.
 const crypto = require('crypto');
 

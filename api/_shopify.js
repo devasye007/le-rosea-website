@@ -97,7 +97,7 @@ async function createPaidOrder(payload) {
     phone: customer.phone || shipping.phone || '',
   };
 
-  // Order total from the line items themselves — exactly what Shopify computes
+  // Order total from the line items themselves - exactly what Shopify computes
   // as the order total. (We never trust a client-sent total for the money math.)
   const lineSubtotal = lineItems.reduce((sum, li) => sum + Number(li.price) * li.quantity, 0);
   const isPartial = payload.paymentMethod === 'partial';
@@ -118,19 +118,19 @@ async function createPaidOrder(payload) {
 
   // What was actually captured online now. The checkout applies the discount iff
   // it claimed the code, so reconstruct the charged amount from the claim using
-  // the same server rate — independent of any client-sent number.
+  // the same server rate - independent of any client-sent number.
   const chargedTotal = lineSubtotal - (claimed ? Math.round(lineSubtotal * DISCOUNT_RATE) : 0);
   const chargedNow = isPartial ? Math.round(chargedTotal / 2) : chargedTotal;
   const balance = orderTotal - chargedNow;      // remaining owed (partial-COD, or a discrepancy)
 
   // Notes -------------------------------------------------------------------
   let note = isPartial
-    ? ('PARTIAL COD — Balance due at delivery: ' + inr(balance) + ' (cash). ' +
+    ? ('PARTIAL COD - Balance due at delivery: ' + inr(balance) + ' (cash). ' +
        'Advance ' + inr(chargedNow) + ' paid online via Razorpay. ' +
        'Collect ' + inr(balance) + ' in cash when booking the courier COD shipment.')
     : 'Paid through Razorpay on lerosea.com';
   if (discrepancy) {
-    note = 'DISCOUNT DISCREPANCY — FIRST10 was applied at checkout but this customer is NOT eligible ' +
+    note = 'DISCOUNT DISCREPANCY - FIRST10 was applied at checkout but this customer is NOT eligible ' +
       '(a prior order exists for ' + (customer.email || 'this email') + '). Discount NOT honoured; order ' +
       'billed at full price ' + inr(lineSubtotal) + '. Amount charged online: ' + inr(chargedNow) +
       '. Outstanding: ' + inr(orderTotal - chargedNow) + '. Review before fulfilment.\n\n' + note;
@@ -149,11 +149,11 @@ async function createPaidOrder(payload) {
     );
   }
   if (honour) {
-    noteAttributes.push({ name: 'Coupon', value: 'FIRST10 — 10% first-order (−' + inr(discount) + ')' });
+    noteAttributes.push({ name: 'Coupon', value: 'FIRST10 - 10% first-order (−' + inr(discount) + ')' });
   }
   if (discrepancy) {
     noteAttributes.unshift({ name: 'Discount Discrepancy',
-      value: 'FIRST10 claimed but NOT eligible — billed full price; outstanding ' + inr(orderTotal - chargedNow) });
+      value: 'FIRST10 claimed but NOT eligible - billed full price; outstanding ' + inr(orderTotal - chargedNow) });
   }
 
   // Full payment that covers the (server-legitimate) total is paid; partial-COD

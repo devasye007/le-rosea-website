@@ -59,7 +59,7 @@ module.exports = async function handler(req, res) {
   const cookieState = dot >= 0 ? cookie.slice(0, dot) : '';
   const cookieSig = dot >= 0 ? cookie.slice(dot + 1) : '';
   if (!safeEqual(cookieState, state) || !safeEqual(cookieSig, sign(state, clientSecret))) {
-    return page(res, 403, '<h1>State mismatch</h1><p>Possible CSRF — request rejected. Start again from <code>/api/shopify/install</code>.</p>');
+    return page(res, 403, '<h1>State mismatch</h1><p>Possible CSRF - request rejected. Start again from <code>/api/shopify/install</code>.</p>');
   }
 
   // 2) Validate shop host (prevents pointing the token exchange at a rogue host)
@@ -70,7 +70,7 @@ module.exports = async function handler(req, res) {
     return page(res, 400, '<h1>Missing code</h1><p>No authorization code was returned by Shopify.</p>');
   }
 
-  // 3) Exchange the code for a PERMANENT token — no `expiring` param is sent.
+  // 3) Exchange the code for a PERMANENT token - no `expiring` param is sent.
   let data;
   try {
     const r = await fetch('https://' + shop + '/admin/oauth/access_token', {
@@ -98,13 +98,13 @@ module.exports = async function handler(req, res) {
     '<h1>Shopify connected ✓</h1>' +
     '<p><strong>' +
       (permanent
-        ? 'Permanent token — no expiry (no <code>expires_in</code> returned) ✓'
+        ? 'Permanent token - no expiry (no <code>expires_in</code> returned) ✓'
         : '⚠ The response included <code>expires_in</code>, so this token is NOT permanent. Re-run the install without requesting an online/expiring token.') +
     '</strong></p>' +
     '<p>Copy this value into your Vercel env var <code>SHOPIFY_ADMIN_API_ACCESS_TOKEN</code> now. It is shown <strong>once</strong> and is not stored anywhere:</p>' +
     '<pre style="background:#f4f1e9;padding:16px;border-radius:8px;white-space:pre-wrap;word-break:break-all;font-size:15px"><strong>' + esc(token || '(no token returned)') + '</strong></pre>' +
     '<p>Granted scopes: <code>' + esc(scope) + '</code></p>' +
     '<hr style="margin:24px 0;border:none;border-top:1px solid #ddd">' +
-    '<p style="color:#555;font-size:14px">After saving it and redeploying, this handshake is complete. <code>SHOPIFY_CLIENT_SECRET</code> is only needed for this one-time exchange — you can remove <code>SHOPIFY_CLIENT_ID</code> / <code>SHOPIFY_CLIENT_SECRET</code> from the runtime env afterwards if you want to minimise stored secrets. If you ever need a fresh token, start over from <code>/api/shopify/install</code>.</p>'
+    '<p style="color:#555;font-size:14px">After saving it and redeploying, this handshake is complete. <code>SHOPIFY_CLIENT_SECRET</code> is only needed for this one-time exchange - you can remove <code>SHOPIFY_CLIENT_ID</code> / <code>SHOPIFY_CLIENT_SECRET</code> from the runtime env afterwards if you want to minimise stored secrets. If you ever need a fresh token, start over from <code>/api/shopify/install</code>.</p>'
   );
 };

@@ -55,8 +55,9 @@ const PRODUCTS = [
     description: 'An intricately hand-embroidered set featuring shimmering sequins, cutdana and cascading latkans, designed to catch the light and move beautifully with the body. Available in sea green, lavender and pink.',
     fit: 'Fitted crop top with mini skirt.',
     artVariant: 'bloom',
-    // Group campaign shot used on cards/grids; per-colour galleries below.
-    cardImage: 'assets/products/sequins-rush-set-trio.jpg',
+    // Card uses the single-model Sea Green shot (not the trio group image) so it
+    // matches the other single-model cards in the shop grid. Per-colour galleries
+    // below (the trio image remains the Lavender placeholder - no dedicated shot).
     images: ['assets/products/sequins-rush-set-sea-green/1.jpg', 'assets/products/sequins-rush-set-sea-green/2.jpg', 'assets/products/sequins-rush-set-sea-green/3.jpg'],
     colors: [
       { name: 'Sea Green', swatch: '#3F8374', images: ['assets/products/sequins-rush-set-sea-green/1.jpg', 'assets/products/sequins-rush-set-sea-green/2.jpg', 'assets/products/sequins-rush-set-sea-green/3.jpg'], video: null },
@@ -78,7 +79,7 @@ const PRODUCTS = [
     isBestseller: false,
     fabric: 'Embroidered mesh with Lycra lining',
     embellishment: 'Sequins, cutdana and cutdana latkans',
-    description: 'The sequinned crop top from the Sequins Rush set, offered on its own — shimmering hand-embroidered sequins, cutdana and cascading latkans designed to catch the light and move beautifully with the body.',
+    description: 'The sequinned crop top from the Sequins Rush set, offered on its own - shimmering hand-embroidered sequins, cutdana and cascading latkans designed to catch the light and move beautifully with the body.',
     fit: 'Fitted crop top with fine shoulder straps.',
     artVariant: 'bloom',
     cardImage: 'assets/products/sequins-rush-set-sea-green/2.jpg',
@@ -102,7 +103,7 @@ const PRODUCTS = [
     isBestseller: false,
     fabric: 'Embroidered mesh with Lycra lining',
     embellishment: 'Sequins, cutdana and cutdana latkans',
-    description: 'The sequinned mini skirt from the Sequins Rush set, offered on its own — shimmering hand-embroidered sequins, cutdana and cascading latkans that catch the light and move beautifully with the body.',
+    description: 'The sequinned mini skirt from the Sequins Rush set, offered on its own - shimmering hand-embroidered sequins, cutdana and cascading latkans that catch the light and move beautifully with the body.',
     fit: 'Fitted mini skirt with cascading fringe hem.',
     artVariant: 'bloom',
     cardImage: 'assets/products/sequins-rush-set-sea-green/3.jpg',
@@ -130,8 +131,8 @@ const PRODUCTS = [
     description: 'An elegant mini dress elevated with intricate hand embroidery, sparkling sequins and cascading fringe for statement evening dressing. Available in sea green, lavender and pink.',
     fit: 'Fitted mini dress with fine shoulder straps.',
     artVariant: 'drape',
-    // Group campaign shot used on cards/grids; per-colour galleries below.
-    cardImage: 'assets/products/fringe-mini-dress-trio.jpg',
+    // Card uses the single-model Sea Green shot (not the trio group image) so it
+    // matches the other single-model cards in the shop grid. Per-colour galleries below.
     images: ['assets/products/fringe-mini-dress-sea-green/1.jpg', 'assets/products/fringe-mini-dress-sea-green/2.jpg', 'assets/products/fringe-mini-dress-sea-green/3.jpg'],
     colors: [
       { name: 'Sea Green', swatch: '#3F8374', images: ['assets/products/fringe-mini-dress-sea-green/1.jpg', 'assets/products/fringe-mini-dress-sea-green/2.jpg', 'assets/products/fringe-mini-dress-sea-green/3.jpg'], video: null },
@@ -169,7 +170,7 @@ const PRODUCTS = [
     isBestseller: false,
     fabric: 'Crepe with Lycra lining',
     embellishment: 'Net flowers and intricate beadwork',
-    description: 'The cropped corset top from the Wildflower set, offered on its own — hand-appliqued net flowers and intricate beadwork on refined white crepe. Shown here in set photography; dedicated piece imagery to follow.',
+    description: 'The cropped corset top from the Wildflower set, offered on its own - hand-appliqued net flowers and intricate beadwork on refined white crepe. Shown here in set photography; dedicated piece imagery to follow.',
     fit: 'Cropped corset top.',
     artVariant: 'botanical',
     cardImage: 'assets/products/wildflower-coord-set-white/2.jpg',
@@ -186,7 +187,7 @@ const PRODUCTS = [
     isBestseller: false,
     fabric: 'Crepe with Lycra lining',
     embellishment: 'Net flowers and intricate beadwork',
-    description: 'The long, figure-skimming skirt from the Wildflower set, offered on its own — hand-appliqued net flowers and intricate beadwork on refined white crepe. Shown here in set photography; dedicated piece imagery to follow.',
+    description: 'The long, figure-skimming skirt from the Wildflower set, offered on its own - hand-appliqued net flowers and intricate beadwork on refined white crepe. Shown here in set photography; dedicated piece imagery to follow.',
     fit: 'Long, figure-skimming skirt.',
     artVariant: 'botanical',
     cardImage: 'assets/products/wildflower-coord-set-white/3.jpg',
@@ -398,7 +399,7 @@ const PRODUCTS = [
     isBestseller: false,
     fabric: 'Crepe with Lycra lining',
     embellishment: 'Crystals and glass-bead fringes',
-    description: 'The crystal-trimmed cropped top from the Noir Bloom set, offered on its own — hand-embellished motifs finished with delicate glass-bead fringes. Shown here in set photography; dedicated piece imagery to follow.',
+    description: 'The crystal-trimmed cropped top from the Noir Bloom set, offered on its own - hand-embellished motifs finished with delicate glass-bead fringes. Shown here in set photography; dedicated piece imagery to follow.',
     fit: 'Cropped top.',
     artVariant: 'grid',
     cardImage: 'assets/products/noir-bloom-set-black/3.jpg',
@@ -415,7 +416,7 @@ const PRODUCTS = [
     isBestseller: false,
     fabric: 'Crepe with Lycra lining',
     embellishment: 'Crystals and glass-bead fringes',
-    description: 'The long, fluid skirt from the Noir Bloom set, offered on its own — refined black crepe with hand-embellished motifs and delicate glass-bead fringes. Shown here in set photography; dedicated piece imagery to follow.',
+    description: 'The long, fluid skirt from the Noir Bloom set, offered on its own - refined black crepe with hand-embellished motifs and delicate glass-bead fringes. Shown here in set photography; dedicated piece imagery to follow.',
     fit: 'Long, fluid skirt.',
     artVariant: 'grid',
     cardImage: 'assets/products/noir-bloom-set-black/4.jpg',
@@ -582,7 +583,7 @@ const PRODUCTS = [
     artVariant: 'grid',
   }),
   // ---------------------------------------------------------------------------
-  // PAYMENT TEST PRODUCT — ₹99. For the owner to run a real end-to-end payment
+  // PAYMENT TEST PRODUCT - ₹99. For the owner to run a real end-to-end payment
   // test cheaply. `hidden: true` keeps it out of the shop grid, search, home
   // rows and related-products, so customers never see it. Reach it directly:
   //   product.html?id=payment-test-99
@@ -598,7 +599,7 @@ const PRODUCTS = [
     isNew: false,
     isBestseller: false,
     hidden: true,
-    fabric: 'N/A — internal payment test item',
+    fabric: 'N/A - internal payment test item',
     embellishment: 'N/A',
     description: 'Internal ₹99 item used only to verify the checkout and payment flow end to end. Not a real product; hidden from the shop, search and homepage. Add to bag and proceed to checkout to test a payment.',
     fit: 'N/A',
@@ -606,7 +607,7 @@ const PRODUCTS = [
   }),
 ];
 
-// Occasion collections — "Day & Resort" / "Celebration" / "Evening". A piece
+// Occasion collections - "Day & Resort" / "Celebration" / "Evening". A piece
 // can belong to more than one. Kept as a single mapping (rather than inline on
 // each product) so it's easy to see and edit in one place. Drives the shop's
 // Collections filter (shop.html). Pieces not listed here belong to no occasion
@@ -768,7 +769,7 @@ function productImageBlock(product, opts){
   var img = primaryImage(product);
   if (img){
     return '<div class="' + cls + ' has-photo">' +
-      '<img src="' + assetPath(img) + '" alt="' + escapeHtml(product.name + ' — ' + product.colorway) + '"' +
+      '<img src="' + assetPath(img) + '" alt="' + escapeHtml(product.name + ' - ' + product.colorway) + '"' +
       ' loading="lazy" decoding="async"' +
       ' data-art-id="' + escapeHtml(product.id) + '" data-art-variant="' + (product.artVariant || '') + '"' +
       ' onerror="lrArtFallback(this)">' +

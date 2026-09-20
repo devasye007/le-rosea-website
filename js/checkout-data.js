@@ -1,8 +1,8 @@
-// LE ROSÈA — bundled, offline checkout datasets. No external/live API calls,
+// LE ROSÈA - bundled, offline checkout datasets. No external/live API calls,
 // so checkout keeps working even if a third-party service is down.
 //   • DIAL_CODES     : country dialing codes for the phone field (+91 default)
 //   • INDIA_STATES   : Indian states/UTs -> major cities (cascading dropdowns)
-//   • INDIA_CITY_PIN : city -> a representative PIN code (SUGGESTION only —
+//   • INDIA_CITY_PIN : city -> a representative PIN code (SUGGESTION only -
 //                      a city can have many PINs, so it is never forced)
 
 const DIAL_CODES = [
@@ -105,7 +105,7 @@ const INDIA_STATES = {
   'Puducherry': ['Puducherry', 'Karaikal'],
 };
 
-// Representative PIN per city — a hint the customer can accept or overwrite.
+// Representative PIN per city - a hint the customer can accept or overwrite.
 const INDIA_CITY_PIN = {
   'Visakhapatnam': '530001', 'Vijayawada': '520001', 'Guntur': '522001', 'Nellore': '524001', 'Tirupati': '517501', 'Kakinada': '533001',
   'Itanagar': '791111', 'Naharlagun': '791110', 'Pasighat': '791102',

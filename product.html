@@ -100,7 +100,7 @@
   function galleryMarkup(){
     const items = currentMediaItems();
     if (items.length){
-      const alt = escapeHtml(product.name + ' — ' + colorLabel());
+      const alt = escapeHtml(product.name + ' - ' + colorLabel());
       const multi = items.length > 1;
       const arrows = multi ? `
           <button type="button" class="pdp-nav pdp-prev" id="pdpPrev" aria-label="Previous media">${ICONS.chevron}</button>
@@ -365,7 +365,7 @@
   }
 
   // Gallery: main-image swap, next/prev (wraparound), thumbnail sync,
-  // keyboard nav, and a fullscreen lightbox. Idempotent — safe to re-run on
+  // keyboard nav, and a fullscreen lightbox. Idempotent - safe to re-run on
   // colour switch (any prior lightbox is removed first).
   function mountGallery(){
     document.getElementById('pdpLightbox')?.remove();
@@ -380,7 +380,7 @@
     const thumbEls = Array.from(document.querySelectorAll('.pdp-thumb'));
     let idx = 0;
 
-    const alt = escapeHtml(product.name + ' — ' + colorLabel());
+    const alt = escapeHtml(product.name + ' - ' + colorLabel());
     const lb = document.createElement('div');
     lb.className = 'pdp-lightbox';
     lb.id = 'pdpLightbox';

@@ -12,10 +12,10 @@
 
 <section class="section-tight">
   <div class="container">
-    <div class="section-head center">
+    <div class="section-head page-header">
       <span class="eyebrow">The Collection</span>
-      <h1>Shop LE ROSÈA</h1>
-      <p class="lede center">Dresses, gowns and co-ords, each hand-finished for the moments worth remembering.</p>
+      <h1 id="shopTitle">Shop LE ROSÈA</h1>
+      <p class="lede">Dresses, gowns and co-ords, each hand-finished for the moments worth remembering.</p>
     </div>
 
     <div class="filter-bar">
@@ -62,7 +62,22 @@
 <script>
   const params = new URLSearchParams(location.search);
 
-  // Include every colour name — the single colorway for standard products, plus
+  // The shop heading reflects the active category filter (e.g. "Dresses",
+  // "Tops"); with no category it falls back to the general shop title.
+  const CATEGORY_TITLES = {
+    'Dresses': 'Dresses',
+    'Gowns': 'Gowns',
+    'Co-ords & Separates': 'Co-ord Sets',
+    'Top': 'Tops',
+    'Skirt': 'Skirts',
+  };
+  function updateShopTitle(cat){
+    const title = cat ? (CATEGORY_TITLES[cat] || cat) : 'Shop LE ROSÈA';
+    document.getElementById('shopTitle').textContent = title;
+    document.title = (cat ? title : 'Shop') + ' - LE ROSÈA';
+  }
+
+  // Include every colour name - the single colorway for standard products, plus
   // each entry in colors[] for merged multi-colour products.
   function productColorNames(p){
     return (p.colors && p.colors.length) ? p.colors.map(c => c.name) : [p.colorway];
@@ -94,6 +109,7 @@
     const color = document.getElementById('filterColor').value;
     const size = document.getElementById('filterSize').value;
     const priceRange = document.getElementById('filterPrice').value;
+    updateShopTitle(cat);
 
     let results = PRODUCTS.filter(p => {
       if (p.hidden) return false;

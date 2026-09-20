@@ -12,10 +12,10 @@
 
 <section class="section-tight">
   <div class="container">
-    <div class="section-head center">
+    <div class="section-head page-header">
       <span class="eyebrow">By Appointment</span>
       <h1>Book an Atelier Appointment</h1>
-      <p class="lede center">Meet the House for a private styling or fitting session. Share a few details and a member of our team will confirm your slot.</p>
+      <p class="lede">Meet the House for a private styling or fitting session. Share a few details and a member of our team will confirm your slot.</p>
     </div>
 
     <div class="split">
@@ -49,7 +49,7 @@
         </div>
         <div class="field"><label for="aNote">Note (occasion, pieces of interest, anything we should know)</label><textarea id="aNote" rows="5"></textarea></div>
         <button type="submit" class="btn btn-primary btn-block" id="apptSubmit">Request Appointment</button>
-        <p id="apptSent" class="hidden" style="margin-top:14px; font-size:0.86rem; color:var(--gold);">Thank you — your appointment request has been received. A member of the House will be in touch shortly to confirm.</p>
+        <p id="apptSent" class="hidden" style="margin-top:14px; font-size:0.86rem; color:var(--gold);">Thank you - your appointment request has been received. A member of the House will be in touch shortly to confirm.</p>
       </form>
 
       <div>
@@ -102,7 +102,7 @@
 
   document.getElementById('appointmentForm').addEventListener('submit', (e) => {
     e.preventDefault();
-    // NOTE: mirrors the contact.html pattern — this confirms client-side only.
+    // NOTE: mirrors the contact.html pattern - this confirms client-side only.
     // TODO (needs a backend): deliver the request to the House, e.g. send an
     // email via a mail service (Resend/SendGrid) from a serverless function,
     // or create a note/task in a CRM. No customer data is stored client-side.

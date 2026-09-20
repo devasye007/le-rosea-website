@@ -5,7 +5,7 @@
 //   "live"           → RAZORPAY_LIVE_KEY_ID / RAZORPAY_LIVE_KEY_SECRET  (REAL money)
 //
 // Keeping both key sets side by side means local dev can stay on test while
-// production runs on live by setting a single env var — and the KEY_SECRET
+// production runs on live by setting a single env var - and the KEY_SECRET
 // never leaves the server in either mode.
 //
 // The filename is underscore-prefixed so Vercel does NOT expose it as a

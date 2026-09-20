@@ -174,7 +174,7 @@
   // is prefilled, but the discount is only applied after the customer's email is
   // checked against /api/check-first-order (automatically on email blur, or on
   // Apply). Eligibility is ALWAYS re-verified server-side before the order is
-  // created — the client result here is UX only.
+  // created - the client result here is UX only.
   const PROMO_CODE = 'FIRST10';
   const PROMO_RATE = 10; // percent
   let appliedCoupon = null;        // { code } once eligibility is confirmed
@@ -188,8 +188,8 @@
 
   // ---- Payment method + 50/50 split ---------------------------------------
   // Single source of truth for the amount owed: subtotal minus any applied
-  // coupon. Everything downstream — the summary Total, the 50/50 split, the
-  // button label, the Razorpay charge and the Shopify order — derives from this,
+  // coupon. Everything downstream - the summary Total, the 50/50 split, the
+  // button label, the Razorpay charge and the Shopify order - derives from this,
   // so an applied coupon flows through the whole flow automatically.
   function orderTotal(){ return Math.max(0, cartSubtotal() - discountAmount()); }
   function advanceAmount(){ return Math.round(orderTotal() / 2); }   // 50% online now
@@ -213,7 +213,7 @@
   }
 
   // Refresh the amounts on both pay options, the advance/balance summary rows,
-  // the selected-card highlight and the button label — for the current total
+  // the selected-card highlight and the button label - for the current total
   // and current selection.
   function renderPaySplit(){
     const total = orderTotal(), advance = advanceAmount(), balance = balanceAmount();
@@ -290,7 +290,7 @@
       if (opts.manual) showCouponMsg('Enter your email above, then apply the code.', 'muted');
       return;
     }
-    // Already confirmed eligible for this exact email — nothing to do.
+    // Already confirmed eligible for this exact email - nothing to do.
     if (!opts.force && appliedCoupon && couponEligibleEmail === email) return;
 
     showCouponMsg('Checking eligibility…', 'muted');
@@ -301,17 +301,17 @@
     } catch (err){
       console.error('[checkout] eligibility check failed:', err);
       appliedCoupon = null; couponEligibleEmail = null; renderSummary();
-      showCouponMsg('Couldn’t verify the promo right now — you can still order at full price.', 'muted');
+      showCouponMsg('Couldn’t verify the promo right now - you can still order at full price.', 'muted');
       return;
     }
     if (eligible){
       appliedCoupon = { code: PROMO_CODE }; couponEligibleEmail = email; userRemovedCoupon = false;
       renderSummary();
-      showCouponMsg(PROMO_CODE + ' applied — 10% off your first order. <a href="#" id="couponRemove">Remove</a>', 'ok');
+      showCouponMsg(PROMO_CODE + ' applied - 10% off your first order. <a href="#" id="couponRemove">Remove</a>', 'ok');
     } else {
       appliedCoupon = null; couponEligibleEmail = null;
       renderSummary();
-      showCouponMsg('This code is for first orders only — looks like you’ve ordered with us before.', 'muted');
+      showCouponMsg('This code is for first orders only - looks like you’ve ordered with us before.', 'muted');
     }
   }
 
@@ -399,7 +399,7 @@
     box.innerHTML = '';
   }
 
-  // Show a PIN suggestion the customer can accept or overwrite — never forced,
+  // Show a PIN suggestion the customer can accept or overwrite - never forced,
   // since one city can have many PIN codes.
   function suggestPin(){
     const box = document.getElementById('pinSuggest');
@@ -408,7 +408,7 @@
     const pin = INDIA_CITY_PIN[cityEl.value];
     if (!pin){ clearPinSuggestion(); return; }
     box.innerHTML = `Suggested PIN for ${escapeHtml(cityEl.value)}: <strong>${pin}</strong> ` +
-      `<a href="#" id="pinUse">Use this</a> <span class="muted">— edit if yours differs</span>`;
+      `<a href="#" id="pinUse">Use this</a> <span class="muted">- edit if yours differs</span>`;
     box.classList.remove('hidden');
     document.getElementById('pinUse').addEventListener('click', (e) => {
       e.preventDefault();
@@ -438,7 +438,7 @@
       currency: 'INR',
       subtotal: cartSubtotal(),
       total: orderTotal(),
-      // Claimed promo code only — the server recomputes the discount AND
+      // Claimed promo code only - the server recomputes the discount AND
       // re-verifies first-order eligibility before honouring it.
       coupon: appliedCoupon ? { code: appliedCoupon.code } : null,
       // Server recomputes advance/balance from the order total; these are sent
@@ -532,7 +532,7 @@
       });
     } catch (netErr) {
       // fetch() only rejects on a network-level failure (server not running,
-      // DNS, connection refused, offline) — NOT on HTTP error status codes.
+      // DNS, connection refused, offline) - NOT on HTTP error status codes.
       console.error('[checkout] create-order network failure:', netErr);
       showError('Could not reach the server. Make sure the backend is running (npm start), then retry.');
       resetBtn();
@@ -546,7 +546,7 @@
 
     if (!res.ok){
       // Surface the real reason instead of one generic string.
-      console.error('[checkout] create-order failed — HTTP', res.status, data);
+      console.error('[checkout] create-order failed - HTTP', res.status, data);
       const reason = (data && data.error) ? data.error : ('HTTP ' + res.status);
       if (res.status === 401){
         showError('The payment gateway rejected the request (authentication). Check RAZORPAY_KEY_ID / KEY_SECRET in .env.');
@@ -574,7 +574,7 @@
       amount: order.amount,
       currency: order.currency,
       name: 'LE ROSÈA',
-      description: method === 'partial' ? 'Advance (50%) — Prêt-couture order' : 'Prêt-couture order',
+      description: method === 'partial' ? 'Advance (50%) - Prêt-couture order' : 'Prêt-couture order',
       image: 'assets/logo.png',
       prefill: {
         name: document.getElementById('fName').value,
@@ -596,7 +596,7 @@
             finishOrder(response.razorpay_order_id, vdata.shopify_order && vdata.shopify_order.name,
               { method, total, advance, balance });
           } else {
-            console.error('[checkout] verify-payment failed — HTTP', vr.status, vdata);
+            console.error('[checkout] verify-payment failed - HTTP', vr.status, vdata);
             showError('Payment could not be verified. If any amount was debited it will be refunded automatically.');
             resetBtn();
           }

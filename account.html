@@ -21,7 +21,7 @@
          for now this area is a working preview backed by this browser only. -->
     <div class="account-preview-note">
       <strong>Preview.</strong> Secure sign-in connects to Shopify Customer Accounts later.
-      For now this is a preview so you can see the sections — any changes are saved to
+      For now this is a preview so you can see the sections - any changes are saved to
       <em>this browser only</em> and never leave your device.
     </div>
 
@@ -51,7 +51,7 @@
               </div>
               <div class="field"><label for="pBirthday">Birthday</label><input id="pBirthday" type="date"></div>
             </div>
-            <div class="field"><label for="pEmail">Email</label><input id="pEmail" type="email" placeholder="(managed by your sign-in — read only once Shopify is connected)"></div>
+            <div class="field"><label for="pEmail">Email</label><input id="pEmail" type="email" placeholder="(managed by your sign-in - read only once Shopify is connected)"></div>
             <button type="submit" class="btn btn-primary">Save changes</button>
             <p id="profileSaved" class="account-inline-msg hidden">Saved to this browser. Will sync to Shopify (name &amp; phone via the Customer Account API, birthday as a <code>custom.birthday</code> metafield) once connected.</p>
           </form>
@@ -105,7 +105,7 @@
         <!-- ORDERS & REFUNDS -->
         <section data-panel="orders" class="hidden">
           <h2 class="mt-0">Orders &amp; Refunds</h2>
-          <p class="account-hint">Your real order history — items, status, totals and any refunds per item — will appear here once you're signed in and Shopify is connected. Below is an <strong>example</strong> of the layout.</p>
+          <p class="account-hint">Your real order history - items, status, totals and any refunds per item - will appear here once you're signed in and Shopify is connected. Below is an <strong>example</strong> of the layout.</p>
           <div class="order-history">
             <div class="order-hist-card is-sample">
               <div class="order-hist-head">
@@ -128,14 +128,14 @@
                   <span>₹499</span>
                 </div>
                 <div class="order-hist-line refund-line">
-                  <span>Refund — Wildflower Co-ord Set (returned)</span>
+                  <span>Refund - Wildflower Co-ord Set (returned)</span>
                   <span>−₹24,500 · Refunded</span>
                 </div>
               </div>
               <span class="order-detail-link">Sample · View order detail &rsaquo;</span>
             </div>
           </div>
-          <p class="account-hint">Refund status and amounts come straight from Shopify's order object — no separate refunds system is needed.</p>
+          <p class="account-hint">Refund status and amounts come straight from Shopify's order object - no separate refunds system is needed.</p>
         </section>
 
         <!-- REVIEWS -->
@@ -184,7 +184,7 @@
 <script src="js/checkout-data.js"></script>
 <script>
   // ---------------------------------------------------------------------------
-  // Account area — LOCAL PREVIEW ONLY. No auth/Shopify yet: profile & addresses
+  // Account area - LOCAL PREVIEW ONLY. No auth/Shopify yet: profile & addresses
   // persist to localStorage on this device so the sections are usable now.
   // Clearly-marked TODOs show where each piece connects to Shopify later.
   // ---------------------------------------------------------------------------
@@ -275,7 +275,7 @@
     if (!adrIsIndia() || !cityEl){ adrClearPin(); return; }
     const pin = INDIA_CITY_PIN[cityEl.value];
     if (!pin){ adrClearPin(); return; }
-    b.innerHTML = `Suggested PIN for ${escapeHtml(cityEl.value)}: <strong>${pin}</strong> <a href="#" id="adrPinUse">Use this</a> <span class="muted">— edit if yours differs</span>`;
+    b.innerHTML = `Suggested PIN for ${escapeHtml(cityEl.value)}: <strong>${pin}</strong> <a href="#" id="adrPinUse">Use this</a> <span class="muted">- edit if yours differs</span>`;
     b.classList.remove('hidden');
     document.getElementById('adrPinUse').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('adrPin').value = pin; });
   }
@@ -287,7 +287,7 @@
   function renderAddressList(){
     const box = document.getElementById('addressList');
     const items = loadAddresses();
-    if (!items.length){ box.innerHTML = '<p class="account-empty">No saved addresses yet — add one below.</p>'; return; }
+    if (!items.length){ box.innerHTML = '<p class="account-empty">No saved addresses yet - add one below.</p>'; return; }
     box.innerHTML = items.map((a, i) => `
       <div class="address-card">
         <div>

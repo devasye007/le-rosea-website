@@ -76,7 +76,7 @@ function lineProductView(line){
   return p;
 }
 
-// "Size M · Sea Green" — colour appended only when the line carries one.
+// "Size M · Sea Green" - colour appended only when the line carries one.
 function lineMetaLabel(line){
   let label = 'Size ' + line.size;
   if (line.color) label += ' · ' + line.color;

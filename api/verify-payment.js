@@ -56,7 +56,7 @@ module.exports = async function handler(req, res) {
     const checkout = body.checkout;
 
     // FINAL server-side safety check (item 5): if FIRST10 was applied at
-    // checkout, re-verify eligibility here using the submitted email — never
+    // checkout, re-verify eligibility here using the submitted email - never
     // trust the client's "was eligible" state (the customer could have swapped
     // in an already-ordered email after applying, or the frontend could be
     // buggy). An indeterminate result (Shopify error) is treated as NOT
