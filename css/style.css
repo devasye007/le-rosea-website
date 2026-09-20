@@ -3538,3 +3538,53 @@ html, body{ overflow-x: clip; }
 .search-result-name{ font-family: var(--serif); font-size: 1rem; color: var(--espresso); }
 .search-result-meta{ font-size: 0.74rem; letter-spacing: 0.04em; color: var(--gold-ink); white-space: nowrap; }
 .search-empty{ padding: 22px 18px; color: var(--taupe); font-size: 0.9rem; margin: 0; }
+
+/* ============================================================
+   PAGE HEADERS — one shared, moderate scale for content/utility
+   pages (checkout, contact, size guide, shipping, policies,
+   customization). Distinct from the homepage hero: smaller, and
+   left-aligned to the .container gutter, so every page's heading
+   starts at the same X position and reads at a consistent size.
+   ============================================================ */
+.page-header{
+  text-align: left;
+  max-width: 760px;
+  margin: 0 0 40px;            /* left edge = .container gutter (never auto-centered) */
+}
+.page-header .eyebrow{ display: block; margin-bottom: 12px; }
+.page-header h1{
+  font-size: clamp(2.2rem, 3.4vw, 2.8rem);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  margin: 0 0 16px;
+}
+.page-header .lede{ margin: 0; }
+@media (max-width: 640px){
+  .page-header{ margin-bottom: 30px; }
+  .page-header h1{ font-size: clamp(1.85rem, 7.5vw, 2.25rem); }
+}
+
+/* Product page: name sized proportionate to the info column (NOT the
+   hero scale), with tightened vertical rhythm between the category
+   label, name, price and colour swatches so the block reads as one
+   cohesive unit at any name length. */
+.pdp-info h1{
+  font-size: clamp(1.9rem, 3vw, 2.5rem);
+  line-height: 1.06;
+  letter-spacing: -0.01em;
+  margin: 0 0 10px;
+}
+.pdp-info .p-cat{ margin-bottom: 8px; }
+.pdp-info .p-price{ margin: 0 0 18px; }
+.pdp-info .pdp-colors{ margin: 0 0 20px; }
+.pdp-info .lede{ margin: 0 0 22px; }
+@media (max-width: 640px){
+  .pdp-info h1{ font-size: clamp(1.75rem, 8vw, 2.1rem); }
+}
+
+/* Editorial split copy (e.g. index.html "Pret Edition"): deliberate, generous
+   spacing between the eyebrow, heading and lede so the three read as an
+   intentional editorial block rather than cramped stacked text. */
+.split-copy .eyebrow{ display: block; margin-bottom: 16px; }
+.split-copy h2{ margin: 0 0 20px; }
+.split-copy .lede{ margin: 0; }

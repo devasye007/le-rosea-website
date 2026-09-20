@@ -158,13 +158,20 @@
   </div>
 </section>
 
-<section class="section-tight">
+<section class="section">
   <div class="container">
-    <div class="section-head center">
-      <span class="eyebrow">From the Journal</span>
-      <h2>Pret Edition</h2>
+    <div class="split">
+      <div class="art tall has-photo">
+        <video autoplay muted loop playsinline poster="assets/video/atelier-poster.jpg">
+          <source src="assets/video/atelier.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div class="split-copy">
+        <span class="eyebrow">The Journal</span>
+        <h2>Pret Edition</h2>
+        <p class="lede">Campaign stories, craftsmanship, styling and the ideas behind each collection.</p>
+      </div>
     </div>
-    <div class="journal-grid" id="journalPreview"></div>
   </div>
 </section>
 
@@ -250,22 +257,6 @@
     document.getElementById('newArrivalsRow').innerHTML = newArrivals.map(productCard).join('');
     const bestsellers = shoppable.filter(p => p.isBestseller).concat(shoppable.slice(0,4)).slice(0,4);
     document.getElementById('bestsellersGrid').innerHTML = bestsellers.map(productCard).join('');
-
-    // Pret Edition preview. The atelier feature plays the reel_2 video.
-    const journalPosts = [
-      { title: "Inside the Atelier: The Making of Écrin d'Or", tag: 'Craftsmanship', variant: 'grid', video: 'assets/video/atelier.mp4', poster: 'assets/video/atelier-poster.jpg' },
-    ];
-    document.getElementById('journalPreview').innerHTML = journalPosts.map(j => {
-      const media = j.video
-        ? `<video class="journal-video" autoplay muted loop playsinline poster="${j.poster}"><source src="${j.video}" type="video/mp4"></video>`
-        : `<img src="${assetPath(j.img)}" alt="${escapeHtml(j.title)}" loading="lazy" decoding="async" data-art-id="${escapeHtml(j.title)}" data-art-variant="${j.variant}" onerror="lrArtFallback(this)">`;
-      return `
-      <a class="journal-card" href="journal.html">
-        <div class="art has-photo">${media}</div>
-        <span class="eyebrow">${j.tag}</span>
-        <h3 style="margin:0;">${j.title}</h3>
-      </a>`;
-    }).join('');
 
     initPlaceholderArt();
   });

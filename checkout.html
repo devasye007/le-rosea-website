@@ -14,6 +14,31 @@
   .pin-suggest{ font-size: 0.76rem; margin: 8px 0 0; color: var(--espresso); }
   .pin-suggest a{ color: var(--gold-ink); text-decoration: underline; font-weight: 600; }
   .pin-suggest .muted{ color: var(--taupe); }
+  /* Partial-COD payment method options + advance/balance split rows. */
+  .pay-opt{ align-items: flex-start; }
+  .pay-opt-body{ display: flex; flex-direction: column; gap: 3px; flex: 1; }
+  .pay-opt-title{ font-family: var(--serif); font-size: 0.98rem; color: var(--espresso); }
+  .pay-opt-sub{ font-size: 0.82rem; color: var(--taupe); }
+  /* Policy note is always shown (never hidden as fine print) so it is seen before commit. */
+  .pay-opt-note{ margin-top: 9px; font-size: 0.8rem; line-height: 1.5; color: #8a5a1e;
+    background: rgba(182,148,77,0.12); border-left: 3px solid var(--gold); border-radius: 6px; padding: 9px 11px; }
+  .order-totals .row.partial-only{ display: none; }
+  .order-totals.show-partial .row.partial-only{ display: flex; }
+  .order-totals .row.advance-row span:last-child{ font-weight: 600; color: var(--espresso); }
+  .order-totals .row.balance-row{ color: #8a5a1e; }
+  .order-totals .row.discount-row{ color: #2f6558; }
+  /* Optional coupon-code field (empty by default). */
+  .coupon{ margin-top: 18px; }
+  .coupon-label{ display: block; font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--espresso); margin-bottom: 8px; }
+  .coupon-row{ display: flex; gap: 8px; }
+  .coupon-row input{ flex: 1 1 auto; min-width: 0; padding: 12px 14px; border: var(--border-hair); border-radius: 8px; background: var(--white); font-size: 0.9rem; font-family: inherit; text-transform: uppercase; }
+  .coupon-row input::placeholder{ text-transform: none; letter-spacing: 0; }
+  .coupon-row .btn{ flex: 0 0 auto; white-space: nowrap; }
+  .coupon-msg{ margin: 8px 0 0; font-size: 0.78rem; line-height: 1.4; }
+  .coupon-msg.ok{ color: #2f6558; }
+  .coupon-msg.err{ color: #b00020; }
+  .coupon-msg.muted{ color: var(--taupe); }
+  .coupon-msg a{ color: var(--gold-ink); text-decoration: underline; font-weight: 600; }
 </style>
 </head>
 <body class="page-checkout">
@@ -24,7 +49,7 @@
   <div class="container">
 
     <div id="checkoutView">
-      <div class="section-head">
+      <div class="section-head page-header">
         <span class="eyebrow">Secure Checkout</span>
         <h1 class="mt-0">Complete Your Order</h1>
       </div>
@@ -65,9 +90,24 @@
             </div>
           </div>
 
-          <p style="font-size:0.76rem; color:var(--taupe); margin-top:8px; margin-bottom:26px;">
-            You'll choose how to pay (UPI, card, netbanking or wallet) in the secure Razorpay window. Made-to-order and customized pieces follow the lead time shown at checkout.
-          </p>
+          <h3 style="margin-top:30px;">Payment</h3>
+          <div class="pay-options" id="payOptions">
+            <label class="pay-opt selected" id="payOptFull">
+              <input type="radio" name="payMethod" value="full" checked>
+              <span class="pay-opt-body">
+                <span class="pay-opt-title">Pay in full now</span>
+                <span class="pay-opt-sub" id="payFullSub">₹0</span>
+              </span>
+            </label>
+            <label class="pay-opt" id="payOptPartial">
+              <input type="radio" name="payMethod" value="partial">
+              <span class="pay-opt-body">
+                <span class="pay-opt-title">Pay 50% now, balance on delivery</span>
+                <span class="pay-opt-sub" id="payPartialSub">₹0 now, ₹0 cash at delivery</span>
+                <span class="pay-opt-note">The advance payment is non-refundable if the order is cancelled after payment. Made-to-order pieces begin production once confirmed.</span>
+              </span>
+            </label>
+          </div>
 
           <button type="submit" class="btn btn-primary btn-block" id="placeOrderBtn">Pay</button>
           <p id="checkoutError" class="hidden" role="alert" style="margin-top:14px; font-size:0.82rem; color:#b00020;"></p>
@@ -76,10 +116,23 @@
         <aside class="order-summary">
           <h3 class="mt-0">Order Summary</h3>
           <div id="summaryLines"></div>
-          <div class="order-totals">
+
+          <div class="coupon" id="couponBox">
+            <label class="coupon-label" for="couponInput">Promo code</label>
+            <div class="coupon-row">
+              <input id="couponInput" type="text" autocomplete="off" placeholder="Enter code" value="FIRST10">
+              <button type="button" class="btn btn-sm" id="couponApplyBtn">Apply</button>
+            </div>
+            <p id="couponMsg" class="coupon-msg hidden"></p>
+          </div>
+
+          <div class="order-totals" id="orderTotals">
             <div class="row"><span>Subtotal</span><span id="sumSubtotal">₹0</span></div>
+            <div class="row discount-row hidden" id="rowDiscount"><span id="discountLabel">Discount</span><span id="sumDiscount">-₹0</span></div>
             <div class="row"><span>Shipping</span><span id="sumShipping">Calculated after address</span></div>
             <div class="row total"><span>Total</span><span id="sumTotal">₹0</span></div>
+            <div class="row partial-only advance-row"><span>Advance due now (50%)</span><span id="sumAdvance">₹0</span></div>
+            <div class="row partial-only balance-row"><span>Balance due at delivery (cash)</span><span id="sumBalance">₹0</span></div>
           </div>
         </aside>
       </div>
@@ -91,6 +144,7 @@
         <span class="eyebrow">Thank You</span>
         <h1>Your Order Has Been Received</h1>
         <p class="lede center">Order <strong id="confirmOrderId"></strong> is confirmed. A member of the House will be in touch to confirm sizing and, where relevant, customization details before your piece goes into production.</p>
+        <p class="lede center" id="confirmPayBreakdown" style="font-weight:600; margin-top:-6px;"></p>
         <a href="shop.html" class="btn btn-primary" style="margin-top:10px;">Continue Browsing</a>
       </div>
     </div>
@@ -114,12 +168,167 @@
   function showError(msg){ errorEl.textContent = msg; errorEl.classList.remove('hidden'); }
   function clearError(){ errorEl.textContent = ''; errorEl.classList.add('hidden'); }
   function setBtn(label, disabled){ placeBtn.textContent = label; placeBtn.disabled = !!disabled; }
-  // The primary button always shows the live total, e.g. "Pay ₹14,999".
-  function payLabel(){ return 'Pay ' + formatINR(cartSubtotal()); }
+
+  // ---- FIRST10 first-order promo ------------------------------------------
+  // FIRST10 = 10% off, first order only. It is NOT applied by default: the code
+  // is prefilled, but the discount is only applied after the customer's email is
+  // checked against /api/check-first-order (automatically on email blur, or on
+  // Apply). Eligibility is ALWAYS re-verified server-side before the order is
+  // created — the client result here is UX only.
+  const PROMO_CODE = 'FIRST10';
+  const PROMO_RATE = 10; // percent
+  let appliedCoupon = null;        // { code } once eligibility is confirmed
+  let couponEligibleEmail = null;  // the email FIRST10 was last confirmed eligible for
+  let userRemovedCoupon = false;   // set when the customer clicks Remove
+
+  function discountAmount(){
+    if (!appliedCoupon) return 0;
+    return Math.min(cartSubtotal(), Math.round(cartSubtotal() * PROMO_RATE / 100));
+  }
+
+  // ---- Payment method + 50/50 split ---------------------------------------
+  // Single source of truth for the amount owed: subtotal minus any applied
+  // coupon. Everything downstream — the summary Total, the 50/50 split, the
+  // button label, the Razorpay charge and the Shopify order — derives from this,
+  // so an applied coupon flows through the whole flow automatically.
+  function orderTotal(){ return Math.max(0, cartSubtotal() - discountAmount()); }
+  function advanceAmount(){ return Math.round(orderTotal() / 2); }   // 50% online now
+  function balanceAmount(){ return orderTotal() - advanceAmount(); } // 50% cash at delivery
+  function selectedMethod(){
+    const el = document.querySelector('input[name="payMethod"]:checked');
+    return el && el.value === 'partial' ? 'partial' : 'full';
+  }
+  function isPartial(){ return selectedMethod() === 'partial'; }
+
+  // The primary button reflects what is charged online now: the full total, or
+  // the 50% advance when Partial COD is selected.
+  function payLabel(){
+    return isPartial()
+      ? 'Pay ' + formatINR(advanceAmount()) + ' now'
+      : 'Pay ' + formatINR(orderTotal());
+  }
   function resetBtn(){
     const empty = cartLinesWithData().length === 0;
     setBtn(empty ? 'Your bag is empty' : payLabel(), empty);
   }
+
+  // Refresh the amounts on both pay options, the advance/balance summary rows,
+  // the selected-card highlight and the button label — for the current total
+  // and current selection.
+  function renderPaySplit(){
+    const total = orderTotal(), advance = advanceAmount(), balance = balanceAmount();
+    const fullSub = document.getElementById('payFullSub');
+    const partSub = document.getElementById('payPartialSub');
+    if (fullSub) fullSub.textContent = formatINR(total);
+    if (partSub) partSub.textContent = formatINR(advance) + ' now, ' + formatINR(balance) + ' cash at delivery';
+    const advEl = document.getElementById('sumAdvance');
+    const balEl = document.getElementById('sumBalance');
+    if (advEl) advEl.textContent = formatINR(advance);
+    if (balEl) balEl.textContent = formatINR(balance);
+    const totals = document.getElementById('orderTotals');
+    if (totals) totals.classList.toggle('show-partial', isPartial());
+    document.getElementById('payOptFull').classList.toggle('selected', !isPartial());
+    document.getElementById('payOptPartial').classList.toggle('selected', isPartial());
+    resetBtn();
+  }
+
+  function showCouponMsg(html, kind){
+    const msg = document.getElementById('couponMsg');
+    msg.className = 'coupon-msg' + (kind ? ' ' + kind : '');
+    msg.innerHTML = html || '';
+    msg.classList.toggle('hidden', !html);
+    const rm = document.getElementById('couponRemove');
+    if (rm) rm.addEventListener('click', function(e){ e.preventDefault(); removeCoupon(); });
+    const re = document.getElementById('couponReapply');
+    if (re) re.addEventListener('click', function(e){ e.preventDefault(); applyCoupon(); });
+  }
+
+  // Reflect the current discount in the summary: the Discount row and Total.
+  function renderCoupon(){
+    const disc = discountAmount();
+    const row = document.getElementById('rowDiscount');
+    if (appliedCoupon && disc > 0){
+      document.getElementById('discountLabel').textContent = 'Discount (' + appliedCoupon.code + ')';
+      document.getElementById('sumDiscount').textContent = '-' + formatINR(disc);
+      row.classList.remove('hidden');
+    } else {
+      row.classList.add('hidden');
+    }
+    document.getElementById('sumTotal').textContent = formatINR(orderTotal());
+  }
+
+  function emailValue(){ return (document.getElementById('fEmail').value || '').trim(); }
+  function promoInField(){ return (document.getElementById('couponInput').value || '').trim().toUpperCase() === PROMO_CODE; }
+
+  // Ask the backend whether this email qualifies for the first-order discount.
+  async function fetchEligibility(email){
+    const res = await fetch('/api/check-first-order', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || ('HTTP ' + res.status));
+    return !!data.eligible;
+  }
+
+  // Validate the promo against `email`, then apply or clear the discount.
+  //  - auto (email blur): respects a prior manual Remove and short-circuits if
+  //    this exact email was already confirmed eligible.
+  //  - opts.force (Apply button / just before pay): always re-checks.
+  async function resolveCoupon(email, opts){
+    opts = opts || {};
+    if (!promoInField()){
+      appliedCoupon = null; couponEligibleEmail = null; renderSummary();
+      const typed = (document.getElementById('couponInput').value || '').trim();
+      showCouponMsg(typed && opts.manual ? 'That promo code isn’t valid.' : '', typed && opts.manual ? 'err' : null);
+      return;
+    }
+    if (userRemovedCoupon && !opts.manual) return; // don't fight a manual removal on auto-checks
+    email = (email || '').trim();
+    if (!email || email.indexOf('@') < 0){
+      appliedCoupon = null; couponEligibleEmail = null; renderSummary();
+      if (opts.manual) showCouponMsg('Enter your email above, then apply the code.', 'muted');
+      return;
+    }
+    // Already confirmed eligible for this exact email — nothing to do.
+    if (!opts.force && appliedCoupon && couponEligibleEmail === email) return;
+
+    showCouponMsg('Checking eligibility…', 'muted');
+    setBtn('Checking promo…', true);
+    let eligible;
+    try {
+      eligible = await fetchEligibility(email);
+    } catch (err){
+      console.error('[checkout] eligibility check failed:', err);
+      appliedCoupon = null; couponEligibleEmail = null; renderSummary();
+      showCouponMsg('Couldn’t verify the promo right now — you can still order at full price.', 'muted');
+      return;
+    }
+    if (eligible){
+      appliedCoupon = { code: PROMO_CODE }; couponEligibleEmail = email; userRemovedCoupon = false;
+      renderSummary();
+      showCouponMsg(PROMO_CODE + ' applied — 10% off your first order. <a href="#" id="couponRemove">Remove</a>', 'ok');
+    } else {
+      appliedCoupon = null; couponEligibleEmail = null;
+      renderSummary();
+      showCouponMsg('This code is for first orders only — looks like you’ve ordered with us before.', 'muted');
+    }
+  }
+
+  function applyCoupon(){
+    userRemovedCoupon = false;
+    resolveCoupon(emailValue(), { manual: true, force: true });
+  }
+
+  function removeCoupon(){
+    appliedCoupon = null; couponEligibleEmail = null; userRemovedCoupon = true;
+    renderSummary();
+    showCouponMsg('Promo removed. <a href="#" id="couponReapply">Apply again</a>', 'muted');
+  }
+
+  // Re-validate whenever the email changes so a stale "eligible" result can't
+  // persist if the customer swaps in an address that has ordered before.
+  function onEmailBlur(){ resolveCoupon(emailValue(), {}); }
 
   function renderSummary(){
     const lines = cartLinesWithData();
@@ -138,8 +347,8 @@
     `;}).join('') || '<p style="color:var(--taupe); font-size:0.88rem;">Your bag is empty.</p>';
     const subtotal = cartSubtotal();
     document.getElementById('sumSubtotal').textContent = formatINR(subtotal);
-    document.getElementById('sumTotal').textContent = formatINR(subtotal);
-    resetBtn();
+    renderCoupon();   // Discount row + Total (reflects any applied coupon)
+    renderPaySplit(); // Split rows + button label derive from orderTotal()
     initPlaceholderArt();
   }
 
@@ -224,9 +433,19 @@
       quantity: l.qty,
       price: l.product.price
     }));
+    const method = selectedMethod();
     return {
       currency: 'INR',
-      total: cartSubtotal(),
+      subtotal: cartSubtotal(),
+      total: orderTotal(),
+      // Claimed promo code only — the server recomputes the discount AND
+      // re-verifies first-order eligibility before honouring it.
+      coupon: appliedCoupon ? { code: appliedCoupon.code } : null,
+      // Server recomputes advance/balance from the order total; these are sent
+      // for record/debugging only. Full payment → advance == total, balance 0.
+      paymentMethod: method,
+      advance: method === 'partial' ? advanceAmount() : orderTotal(),
+      balance: method === 'partial' ? balanceAmount() : 0,
       customer: {
         name: document.getElementById('fName').value,
         email: document.getElementById('fEmail').value,
@@ -245,9 +464,20 @@
     };
   }
 
-  function finishOrder(orderRef, shopifyName){
+  function finishOrder(orderRef, shopifyName, pay){
     document.getElementById('confirmOrderId').textContent = shopifyName || ('#' + orderRef);
     document.getElementById('confirmRose').innerHTML = ICONS.rose;
+    const bd = document.getElementById('confirmPayBreakdown');
+    if (bd){
+      if (pay && pay.method === 'partial'){
+        bd.textContent = 'Advance paid: ' + formatINR(pay.advance) +
+          '. Balance due at delivery: ' + formatINR(pay.balance) + ', payable in cash to the courier.';
+      } else if (pay){
+        bd.textContent = 'Paid in full: ' + formatINR(pay.total) + '.';
+      } else {
+        bd.textContent = '';
+      }
+    }
     document.getElementById('checkoutView').classList.add('hidden');
     document.getElementById('confirmView').classList.remove('hidden');
     writeCart([]);
@@ -259,7 +489,16 @@
   // Razorpay returns is verified by /api/verify-payment before we treat the
   // order as paid.
   async function payWithRazorpay(){
-    const amountPaise = Math.round(cartSubtotal() * 100);
+    // Snapshot the method + amounts now so the whole flow (and the confirmation
+    // screen) uses one consistent set of numbers.
+    const method = selectedMethod();
+    const total = orderTotal();
+    const advance = advanceAmount();
+    const balance = balanceAmount();
+    const discount = discountAmount();
+    const couponCode = appliedCoupon ? appliedCoupon.code : '';
+    const chargeNow = method === 'partial' ? advance : total;   // collected online now
+    const amountPaise = Math.round(chargeNow * 100);
     setBtn('Starting secure payment…', true);
 
     const orderPayload = {
@@ -273,7 +512,13 @@
         city: (document.getElementById('fCity') || {}).value || '',
         state: (document.getElementById('fState') || {}).value || '',
         pin: document.getElementById('fPin').value,
-        country: document.getElementById('fCountry').value
+        country: document.getElementById('fCountry').value,
+        payment_method: method === 'partial' ? 'Partial COD (50% advance)' : 'Full payment',
+        order_total: String(total),
+        advance_paid: String(chargeNow),
+        balance_due: String(method === 'partial' ? balance : 0),
+        coupon_code: couponCode,
+        discount: String(discount)
       }
     };
 
@@ -329,7 +574,7 @@
       amount: order.amount,
       currency: order.currency,
       name: 'LE ROSÈA',
-      description: 'Prêt-couture order',
+      description: method === 'partial' ? 'Advance (50%) — Prêt-couture order' : 'Prêt-couture order',
       image: 'assets/logo.png',
       prefill: {
         name: document.getElementById('fName').value,
@@ -348,7 +593,8 @@
           const vdata = await vr.json().catch(() => ({}));
           if (vr.ok && vdata.success){
             clearError();
-            finishOrder(response.razorpay_order_id, vdata.shopify_order && vdata.shopify_order.name);
+            finishOrder(response.razorpay_order_id, vdata.shopify_order && vdata.shopify_order.name,
+              { method, total, advance, balance });
           } else {
             console.error('[checkout] verify-payment failed — HTTP', vr.status, vdata);
             showError('Payment could not be verified. If any amount was debited it will be refunded automatically.');
@@ -379,14 +625,28 @@
     rzp.open();
   }
 
-  function placeOrder(e){
+  async function placeOrder(e){
     e.preventDefault();
     clearError();
     if (cartLinesWithData().length === 0){ showError('Your bag is empty.'); return; }
+    // If FIRST10 is in the field with an email we haven't confirmed yet, resolve
+    // now so the amount charged reflects the real (server-checked) eligibility
+    // and we don't race the email-blur handler.
+    const email = emailValue();
+    if (promoInField() && !userRemovedCoupon && email && couponEligibleEmail !== email){
+      await resolveCoupon(email, { force: true });
+    }
     payWithRazorpay();
   }
 
   document.getElementById('fCountry').addEventListener('change', renderStateField);
+  document.getElementById('fEmail').addEventListener('blur', onEmailBlur);
+  document.querySelectorAll('input[name="payMethod"]').forEach(r =>
+    r.addEventListener('change', renderPaySplit));
+  document.getElementById('couponApplyBtn').addEventListener('click', applyCoupon);
+  document.getElementById('couponInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter'){ e.preventDefault(); applyCoupon(); }
+  });
   document.getElementById('checkoutForm').addEventListener('submit', placeOrder);
   document.addEventListener('DOMContentLoaded', () => {
     populatePhoneCodes();

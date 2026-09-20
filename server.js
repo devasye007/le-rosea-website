@@ -22,6 +22,8 @@ app.use(express.json());
 app.post('/api/create-order', require('./api/create-order'));
 app.post('/api/verify-payment', require('./api/verify-payment'));
 app.post('/api/create-shopify-order', require('./api/create-shopify-order'));
+app.post('/api/check-first-order', require('./api/check-first-order'));
+app.get('/api/check-first-order', require('./api/check-first-order'));
 
 // One-time Shopify OAuth handshake (GET endpoints; see api/shopify/*).
 app.get('/api/shopify/install', require('./api/shopify/install'));

@@ -45,8 +45,6 @@ const PRODUCTS = [
     id: 'sequins-rush-set',
     name: 'Sequins Rush Set',
     category: 'Co-ords & Separates',
-    // Also surfaced under the Top and Skirt category filters (it's a co-ord set).
-    extraCategories: ['Top', 'Skirt'],
     collection: 'Pret',
     price: 14999,
     colorway: 'Sea Green',
@@ -65,6 +63,43 @@ const PRODUCTS = [
       { name: 'Lavender', swatch: '#B7A6DA', images: ['assets/products/sequins-rush-set-trio.jpg'], video: null },
       { name: 'Pink', swatch: '#E48CB2', images: ['assets/products/sequins-rush-set-pink/1.jpg', 'assets/products/sequins-rush-set-pink/2.jpg', 'assets/products/sequins-rush-set-pink/3.jpg', 'assets/products/sequins-rush-set-pink/4.jpg', 'assets/products/sequins-rush-set-pink/5.jpg', 'assets/products/sequins-rush-set-pink/6.jpg', 'assets/products/sequins-rush-set-pink/7.jpg'], video: null },
     ],
+  }),
+  // Standalone pieces split out from the Sequins Rush Set (set kept at ₹14,999).
+  // They share the set's sea-green photography; each leads with the shot the
+  // owner chose for its cover card.
+  makeProduct({
+    id: 'sequins-rush-top',
+    name: 'Sequins Rush Top',
+    category: 'Top',
+    collection: 'Pret',
+    price: 7999,
+    colorway: 'Sea Green',
+    isNew: true,
+    isBestseller: false,
+    fabric: 'Embroidered mesh with Lycra lining',
+    embellishment: 'Sequins, cutdana and cutdana latkans',
+    description: 'The sequinned crop top from the Sequins Rush set, offered on its own — shimmering hand-embroidered sequins, cutdana and cascading latkans designed to catch the light and move beautifully with the body.',
+    fit: 'Fitted crop top with fine shoulder straps.',
+    artVariant: 'bloom',
+    cardImage: 'assets/products/sequins-rush-set-sea-green/2.jpg',
+    images: ['assets/products/sequins-rush-set-sea-green/2.jpg', 'assets/products/sequins-rush-set-sea-green/1.jpg', 'assets/products/sequins-rush-set-sea-green/3.jpg'],
+  }),
+  makeProduct({
+    id: 'sequins-rush-skirt',
+    name: 'Sequins Rush Skirt',
+    category: 'Skirt',
+    collection: 'Pret',
+    price: 9999,
+    colorway: 'Sea Green',
+    isNew: true,
+    isBestseller: false,
+    fabric: 'Embroidered mesh with Lycra lining',
+    embellishment: 'Sequins, cutdana and cutdana latkans',
+    description: 'The sequinned mini skirt from the Sequins Rush set, offered on its own — shimmering hand-embroidered sequins, cutdana and cascading latkans that catch the light and move beautifully with the body.',
+    fit: 'Fitted mini skirt with cascading fringe hem.',
+    artVariant: 'bloom',
+    cardImage: 'assets/products/sequins-rush-set-sea-green/3.jpg',
+    images: ['assets/products/sequins-rush-set-sea-green/3.jpg', 'assets/products/sequins-rush-set-sea-green/1.jpg', 'assets/products/sequins-rush-set-sea-green/2.jpg'],
   }),
   // Merged colour product: fringe mini dress offered in three colourways.
   makeProduct({
@@ -565,6 +600,8 @@ const PRODUCTS = [
 const OCCASION_COLLECTIONS = {
   // Day & Resort
   'sequins-rush-set': ['Day & Resort'],
+  'sequins-rush-top': ['Day & Resort'],
+  'sequins-rush-skirt': ['Day & Resort'],
   'fringe-mini-dress': ['Day & Resort'],
   'ivory-bloom-dress': ['Day & Resort'],
   'cream-stone-dress': ['Day & Resort'],
@@ -601,6 +638,8 @@ PRODUCTS.forEach(function(p){ p.collections = OCCASION_COLLECTIONS[p.id] || []; 
 // the collections map above. Products not listed simply have no video.
 const PRODUCT_VIDEOS = {
   'sequins-rush-set': 'assets/video/products/sequins-rush-set.mp4',
+  'sequins-rush-top': 'assets/video/products/sequins-rush-set.mp4',
+  'sequins-rush-skirt': 'assets/video/products/sequins-rush-set.mp4',
   'fringe-mini-dress': 'assets/video/products/fringe-mini-dress.mp4',
   'wildflower-coord-set-white': 'assets/video/products/wildflower-set.mp4',
   'wildflower-top': 'assets/video/products/wildflower-set.mp4',
@@ -636,6 +675,8 @@ PRODUCTS.forEach(function(p){ if (PRODUCT_VIDEOS[p.id]) p.video = PRODUCT_VIDEOS
 // Main fabric / Lining / Embroidery
 const PRODUCT_FABRIC_SPECS = {
   'sequins-rush-set': { mainFabric: 'Embroidered mesh', lining: 'Lycra', embroidery: 'Sequins, cutdana and cutdana latkans' },
+  'sequins-rush-top': { mainFabric: 'Embroidered mesh', lining: 'Lycra', embroidery: 'Sequins, cutdana and cutdana latkans' },
+  'sequins-rush-skirt': { mainFabric: 'Embroidered mesh', lining: 'Lycra', embroidery: 'Sequins, cutdana and cutdana latkans' },
   'fringe-mini-dress': { mainFabric: 'Satin Lycra', lining: 'Matching Lycra', embroidery: 'Sequins, cutdana and cutdana latkans' },
   'wildflower-coord-set-white': { mainFabric: 'Luxury Crepe', lining: 'Lycra', embroidery: 'Net flowers and intricate beadwork' },
   'wildflower-top': { mainFabric: 'Luxury Crepe', lining: 'Lycra', embroidery: 'Net flowers and intricate beadwork' },

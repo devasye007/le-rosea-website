@@ -7,6 +7,7 @@
 const crypto = require('crypto');
 const razorpayConfig = require('./_razorpay-config');
 const { createPaidOrder } = require('./_shopify');
+const { checkFirstOrderEligibility } = require('./_first-order');
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -52,9 +53,35 @@ module.exports = async function handler(req, res) {
   const result = { success: true, order_id: orderId, payment_id: paymentId };
 
   if (body.checkout && typeof body.checkout === 'object') {
+    const checkout = body.checkout;
+
+    // FINAL server-side safety check (item 5): if FIRST10 was applied at
+    // checkout, re-verify eligibility here using the submitted email — never
+    // trust the client's "was eligible" state (the customer could have swapped
+    // in an already-ordered email after applying, or the frontend could be
+    // buggy). An indeterminate result (Shopify error) is treated as NOT
+    // eligible; _shopify then bills full price and flags the discrepancy.
+    let couponEligible = false;
+    const claimsFirst10 = checkout.coupon &&
+      String(checkout.coupon.code || '').toUpperCase() === 'FIRST10';
+    if (claimsFirst10) {
+      const email = checkout.customer && checkout.customer.email;
+      try {
+        const elig = await checkFirstOrderEligibility(email);
+        couponEligible = !!elig.eligible;
+        if (!couponEligible) {
+          console.warn('[verify-payment] FIRST10 applied but email is NOT eligible (prior order exists):', email);
+        }
+      } catch (e) {
+        console.error('[verify-payment] eligibility re-check failed; not honouring discount:', e && e.message);
+        couponEligible = false;
+      }
+    }
+
     try {
       const data = await createPaidOrder({
-        ...body.checkout,
+        ...checkout,
+        couponEligible,
         payment: {
           razorpay_order_id: orderId,
           razorpay_payment_id: paymentId,
