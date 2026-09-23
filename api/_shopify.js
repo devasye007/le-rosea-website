@@ -100,7 +100,6 @@ async function createPaidOrder(payload) {
   // Order total from the line items themselves - exactly what Shopify computes
   // as the order total. (We never trust a client-sent total for the money math.)
   const lineSubtotal = lineItems.reduce((sum, li) => sum + Number(li.price) * li.quantity, 0);
-  const isPartial = payload.paymentMethod === 'partial';
 
   // --- FIRST10 first-order discount (server-enforced) ----------------------
   // Honour the discount ONLY when the code was claimed AND the caller passed a
@@ -116,19 +115,14 @@ async function createPaidOrder(payload) {
   const orderTotal = lineSubtotal - discount;   // what Shopify records as total_price
   const discrepancy = claimed && !eligible;     // applied at checkout but not valid
 
-  // What was actually captured online now. The checkout applies the discount iff
-  // it claimed the code, so reconstruct the charged amount from the claim using
-  // the same server rate - independent of any client-sent number.
-  const chargedTotal = lineSubtotal - (claimed ? Math.round(lineSubtotal * DISCOUNT_RATE) : 0);
-  const chargedNow = isPartial ? Math.round(chargedTotal / 2) : chargedTotal;
-  const balance = orderTotal - chargedNow;      // remaining owed (partial-COD, or a discrepancy)
+  // What was actually captured online. The full order total is always charged
+  // upfront via Razorpay. The checkout applies the discount iff it claimed the
+  // code, so reconstruct the charged amount from the claim using the same server
+  // rate - independent of any client-sent number.
+  const chargedNow = lineSubtotal - (claimed ? Math.round(lineSubtotal * DISCOUNT_RATE) : 0);
 
   // Notes -------------------------------------------------------------------
-  let note = isPartial
-    ? ('PARTIAL COD - Balance due at delivery: ' + inr(balance) + ' (cash). ' +
-       'Advance ' + inr(chargedNow) + ' paid online via Razorpay. ' +
-       'Collect ' + inr(balance) + ' in cash when booking the courier COD shipment.')
-    : 'Paid through Razorpay on lerosea.com';
+  let note = 'Paid through Razorpay on lerosea.com';
   if (discrepancy) {
     note = 'DISCOUNT DISCREPANCY - FIRST10 was applied at checkout but this customer is NOT eligible ' +
       '(a prior order exists for ' + (customer.email || 'this email') + '). Discount NOT honoured; order ' +
@@ -140,14 +134,6 @@ async function createPaidOrder(payload) {
     { name: 'Razorpay Order ID', value: payment.razorpay_order_id || '' },
     { name: 'Razorpay Payment ID', value: payment.razorpay_payment_id || '' },
   ];
-  if (isPartial) {
-    // Prepend so the balance-due amount surfaces at the top of "Additional details".
-    noteAttributes.unshift(
-      { name: 'Payment Method', value: 'Partial COD (50% advance)' },
-      { name: 'Advance Paid Online', value: inr(chargedNow) },
-      { name: 'Balance Due at Delivery (cash)', value: inr(balance) },
-    );
-  }
   if (honour) {
     noteAttributes.push({ name: 'Coupon', value: 'FIRST10 - 10% first-order (−' + inr(discount) + ')' });
   }
@@ -156,13 +142,12 @@ async function createPaidOrder(payload) {
       value: 'FIRST10 claimed but NOT eligible - billed full price; outstanding ' + inr(orderTotal - chargedNow) });
   }
 
-  // Full payment that covers the (server-legitimate) total is paid; partial-COD
-  // or an underpaid discrepancy is partially_paid, leaving the rest outstanding.
+  // Full payment that covers the (server-legitimate) total is paid; an underpaid
+  // discrepancy is partially_paid, leaving the rest outstanding.
   const coversTotal = chargedNow >= orderTotal - 1; // ₹1 rounding tolerance
-  const financialStatus = (!isPartial && coversTotal) ? 'paid' : 'partially_paid';
+  const financialStatus = coversTotal ? 'paid' : 'partially_paid';
 
   let tags = 'lerosea-web, razorpay';
-  if (isPartial) tags += ', partial-cod';
   if (honour) tags += ', first10';
   if (discrepancy) tags += ', discount-discrepancy';
 

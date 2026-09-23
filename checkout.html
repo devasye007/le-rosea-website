@@ -14,18 +14,6 @@
   .pin-suggest{ font-size: 0.76rem; margin: 8px 0 0; color: var(--espresso); }
   .pin-suggest a{ color: var(--gold-ink); text-decoration: underline; font-weight: 600; }
   .pin-suggest .muted{ color: var(--taupe); }
-  /* Partial-COD payment method options + advance/balance split rows. */
-  .pay-opt{ align-items: flex-start; }
-  .pay-opt-body{ display: flex; flex-direction: column; gap: 3px; flex: 1; }
-  .pay-opt-title{ font-family: var(--serif); font-size: 0.98rem; color: var(--espresso); }
-  .pay-opt-sub{ font-size: 0.82rem; color: var(--taupe); }
-  /* Policy note is always shown (never hidden as fine print) so it is seen before commit. */
-  .pay-opt-note{ margin-top: 9px; font-size: 0.8rem; line-height: 1.5; color: #8a5a1e;
-    background: rgba(182,148,77,0.12); border-left: 3px solid var(--gold); border-radius: 6px; padding: 9px 11px; }
-  .order-totals .row.partial-only{ display: none; }
-  .order-totals.show-partial .row.partial-only{ display: flex; }
-  .order-totals .row.advance-row span:last-child{ font-weight: 600; color: var(--espresso); }
-  .order-totals .row.balance-row{ color: #8a5a1e; }
   .order-totals .row.discount-row{ color: #2f6558; }
   /* Optional coupon-code field (empty by default). */
   .coupon{ margin-top: 18px; }
@@ -90,25 +78,6 @@
             </div>
           </div>
 
-          <h3 style="margin-top:30px;">Payment</h3>
-          <div class="pay-options" id="payOptions">
-            <label class="pay-opt selected" id="payOptFull">
-              <input type="radio" name="payMethod" value="full" checked>
-              <span class="pay-opt-body">
-                <span class="pay-opt-title">Pay in full now</span>
-                <span class="pay-opt-sub" id="payFullSub">₹0</span>
-              </span>
-            </label>
-            <label class="pay-opt" id="payOptPartial">
-              <input type="radio" name="payMethod" value="partial">
-              <span class="pay-opt-body">
-                <span class="pay-opt-title">Pay 50% now, balance on delivery</span>
-                <span class="pay-opt-sub" id="payPartialSub">₹0 now, ₹0 cash at delivery</span>
-                <span class="pay-opt-note">The advance payment is non-refundable if the order is cancelled after payment. Made-to-order pieces begin production once confirmed.</span>
-              </span>
-            </label>
-          </div>
-
           <button type="submit" class="btn btn-primary btn-block" id="placeOrderBtn">Pay</button>
           <p id="checkoutError" class="hidden" role="alert" style="margin-top:14px; font-size:0.82rem; color:#b00020;"></p>
         </form>
@@ -131,8 +100,6 @@
             <div class="row discount-row hidden" id="rowDiscount"><span id="discountLabel">Discount</span><span id="sumDiscount">-₹0</span></div>
             <div class="row"><span>Shipping</span><span id="sumShipping">Calculated after address</span></div>
             <div class="row total"><span>Total</span><span id="sumTotal">₹0</span></div>
-            <div class="row partial-only advance-row"><span>Advance due now (50%)</span><span id="sumAdvance">₹0</span></div>
-            <div class="row partial-only balance-row"><span>Balance due at delivery (cash)</span><span id="sumBalance">₹0</span></div>
           </div>
         </aside>
       </div>
@@ -159,6 +126,7 @@
 <script src="js/placeholder-art.js"></script>
 <script src="js/cart.js"></script>
 <script src="js/components.js"></script>
+<script src="js/vendor/anime.min.js"></script>
 <script src="js/motion.js"></script>
 <script src="js/checkout-data.js"></script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
@@ -186,50 +154,18 @@
     return Math.min(cartSubtotal(), Math.round(cartSubtotal() * PROMO_RATE / 100));
   }
 
-  // ---- Payment method + 50/50 split ---------------------------------------
+  // ---- Order total ---------------------------------------------------------
   // Single source of truth for the amount owed: subtotal minus any applied
-  // coupon. Everything downstream - the summary Total, the 50/50 split, the
-  // button label, the Razorpay charge and the Shopify order - derives from this,
-  // so an applied coupon flows through the whole flow automatically.
+  // coupon. Everything downstream - the summary Total, the button label, the
+  // Razorpay charge and the Shopify order - derives from this, so an applied
+  // coupon flows through the whole flow automatically. The full total is always
+  // charged upfront via Razorpay.
   function orderTotal(){ return Math.max(0, cartSubtotal() - discountAmount()); }
-  function advanceAmount(){ return Math.round(orderTotal() / 2); }   // 50% online now
-  function balanceAmount(){ return orderTotal() - advanceAmount(); } // 50% cash at delivery
-  function selectedMethod(){
-    const el = document.querySelector('input[name="payMethod"]:checked');
-    return el && el.value === 'partial' ? 'partial' : 'full';
-  }
-  function isPartial(){ return selectedMethod() === 'partial'; }
 
-  // The primary button reflects what is charged online now: the full total, or
-  // the 50% advance when Partial COD is selected.
-  function payLabel(){
-    return isPartial()
-      ? 'Pay ' + formatINR(advanceAmount()) + ' now'
-      : 'Pay ' + formatINR(orderTotal());
-  }
+  function payLabel(){ return 'Pay ' + formatINR(orderTotal()); }
   function resetBtn(){
     const empty = cartLinesWithData().length === 0;
     setBtn(empty ? 'Your bag is empty' : payLabel(), empty);
-  }
-
-  // Refresh the amounts on both pay options, the advance/balance summary rows,
-  // the selected-card highlight and the button label - for the current total
-  // and current selection.
-  function renderPaySplit(){
-    const total = orderTotal(), advance = advanceAmount(), balance = balanceAmount();
-    const fullSub = document.getElementById('payFullSub');
-    const partSub = document.getElementById('payPartialSub');
-    if (fullSub) fullSub.textContent = formatINR(total);
-    if (partSub) partSub.textContent = formatINR(advance) + ' now, ' + formatINR(balance) + ' cash at delivery';
-    const advEl = document.getElementById('sumAdvance');
-    const balEl = document.getElementById('sumBalance');
-    if (advEl) advEl.textContent = formatINR(advance);
-    if (balEl) balEl.textContent = formatINR(balance);
-    const totals = document.getElementById('orderTotals');
-    if (totals) totals.classList.toggle('show-partial', isPartial());
-    document.getElementById('payOptFull').classList.toggle('selected', !isPartial());
-    document.getElementById('payOptPartial').classList.toggle('selected', isPartial());
-    resetBtn();
   }
 
   function showCouponMsg(html, kind){
@@ -348,7 +284,7 @@
     const subtotal = cartSubtotal();
     document.getElementById('sumSubtotal').textContent = formatINR(subtotal);
     renderCoupon();   // Discount row + Total (reflects any applied coupon)
-    renderPaySplit(); // Split rows + button label derive from orderTotal()
+    resetBtn();       // Button label derives from orderTotal()
     initPlaceholderArt();
   }
 
@@ -433,7 +369,6 @@
       quantity: l.qty,
       price: l.product.price
     }));
-    const method = selectedMethod();
     return {
       currency: 'INR',
       subtotal: cartSubtotal(),
@@ -441,11 +376,6 @@
       // Claimed promo code only - the server recomputes the discount AND
       // re-verifies first-order eligibility before honouring it.
       coupon: appliedCoupon ? { code: appliedCoupon.code } : null,
-      // Server recomputes advance/balance from the order total; these are sent
-      // for record/debugging only. Full payment → advance == total, balance 0.
-      paymentMethod: method,
-      advance: method === 'partial' ? advanceAmount() : orderTotal(),
-      balance: method === 'partial' ? balanceAmount() : 0,
       customer: {
         name: document.getElementById('fName').value,
         email: document.getElementById('fEmail').value,
@@ -468,16 +398,7 @@
     document.getElementById('confirmOrderId').textContent = shopifyName || ('#' + orderRef);
     document.getElementById('confirmRose').innerHTML = ICONS.rose;
     const bd = document.getElementById('confirmPayBreakdown');
-    if (bd){
-      if (pay && pay.method === 'partial'){
-        bd.textContent = 'Advance paid: ' + formatINR(pay.advance) +
-          '. Balance due at delivery: ' + formatINR(pay.balance) + ', payable in cash to the courier.';
-      } else if (pay){
-        bd.textContent = 'Paid in full: ' + formatINR(pay.total) + '.';
-      } else {
-        bd.textContent = '';
-      }
-    }
+    if (bd) bd.textContent = pay ? 'Paid in full: ' + formatINR(pay.total) + '.' : '';
     document.getElementById('checkoutView').classList.add('hidden');
     document.getElementById('confirmView').classList.remove('hidden');
     writeCart([]);
@@ -489,16 +410,12 @@
   // Razorpay returns is verified by /api/verify-payment before we treat the
   // order as paid.
   async function payWithRazorpay(){
-    // Snapshot the method + amounts now so the whole flow (and the confirmation
-    // screen) uses one consistent set of numbers.
-    const method = selectedMethod();
+    // Snapshot the amounts now so the whole flow (and the confirmation screen)
+    // uses one consistent set of numbers. The full total is charged upfront.
     const total = orderTotal();
-    const advance = advanceAmount();
-    const balance = balanceAmount();
     const discount = discountAmount();
     const couponCode = appliedCoupon ? appliedCoupon.code : '';
-    const chargeNow = method === 'partial' ? advance : total;   // collected online now
-    const amountPaise = Math.round(chargeNow * 100);
+    const amountPaise = Math.round(total * 100);
     setBtn('Starting secure payment…', true);
 
     const orderPayload = {
@@ -513,10 +430,8 @@
         state: (document.getElementById('fState') || {}).value || '',
         pin: document.getElementById('fPin').value,
         country: document.getElementById('fCountry').value,
-        payment_method: method === 'partial' ? 'Partial COD (50% advance)' : 'Full payment',
+        payment_method: 'Full payment',
         order_total: String(total),
-        advance_paid: String(chargeNow),
-        balance_due: String(method === 'partial' ? balance : 0),
         coupon_code: couponCode,
         discount: String(discount)
       }
@@ -574,7 +489,7 @@
       amount: order.amount,
       currency: order.currency,
       name: 'LE ROSÈA',
-      description: method === 'partial' ? 'Advance (50%) - Prêt-couture order' : 'Prêt-couture order',
+      description: 'Prêt-couture order',
       image: 'assets/logo.png',
       prefill: {
         name: document.getElementById('fName').value,
@@ -594,7 +509,7 @@
           if (vr.ok && vdata.success){
             clearError();
             finishOrder(response.razorpay_order_id, vdata.shopify_order && vdata.shopify_order.name,
-              { method, total, advance, balance });
+              { total });
           } else {
             console.error('[checkout] verify-payment failed - HTTP', vr.status, vdata);
             showError('Payment could not be verified. If any amount was debited it will be refunded automatically.');
@@ -641,8 +556,6 @@
 
   document.getElementById('fCountry').addEventListener('change', renderStateField);
   document.getElementById('fEmail').addEventListener('blur', onEmailBlur);
-  document.querySelectorAll('input[name="payMethod"]').forEach(r =>
-    r.addEventListener('change', renderPaySplit));
   document.getElementById('couponApplyBtn').addEventListener('click', applyCoupon);
   document.getElementById('couponInput').addEventListener('keydown', e => {
     if (e.key === 'Enter'){ e.preventDefault(); applyCoupon(); }

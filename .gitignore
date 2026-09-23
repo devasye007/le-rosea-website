@@ -44,3 +44,6 @@ website_videos.zip
 *.zip
 website_videos/
 Website videos/
+
+# Downloaded app installers / disk images (never part of the site)
+*.dmg

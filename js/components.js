@@ -313,6 +313,76 @@ function renderWhatsappButton(){
   document.body.appendChild(link);
 }
 
+// First-order coupon toast. Rendered on every page. It appears the moment the
+// site is opened, stays ~5.5s, then fades - and re-appears every 2 minutes.
+// The cadence is coordinated across page navigations via localStorage so it
+// shows immediately on the first open (or once 2 min have elapsed) rather than
+// re-triggering on every single click.
+function renderPromoToast(){
+  if (document.getElementById('promoToast')) return;
+
+  var SHOW_MS = 5500;       // visible window (~5-6s)
+  var CYCLE_MS = 120000;    // re-appear every 2 minutes
+  var FADE_MS = 620;        // matches the CSS out-transition (+ slack)
+  var KEY = 'lr-promo-last-shown';
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var toast = document.createElement('div');
+  toast.className = 'promo-toast';
+  toast.id = 'promoToast';
+  toast.setAttribute('role', 'status');
+  toast.setAttribute('aria-live', 'polite');
+  toast.hidden = true;
+  toast.innerHTML =
+    '<button type="button" class="promo-toast-close" id="promoToastClose" aria-label="Dismiss offer">&times;</button>' +
+    '<span class="promo-toast-eyebrow">A Little Welcome</span>' +
+    '<p class="promo-toast-text">Your first order gets <strong>10% off</strong></p>' +
+    '<div class="promo-toast-code">' +
+      '<span class="promo-toast-code-value">FIRST10</span>' +
+      '<button type="button" class="btn btn-sm promo-toast-copy" id="promoToastCopy">Copy</button>' +
+    '</div>';
+  document.body.appendChild(toast);
+
+  var copyBtn = toast.querySelector('#promoToastCopy');
+  var closeBtn = toast.querySelector('#promoToastClose');
+  var hideTimer = null;
+
+  function lastShown(){ try { return parseInt(localStorage.getItem(KEY) || '0', 10) || 0; } catch (_) { return 0; } }
+  function stamp(){ try { localStorage.setItem(KEY, String(Date.now())); } catch (_) {} }
+
+  function hide(){
+    clearTimeout(hideTimer);
+    toast.classList.remove('is-visible');
+    setTimeout(function(){ toast.hidden = true; toast.classList.remove('is-copied'); }, reduced ? 240 : FADE_MS);
+  }
+
+  function show(){
+    stamp();
+    toast.classList.remove('is-copied');
+    if (copyBtn) copyBtn.textContent = 'Copy';
+    toast.hidden = false;
+    requestAnimationFrame(function(){ toast.classList.add('is-visible'); });
+    clearTimeout(hideTimer);
+    hideTimer = setTimeout(hide, SHOW_MS);
+  }
+
+  copyBtn.addEventListener('click', async function(){
+    try { await navigator.clipboard.writeText('FIRST10'); } catch (_) { /* clipboard blocked - still confirm visually */ }
+    clearTimeout(hideTimer);
+    toast.classList.add('is-copied');
+    copyBtn.textContent = 'Copied ✓';
+    hideTimer = setTimeout(hide, 1600);
+  });
+  closeBtn.addEventListener('click', hide);
+
+  var sinceLast = Date.now() - lastShown();
+  var firstDelay = sinceLast >= CYCLE_MS ? 0 : (CYCLE_MS - sinceLast);
+  setTimeout(function start(){
+    show();
+    setInterval(show, CYCLE_MS);
+  }, firstDelay);
+}
+
 // Use the real rose logo as the favicon (recognisable at small size).
 function setFavicon(){
   if (document.querySelector('link[rel="icon"]')) return;
@@ -331,5 +401,6 @@ document.addEventListener('DOMContentLoaded', () => {
   renderCartDrawer();
   renderSearchOverlay();
   renderWhatsappButton();
+  renderPromoToast();
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape'){ closeCart(); closeSearch(); } });
 });

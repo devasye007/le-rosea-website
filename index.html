@@ -11,8 +11,13 @@
 
 <div class="splash-screen" id="splashScreen" aria-hidden="true">
   <div class="splash-screen-inner">
-    <img src="assets/logo.png" alt="LE ROSÈA" class="splash-logo">
-    <div class="splash-title">LE ROSÈA</div>
+    <div class="splash-stage">
+      <span class="splash-ring" aria-hidden="true"></span>
+      <span class="splash-ring splash-ring-2" aria-hidden="true"></span>
+      <img src="assets/logo.png" alt="LE ROSÈA" class="splash-logo">
+    </div>
+    <div class="splash-title" id="splashTitle" aria-label="LE ROSÈA">LE ROSÈA</div>
+    <span class="splash-rule" aria-hidden="true"></span>
     <div class="splash-subtitle">Private couture atelier</div>
   </div>
 </div>
@@ -192,8 +197,15 @@
 <script src="js/placeholder-art.js"></script>
 <script src="js/cart.js"></script>
 <script src="js/components.js"></script>
+<script src="js/vendor/anime.min.js"></script>
 <script src="js/motion.js"></script>
 <script>
+  // ---- Opening splash: anime.js-driven couture intro -----------------------
+  // The gold rings burst open, the crest springs in, the LE ROSÈA wordmark
+  // cascades letter by letter, a gold rule draws across and the tagline fans
+  // out - then the whole panel lifts away to reveal the hero. Falls back to the
+  // original CSS reveal if anime.js is unavailable, and is skipped entirely for
+  // reduced-motion or once already seen this session.
   (function(){
     const splash = document.getElementById('splashScreen');
     if (!splash) return;
@@ -205,13 +217,66 @@
       }
       sessionStorage.setItem('lr-splash-seen', '1');
     } catch (_) {}
+
     document.body.style.overflow = 'hidden';
-    requestAnimationFrame(() => splash.classList.add('is-active'));
-    setTimeout(() => {
-      splash.classList.add('is-hide');
-      document.body.style.overflow = '';
-    }, 1500);
-    setTimeout(() => splash.remove(), 2600);
+    const restoreScroll = () => { document.body.style.overflow = ''; };
+
+    // Fallback: no anime.js -> original timed CSS reveal.
+    if (typeof window.anime !== 'function'){
+      requestAnimationFrame(() => splash.classList.add('is-active'));
+      setTimeout(() => { splash.classList.add('is-hide'); restoreScroll(); }, 1500);
+      setTimeout(() => splash.remove(), 2600);
+      return;
+    }
+
+    const anime = window.anime;
+    splash.classList.add('anime-on');
+
+    // Split the wordmark into per-letter spans so they can cascade in.
+    const titleEl = document.getElementById('splashTitle');
+    if (titleEl){
+      const word = titleEl.textContent.trim();
+      titleEl.textContent = '';
+      for (const ch of word){
+        const span = document.createElement('span');
+        span.className = 'splash-letter' + (ch === ' ' ? ' is-space' : '');
+        span.textContent = ch === ' ' ? ' ' : ch;
+        titleEl.appendChild(span);
+      }
+    }
+
+    const rings = splash.querySelectorAll('.splash-ring');
+    const logo = splash.querySelector('.splash-logo');
+    const letters = splash.querySelectorAll('.splash-letter');
+    const rule = splash.querySelector('.splash-rule');
+    const subtitle = splash.querySelector('.splash-subtitle');
+    const inner = splash.querySelector('.splash-screen-inner');
+
+    const tl = anime.timeline({ easing: 'easeOutExpo', autoplay: true });
+    tl
+      .add({ targets: rings, scale: [0, 1], opacity: [0, 1], rotate: [-120, 0],
+             duration: 1100, delay: anime.stagger(130), easing: 'easeOutElastic(1, 0.6)' }, 0)
+      .add({ targets: logo, scale: [0.2, 1], opacity: [0, 1], rotate: [-28, 0],
+             duration: 1200, easing: 'easeOutElastic(1, 0.55)' }, 160)
+      .add({ targets: letters, opacity: [0, 1], translateY: [34, 0], rotateZ: [26, 0], scale: [0.7, 1],
+             duration: 850, delay: anime.stagger(62), easing: 'easeOutBack' }, 520)
+      .add({ targets: rule, scaleX: [0, 1], opacity: [0, 1], duration: 760 }, '-=360')
+      .add({ targets: subtitle, opacity: [0, 1], translateY: [10, 0], letterSpacing: ['0.62em', '0.22em'],
+             duration: 860 }, '-=440');
+
+    function exit(){
+      anime({ targets: inner, opacity: [1, 0], scale: [1, 1.08], translateY: [0, -14],
+              duration: 680, easing: 'easeInExpo' });
+      splash.classList.add('is-hide');   // background fades via CSS
+      restoreScroll();
+      setTimeout(() => splash.remove(), 900);
+    }
+
+    tl.finished.then(() => {
+      // A slow gold spin on the rings while the wordmark is held, then lift away.
+      const spin = anime({ targets: rings, rotate: 360, duration: 9000, easing: 'linear', loop: true });
+      setTimeout(() => { spin.pause(); exit(); }, 720);
+    });
   })();
 
   // Play the background hero video on ALL devices. Mobile browsers autoplay a

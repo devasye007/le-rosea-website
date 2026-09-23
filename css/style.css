@@ -1132,7 +1132,9 @@ body.homepage #site-header{
     opacity 650ms var(--ease-premium),
     transform 650ms var(--ease-premium);
   transition-delay: var(--motion-delay, 0ms);
-  will-change: opacity, transform;
+  /* will-change is applied transiently by js/motion.js only while a card is
+     actually revealing, then released - so revealed cards don't each keep a
+     permanent GPU layer (which stutters scrolling on card-heavy pages). */
 }
 .motion-reveal.is-visible{
   opacity: 1;
@@ -1290,6 +1292,18 @@ body.homepage #site-header{
 .product-card:hover .art{
   transform: scale(1.04);
   opacity: 0.92;
+}
+/* Runway clip that plays inside a card after a 1.2s hover dwell. It sits over
+   the still (which shares .art img/video absolute-cover styling) and fades in;
+   the badge (z-index 3) stays above it. Injected/removed by js/motion.js. */
+.card-hover-video{
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 380ms var(--ease);
+}
+.card-hover-video.is-playing{ opacity: 1; }
+@media (prefers-reduced-motion: reduce){
+  .card-hover-video{ transition: none; }
 }
 .product-card .p-name{ font-family: var(--serif); font-size: 1.08rem; margin-bottom: 2px; }
 .product-card .p-cat{ font-size: 0.7rem; letter-spacing: 0.06em; color: var(--taupe); margin-bottom: 6px; }
@@ -2163,6 +2177,53 @@ body > section:nth-of-type(even) .text-link{
   35%{ opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
   100%{ opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
 }
+
+/* ---- anime.js-driven intro: rings, letter cascade, gold rule ---- */
+.splash-stage{
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 152px;
+  height: 152px;
+  margin-bottom: 6px;
+}
+.splash-stage .splash-logo{ position: relative; z-index: 2; margin: 0; }
+.splash-ring{
+  position: absolute;
+  width: 118px; height: 118px;
+  border-radius: 50%;
+  border: 1px solid rgba(182,148,77,0.6);
+  box-shadow: 0 0 34px rgba(182,148,77,0.30), inset 0 0 22px rgba(182,148,77,0.12);
+  pointer-events: none;
+  transform-origin: center;
+}
+.splash-ring-2{
+  width: 150px; height: 150px;
+  border-style: dashed;
+  border-color: rgba(182,148,77,0.34);
+  box-shadow: none;
+}
+.splash-letter{ display: inline-block; transform-origin: center bottom; }
+.splash-letter.is-space{ width: 0.34em; }
+.splash-rule{
+  display: block;
+  width: 148px; height: 1px;
+  transform-origin: center;
+  background: linear-gradient(90deg, transparent, var(--gold) 22%, #E7CE92 50%, var(--gold) 78%, transparent);
+}
+
+/* While anime.js drives the intro, suspend the CSS fallback reveal and start
+   each animated element hidden so the timeline controls it with no flash. */
+.splash-screen.anime-on .splash-screen-inner{
+  animation: none;
+  opacity: 1;
+  transform: none;
+}
+.splash-screen.anime-on .splash-ring,
+.splash-screen.anime-on .splash-logo,
+.splash-screen.anime-on .splash-letter,
+.splash-screen.anime-on .splash-rule,
+.splash-screen.anime-on .splash-subtitle{ opacity: 0; }
 
 @media (prefers-reduced-motion: reduce){
   .splash-screen,
@@ -3592,6 +3653,102 @@ html, body{ overflow-x: clip; }
     width: 29px;
     height: 29px;
   }
+}
+
+/* ---- First-order coupon toast (bottom-left, opposite the WhatsApp float) ---- */
+.promo-toast{
+  position: fixed;
+  left: clamp(16px, 3vw, 28px);
+  bottom: clamp(18px, 3vw, 28px);
+  z-index: 80;
+  width: min(322px, calc(100vw - 32px));
+  padding: 20px 22px 22px;
+  background: linear-gradient(180deg, #ffffff 0%, var(--white) 100%);
+  border: 1px solid rgba(182, 148, 77, 0.55);
+  border-radius: 14px;
+  box-shadow:
+    0 24px 52px -14px rgba(36, 28, 24, 0.30),
+    0 6px 18px rgba(36, 28, 24, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.75);
+  color: var(--espresso);
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(20px) scale(0.94);
+  transition:
+    opacity 520ms var(--ease-premium),
+    transform 520ms var(--ease-premium);
+}
+/* Gold hairline accent sweeping across the very top of the card. */
+.promo-toast::before{
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, transparent, var(--gold) 20%, #E7CE92 50%, var(--gold) 80%, transparent);
+}
+.promo-toast.is-visible{ opacity: 1; transform: translateY(0) scale(1); }
+
+.promo-toast-close{
+  position: absolute; top: 8px; right: 9px;
+  width: 26px; height: 26px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: none; border: none; cursor: pointer;
+  font-size: 1.2rem; line-height: 1; color: var(--taupe);
+  transition: color var(--speed) var(--ease), background var(--speed) var(--ease), transform var(--speed) var(--ease);
+}
+.promo-toast-close:hover{ color: var(--espresso); background: var(--gold-soft); transform: rotate(90deg); }
+
+.promo-toast-eyebrow{
+  display: block; margin: 0 0 7px; font-size: 0.62rem; font-weight: 600;
+  letter-spacing: 0.24em; text-transform: uppercase; color: var(--gold-ink);
+}
+.promo-toast-text{ margin: 0 18px 15px 0; font-family: var(--serif); font-size: 1.14rem; line-height: 1.3; }
+.promo-toast-text strong{ color: var(--gold-ink); font-style: italic; font-weight: 600; }
+
+.promo-toast-code{ display: flex; align-items: stretch; gap: 10px; }
+.promo-toast-code-value{
+  position: relative; flex: 1 1 auto; overflow: hidden;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--serif); font-size: 1.06rem; font-weight: 600; letter-spacing: 0.18em;
+  color: var(--espresso);
+  background: var(--gold-soft);
+  border: 1px dashed rgba(182, 148, 77, 0.7);
+  border-radius: 8px; padding: 9px 12px;
+  transition: background var(--speed) var(--ease), border-color var(--speed) var(--ease);
+}
+/* Slow shimmer sweeping across the code chip. */
+.promo-toast-code-value::after{
+  content: ""; position: absolute; top: 0; bottom: 0; left: -60%; width: 45%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.85), transparent);
+  transform: skewX(-18deg);
+  animation: promoShimmer 3.6s var(--ease) 1.4s infinite;
+}
+.promo-toast-copy{ flex: 0 0 auto; }
+
+/* Copy confirmation: chip flushes to a soft sage and gives a gentle pop. */
+.promo-toast.is-copied .promo-toast-code-value{
+  background: rgba(47, 101, 88, 0.14);
+  border-color: rgba(47, 101, 88, 0.5);
+  animation: promoPop 440ms var(--ease-premium);
+}
+.promo-toast.is-copied .promo-toast-code-value::after{ animation: none; opacity: 0; }
+
+@keyframes promoShimmer{
+  0%   { left: -60%; }
+  55%  { left: 130%; }
+  100% { left: 130%; }
+}
+@keyframes promoPop{
+  0%   { transform: scale(1); }
+  45%  { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce){
+  /* No movement - a plain fade only, and no looping shimmer/pop. */
+  .promo-toast{ transition: opacity 220ms linear; transform: none; }
+  .promo-toast.is-visible{ transform: none; }
+  .promo-toast-close:hover{ transform: none; }
+  .promo-toast-code-value::after{ display: none; animation: none; }
+  .promo-toast.is-copied .promo-toast-code-value{ animation: none; }
 }
 
 /* ---- Header search overlay (translucent, frosted) ---- */
